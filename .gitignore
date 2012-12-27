@@ -1,0 +1,8 @@
+# Ignores
+*.c~
+*.vala~
+*.sh
+*.bat
+*.sh~
+*.bat~
+*.md~
