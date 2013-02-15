@@ -397,8 +397,6 @@ if(this.WWWAuthenticate.length > 0){
 Cadena.append_printf("WWW-Authenticate: %s\n", this.WWWAuthenticate);
 }
 
-//Cadena.append_printf("xxxxxxxxxxxxxxx: %s\n", this.xxxxxxxxxxxxxx);
-
 return Cadena.str;
 }
 
@@ -656,6 +654,9 @@ public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
     /* connect the 'run' signal that is emitted when 
      * there is a connection to our connection handler
      */
+
+//VirtualUrl["uhttp_joinjsfiles"] = "/uhttp_joinjsfiles.js";
+
     tss.run.connect( connection_handler );
   }
   
@@ -765,6 +766,32 @@ print("Llama al Doc Raiz\n");
         response.Header.Status = StatusCode.OK;
     response.Data = LoadFile(PathLocalFile(this.Index));
     response.Header.ContentType = "text/html";
+    serve_response( response, dos );
+
+}else if(request.Path  == "/uhttp_joinjsfiles.js"){
+// Esta seccion es una utilidad del servidor que permite unir varios archivos javascript en uno solo y enviarlo a cliente, esto elimina la cantidad de peticiones hechas al servidor y carga mas rapido la pagina. 
+// Los scripts separados por comas, sin el .js y el path relativo o absoluto
+// Recordar que es una peticion GET por lo que el limite del string 
+// el formato de envio es /uhttp_joinjsfiles.js?files=/script1,/script2,/script3
+var textjoin = new StringBuilder();
+var pathjs = new StringBuilder();
+        response.Header.Status = StatusCode.OK;
+    response.Header.ContentType = "application/javascript";
+
+if(request.Query.has_key("files")){
+
+foreach(var p in request.Query["files"].split(",")){
+pathjs.truncate();
+pathjs.append_printf("%s.js", PathLocalFile(p));
+if(FileUtils.test(pathjs.str, GLib.FileTest.IS_REGULAR)){
+textjoin.append_printf("%s ", ReadJavaScriptFile(pathjs.str));
+}
+
+}
+}
+
+    response.Data = textjoin.str.data;
+
     serve_response( response, dos );
 
 }else if(FileUtils.test(PathLocalFile(request.Path), GLib.FileTest.IS_REGULAR)){
@@ -944,6 +971,10 @@ Temporizador.stop();
 // Obtiene el path local del archivo solicitado
 private string PathLocalFile(string Filex){
 return Path.build_path (Path.DIR_SEPARATOR_S, Root, Filex);
+}
+
+private static string ReadJavaScriptFile(string path){
+return (string)LoadFile(path);
 }
 
 // Carga los datos de un archivo local

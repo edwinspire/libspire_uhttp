@@ -6,3 +6,5 @@
 *.sh~
 *.bat~
 *.md~
+bin/lnx/proyects
+bin/win/proyects
