@@ -768,11 +768,11 @@ print("Llama al Doc Raiz\n");
     response.Header.ContentType = "text/html";
     serve_response( response, dos );
 
-}else if(request.Path  == "/uhttp_joinjsfiles.js"){
+}else if(request.Path  == "/joinjsfiles.uhttp"){
 // Esta seccion es una utilidad del servidor que permite unir varios archivos javascript en uno solo y enviarlo a cliente, esto elimina la cantidad de peticiones hechas al servidor y carga mas rapido la pagina. 
 // Los scripts separados por comas, sin el .js y el path relativo o absoluto
 // Recordar que es una peticion GET por lo que el limite del string 
-// el formato de envio es /uhttp_joinjsfiles.js?files=/script1,/script2,/script3
+// el formato de envio es /joinjsfiles.uhttp?files=/script1,/script2,/script3
 var textjoin = new StringBuilder();
 var pathjs = new StringBuilder();
         response.Header.Status = StatusCode.OK;
