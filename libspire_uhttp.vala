@@ -643,7 +643,7 @@ public bool RequestPrintOnConsole = false;
 [Description(nick = "Virtual Url", blurb = "List of Virtual URL (para ser manejado por el usuario)")]
 public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
 [Description(nick = "Path Root", blurb = "Default: rootweb on current directory.")]
-	public string Root = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir (), "uhttproot");
+	public string Root = "*uhttproot";
 
 public uHttpServerCongif(){
 try{
@@ -678,11 +678,14 @@ try{
 	this.Port = (uint16)file.get_uint64 ("uHTTP", "Port");
 	this.Index = file.get_string ("uHTTP", "Index");
 
-	if(file.get_string ("uHTTP", "Root").length > 0){
-	this.Root = file.get_string ("uHTTP", "Root");
-}else{
 
+	if(file.get_string ("uHTTP", "Root").length == 0){
 	this.Root = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir (), "uhttproot");
+}else if(file.get_string ("uHTTP", "Root").has_prefix("*")){
+this.Root = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir (), file.get_string ("uHTTP", "Root").replace("*", ""));
+}else{
+	this.Root = file.get_string ("uHTTP", "Root");
+
 }
 
 
@@ -775,7 +778,7 @@ try{
 	filekf.set_comment("uHTTP", "Index", "Página de inicio, default: index.html");
 
 	filekf.set_string("uHTTP", "Root", _rootpath);
-	filekf.set_comment("uHTTP", "Root", "Carpeta raíz de los documentos del servidor web. La ruta es absoluta, a menos que la ruta inicie con * con lo cual se tomará como relativa a la ubucación donde está corriendo el servidor.");
+	filekf.set_comment("uHTTP", "Root", "Carpeta raíz de los documentos del servidor web. La ruta puede ser absoluta, o si la ruta inicia con * se tomará como relativa a la ubicación donde está corriendo el servidor. Si se deja vacio se tomará como raiz una cartepa llamada uhttproot dentro de la ubicación actual del servidor.");
 
 
 	filekf.set_boolean("uHTTP", "RequestPrintOnConsole", this.RequestPrintOnConsole);
