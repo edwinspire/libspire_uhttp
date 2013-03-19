@@ -105,13 +105,8 @@ namespace edwinspire {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Micro embebed HTTP Web Server", nick = "HTTP Server")]
 		public class uHttpServer : GLib.Object {
-			[Description (blurb = "Index page, default: index.html", nick = "Index")]
-			public string Index;
-			[Description (blurb = "Default: 8080", nick = "Port")]
-			public uint16 Port;
-			public bool RequestPrintOnConsole;
-			[Description (blurb = "Default: rootweb on current directory.", nick = "Path Root")]
-			public string Root;
+			[Description (blurb = " Data Config uHTTP", nick = "Config uHTTP")]
+			public edwinspire.uHttp.uHttpServerCongif Config;
 			[Description (blurb = "List of Virtual URL (para ser manejado por el usuario)", nick = "Virtual Url")]
 			public Gee.HashMap<string,string> VirtualUrl;
 			[Description (blurb = "", nick = "Constructor uHttpServer")]
@@ -125,6 +120,25 @@ namespace edwinspire {
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
 			[Description (blurb = "", nick = "Signal Request Virtual URL")]
 			public signal void RequestVirtualUrl (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		[Description (blurb = "Micro embebed HTTP Web Server config file", nick = "HTTP Server Config")]
+		public class uHttpServerCongif : GLib.Object {
+			[Description (blurb = "Index page, default: index.html", nick = "Index")]
+			public string Index;
+			[Description (blurb = "Default: 8080", nick = "Port")]
+			public uint16 Port;
+			public bool RequestPrintOnConsole;
+			[Description (blurb = "Default: rootweb on current directory.", nick = "Path Root")]
+			public string Root;
+			[Description (blurb = "List of Virtual URL (para ser manejado por el usuario)", nick = "Virtual Url")]
+			public Gee.HashMap<string,string> VirtualUrl;
+			public uHttpServerCongif ();
+			public string ToXml (bool fieldtextasbase64 = true);
+			public void read ();
+			public bool write ();
+			[Description (blurb = "", nick = "Signal on write file")]
+			public signal void FileWrited ();
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Version")]

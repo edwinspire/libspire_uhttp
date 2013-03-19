@@ -626,14 +626,12 @@ return Cadena.str;
 
 }
 
+[Description(nick = "HTTP Server Config", blurb = "Micro embebed HTTP Web Server config file")]
+public class uHttpServerCongif:GLib.Object {
 
-[Description(nick = "HTTP Server", blurb = "Micro embebed HTTP Web Server")]
-public class uHttpServer:GLib.Object {
+[Description(nick = "Signal on write file", blurb = "")]
+public signal void FileWrited();
 
-[Description(nick = "Signal Request Virtual URL", blurb = "")]
-public signal void RequestVirtualUrl(Request request, DataOutputStream dos);
-
-  private ThreadedSocketService tss;
 [Description(nick = "Port", blurb = "Default: 8080")]
 public uint16 Port = 8080;
 
@@ -645,7 +643,178 @@ public bool RequestPrintOnConsole = false;
 [Description(nick = "Virtual Url", blurb = "List of Virtual URL (para ser manejado por el usuario)")]
 public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
 [Description(nick = "Path Root", blurb = "Default: rootweb on current directory.")]
-	public string Root = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir (), "rootweb");
+	public string Root = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir (), "uhttproot");
+
+public uHttpServerCongif(){
+try{
+        // Reference a local file name
+        var file = File.new_for_path ("uhttp.conf");
+{
+
+            // Test for the existence of file
+            if (file.query_exists ()) {
+this.read();
+            }else{
+this.save("");
+this.write();
+}
+
+
+}
+
+}catch(GLib.Error e){
+		stdout.printf ("cError: %s\n", e.message);
+}
+}
+
+public void read(){
+
+try{
+
+	KeyFile file = new KeyFile ();
+
+	file.load_from_file ("uhttp.conf", KeyFileFlags.NONE);
+
+	this.Port = (uint16)file.get_uint64 ("uHTTP", "Port");
+	this.Index = file.get_string ("uHTTP", "Index");
+
+	if(file.get_string ("uHTTP", "Root").length > 0){
+	this.Root = file.get_string ("uHTTP", "Root");
+}else{
+
+	this.Root = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir (), "uhttproot");
+}
+
+
+	this.RequestPrintOnConsole = file.get_boolean ("uHTTP", "RequestPrintOnConsole");
+
+
+} catch (KeyFileError e) {
+		stdout.printf ("rError: %s\n", e.message);
+//this.write();
+	}
+catch (GLib.FileError fe) {
+		stdout.printf ("rError: %s\n", fe.message);
+this.write();
+	}
+
+
+}
+
+
+private void save (string datakf){
+try{
+        // Reference a local file name
+        var file = File.new_for_path ("uhttp.conf");
+{
+
+            // Test for the existence of file
+            if (file.query_exists ()) {
+file.delete();
+            }
+        var dos = new DataOutputStream (file.create (FileCreateFlags.REPLACE_DESTINATION));
+     
+        // For long string writes, a loop should be used, because sometimes not all data can be written in one run
+        // 'written' is used to check how much of the string has already been written
+        uint8[] data = datakf.data;
+        long written = 0;
+        while (written < data.length) { 
+            // sum of the bytes of 'text' that already have been written to the stream
+            written += dos.write (data[written:data.length]);
+        }
+FileWrited();
+
+
+}
+
+}catch(GLib.Error e){
+		stdout.printf ("Error: %s\n", e.message);
+}
+}
+
+public string ToXml(bool fieldtextasbase64 = true){
+string Retorno = "";
+var TempS = new StringBuilder("<uhttp>");
+
+this.read();
+
+if(fieldtextasbase64){
+TempS.append_printf("<row><index>%s</index><port>%s</port><root>%s</root><RequestPrintOnConsole>%s</RequestPrintOnConsole></row>", Base64.encode(this.Index.data), Base64.encode(this.Port.to_string().data), Base64.encode(this.Root.data), Base64.encode(this.RequestPrintOnConsole.to_string().data));
+}else{
+TempS.append_printf("<row><index>%s</index><port>%s</port><root>%s</root><RequestPrintOnConsole>%s</RequestPrintOnConsole></row>", this.Index, this.Port.to_string(), this.Root, this.RequestPrintOnConsole.to_string());
+}
+
+
+TempS.append("</uhttp>");
+Retorno = TempS.str;
+
+return Retorno;
+}
+
+
+public bool write(){
+bool Retorno = false;
+string _rootpath = "";
+if(this.Root.length < 1){
+_rootpath = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir (), "uhttproot");
+}else{
+_rootpath = this.Root;
+}
+
+try{
+
+
+	KeyFile filekf = new KeyFile ();
+
+	filekf.load_from_file ("uhttp.conf", KeyFileFlags.NONE);
+
+	filekf.set_string("uHTTP", "Port", this.Port.to_string());
+	filekf.set_string("uHTTP", "Index", this.Index);
+	filekf.set_string("uHTTP", "Root", _rootpath);
+	filekf.set_boolean("uHTTP", "RequestPrintOnConsole", this.RequestPrintOnConsole);
+
+this.save(filekf.to_data());
+   
+Retorno = true;
+
+	} catch (KeyFileError e) {
+		stdout.printf ("wError: %s\n", e.message);
+	}
+catch (GLib.FileError fe) {
+		stdout.printf ("wError: %s\n", fe.message);
+this.save("");
+	}
+
+return Retorno;
+}
+
+}
+
+
+[Description(nick = "HTTP Server", blurb = "Micro embebed HTTP Web Server")]
+public class uHttpServer:GLib.Object {
+
+[Description(nick = "Signal Request Virtual URL", blurb = "")]
+public signal void RequestVirtualUrl(Request request, DataOutputStream dos);
+
+  private ThreadedSocketService tss;
+
+[Description(nick = "Config uHTTP", blurb = " Data Config uHTTP")]
+public uHttpServerCongif Config = new uHttpServerCongif();
+
+
+//[Description(nick = "Port", blurb = "Default: 8080")]
+//public uint16 Port = 8080;
+
+//[Description(nick = "Index", blurb = "Index page, default: index.html")]
+//public string Index = "index.html";
+
+//public bool RequestPrintOnConsole = false;
+
+[Description(nick = "Virtual Url", blurb = "List of Virtual URL (para ser manejado por el usuario)")]
+public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
+//[Description(nick = "Path Root", blurb = "Default: rootweb on current directory.")]
+//	public string Root = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir (), "rootweb");
 
 [Description(nick = "Constructor uHttpServer", blurb = "")]  
   public uHttpServer(int max_threads = 100) {
@@ -665,7 +834,7 @@ public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
     //create an IPV4 InetAddress bound to no specific IP address
     InetAddress ia = new InetAddress.any(SocketFamily.IPV4);
     //create a socket address based on the netadress and set the port
-    InetSocketAddress isa = new InetSocketAddress(ia, Port);
+    InetSocketAddress isa = new InetSocketAddress(ia, Config.Port);
     //try to add the address to the ThreadedSocketService
     try {
       tss.add_address(isa, SocketType.STREAM, SocketProtocol.TCP, null, null);
@@ -677,7 +846,7 @@ public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
     MainLoop ml = new MainLoop();
     //start listening 
     tss.start();
-    stdout.printf(@"Serving on port $Port\n");
+    stdout.printf("Serving on port %s\n", Config.Port.to_string());
 //tss.
     //run the main loop
     ml.run();
@@ -687,7 +856,7 @@ public void run_without_mainloop(){
     //create an IPV4 InetAddress bound to no specific IP address
     InetAddress ia = new InetAddress.any(SocketFamily.IPV4);
     //create a socket address based on the netadress and set the port
-    InetSocketAddress isa = new InetSocketAddress(ia, Port);
+    InetSocketAddress isa = new InetSocketAddress(ia, Config.Port);
     //try to add the address to the ThreadedSocketService
     try {
       tss.add_address(isa, SocketType.STREAM, SocketProtocol.TCP, null, null);
@@ -699,7 +868,7 @@ public void run_without_mainloop(){
 //    MainLoop ml = new MainLoop();
     //start listening 
     tss.start();
-    stdout.printf(@"Serving on port $Port without mail loop\n");
+    stdout.printf("Serving on port %s\n", Config.Port.to_string());
 //tss.
     //run the main loop
   //  ml.run();
@@ -749,7 +918,7 @@ dis.read (datos);
 request.Data = datos;
 }
 
-if(RequestPrintOnConsole){
+if(Config.RequestPrintOnConsole){
 request.print();
 }
       
@@ -764,8 +933,25 @@ if(!VirtualUrl.values.contains(request.Path)){
 if(request.Path == "/"){
 print("Llama al Doc Raiz\n");
         response.Header.Status = StatusCode.OK;
-    response.Data = LoadFile(PathLocalFile(this.Index));
+    response.Data = LoadFile(PathLocalFile(Config.Index));
     response.Header.ContentType = "text/html";
+    serve_response( response, dos );
+
+
+}else if(request.Path  == "/virtualurls.uhttp"){
+// Devuelva una lista en xml de todas las paginas virtuales del sistema
+
+        response.Header.Status = StatusCode.OK;
+    response.Data = LoadFile(this.VirtualUrlsToXml());
+    response.Header.ContentType = "text/xml";
+    serve_response( response, dos );
+
+}else if(request.Path  == "/config.uhttp"){
+// Devuelva una lista en xml de todas las paginas virtuales del sistema
+
+        response.Header.Status = StatusCode.OK;
+    response.Data = LoadFile(Config.ToXml());
+    response.Header.ContentType = "text/xml";
     serve_response( response, dos );
 
 }else if(request.Path  == "/joinjsfiles.uhttp"){
@@ -816,6 +1002,33 @@ RequestVirtualUrl(request, dos);
     return false;
   }
 
+
+private string VirtualUrlsToXml(bool fieldtextasbase64 = true){
+
+string Retorno = "";
+var TempS = new StringBuilder("<uhttp>");
+if(fieldtextasbase64){
+TempS.append_printf("<row><name>%s</name><url>%s</url></row>", Base64.encode("joinjsfiles.uhttp".data), Base64.encode("/joinjsfiles.uhttp".data));
+TempS.append_printf("<row><name>%s</name><url>%s</url></row>", Base64.encode("virtualurls.uhttp".data), Base64.encode("/virtualurls.uhttp".data));
+}else{
+TempS.append_printf("<row><name>%s</name><url>%s</url></row>", "joinjsfiles.uhttp", "/joinjsfiles.uhttp");
+TempS.append_printf("<row><name>%s</name><url>%s</url></row>", "virtualurls.uhttp", "/virtualurls.uhttp");
+}
+
+
+foreach(var url in VirtualUrl.entries){
+if(fieldtextasbase64){
+TempS.append_printf("<row><name>%s</name><url>%s</url></row>", Base64.encode(url.key.data), Base64.encode(url.value.data));
+}else{
+TempS.append_printf("<row><name>%s</name><url>%s</url></row>", url.key, url.value);
+}
+}
+
+TempS.append("</uhttp>");
+Retorno = TempS.str;
+
+return Retorno;
+}
 
 
 // Decodifica los datos provenientes de una requerimiento
@@ -970,7 +1183,7 @@ Temporizador.stop();
 
 // Obtiene el path local del archivo solicitado
 private string PathLocalFile(string Filex){
-return Path.build_path (Path.DIR_SEPARATOR_S, Root, Filex);
+return Path.build_path (Path.DIR_SEPARATOR_S, Config.Root, Filex);
 }
 
 private static string ReadJavaScriptFile(string path){

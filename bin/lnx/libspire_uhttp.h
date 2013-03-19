@@ -86,6 +86,17 @@ typedef struct _edwinspireuHttpResponse edwinspireuHttpResponse;
 typedef struct _edwinspireuHttpResponseClass edwinspireuHttpResponseClass;
 typedef struct _edwinspireuHttpResponsePrivate edwinspireuHttpResponsePrivate;
 
+#define EDWINSPIRE_UHTTP_TYPE_UHTTP_SERVER_CONGIF (edwinspire_uhttp_uhttp_server_congif_get_type ())
+#define EDWINSPIRE_UHTTP_UHTTP_SERVER_CONGIF(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_UHTTP_SERVER_CONGIF, edwinspireuHttpuHttpServerCongif))
+#define EDWINSPIRE_UHTTP_UHTTP_SERVER_CONGIF_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_UHTTP_SERVER_CONGIF, edwinspireuHttpuHttpServerCongifClass))
+#define EDWINSPIRE_UHTTP_IS_UHTTP_SERVER_CONGIF(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_UHTTP_SERVER_CONGIF))
+#define EDWINSPIRE_UHTTP_IS_UHTTP_SERVER_CONGIF_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_UHTTP_SERVER_CONGIF))
+#define EDWINSPIRE_UHTTP_UHTTP_SERVER_CONGIF_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_UHTTP_SERVER_CONGIF, edwinspireuHttpuHttpServerCongifClass))
+
+typedef struct _edwinspireuHttpuHttpServerCongif edwinspireuHttpuHttpServerCongif;
+typedef struct _edwinspireuHttpuHttpServerCongifClass edwinspireuHttpuHttpServerCongifClass;
+typedef struct _edwinspireuHttpuHttpServerCongifPrivate edwinspireuHttpuHttpServerCongifPrivate;
+
 #define EDWINSPIRE_UHTTP_TYPE_UHTTP_SERVER (edwinspire_uhttp_uhttp_server_get_type ())
 #define EDWINSPIRE_UHTTP_UHTTP_SERVER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_UHTTP_SERVER, edwinspireuHttpuHttpServer))
 #define EDWINSPIRE_UHTTP_UHTTP_SERVER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_UHTTP_SERVER, edwinspireuHttpuHttpServerClass))
@@ -275,14 +286,25 @@ struct _edwinspireuHttpResponseClass {
 	GObjectClass parent_class;
 };
 
-struct _edwinspireuHttpuHttpServer {
+struct _edwinspireuHttpuHttpServerCongif {
 	GObject parent_instance;
-	edwinspireuHttpuHttpServerPrivate * priv;
+	edwinspireuHttpuHttpServerCongifPrivate * priv;
 	guint16 Port;
 	gchar* Index;
 	gboolean RequestPrintOnConsole;
 	GeeHashMap* VirtualUrl;
 	gchar* Root;
+};
+
+struct _edwinspireuHttpuHttpServerCongifClass {
+	GObjectClass parent_class;
+};
+
+struct _edwinspireuHttpuHttpServer {
+	GObject parent_instance;
+	edwinspireuHttpuHttpServerPrivate * priv;
+	edwinspireuHttpuHttpServerCongif* Config;
+	GeeHashMap* VirtualUrl;
 };
 
 struct _edwinspireuHttpuHttpServerClass {
@@ -321,6 +343,12 @@ GType edwinspire_uhttp_response_get_type (void) G_GNUC_CONST;
 edwinspireuHttpResponse* edwinspire_uhttp_response_new (void);
 edwinspireuHttpResponse* edwinspire_uhttp_response_construct (GType object_type);
 gchar* edwinspire_uhttp_response_ToString (edwinspireuHttpResponse* self);
+GType edwinspire_uhttp_uhttp_server_congif_get_type (void) G_GNUC_CONST;
+edwinspireuHttpuHttpServerCongif* edwinspire_uhttp_uhttp_server_congif_new (void);
+edwinspireuHttpuHttpServerCongif* edwinspire_uhttp_uhttp_server_congif_construct (GType object_type);
+void edwinspire_uhttp_uhttp_server_congif_read (edwinspireuHttpuHttpServerCongif* self);
+gchar* edwinspire_uhttp_uhttp_server_congif_ToXml (edwinspireuHttpuHttpServerCongif* self, gboolean fieldtextasbase64);
+gboolean edwinspire_uhttp_uhttp_server_congif_write (edwinspireuHttpuHttpServerCongif* self);
 GType edwinspire_uhttp_uhttp_server_get_type (void) G_GNUC_CONST;
 edwinspireuHttpuHttpServer* edwinspire_uhttp_uhttp_server_new (gint max_threads);
 edwinspireuHttpuHttpServer* edwinspire_uhttp_uhttp_server_construct (GType object_type, gint max_threads);
