@@ -769,9 +769,17 @@ try{
 	filekf.load_from_file ("uhttp.conf", KeyFileFlags.NONE);
 
 	filekf.set_string("uHTTP", "Port", this.Port.to_string());
+	filekf.set_comment("uHTTP", "Port", "Puerto / Socket, default: 8080");
+
 	filekf.set_string("uHTTP", "Index", this.Index);
+	filekf.set_comment("uHTTP", "Index", "Página de inicio, default: index.html");
+
 	filekf.set_string("uHTTP", "Root", _rootpath);
+	filekf.set_comment("uHTTP", "Root", "Carpeta raíz de los documentos del servidor web. La ruta es absoluta, a menos que la ruta inicie con * con lo cual se tomará como relativa a la ubucación donde está corriendo el servidor.");
+
+
 	filekf.set_boolean("uHTTP", "RequestPrintOnConsole", this.RequestPrintOnConsole);
+	filekf.set_comment("uHTTP", "RequestPrintOnConsole", "Imprime en consola las peticiones realizadas al servidor");
 
 this.save(filekf.to_data());
    
