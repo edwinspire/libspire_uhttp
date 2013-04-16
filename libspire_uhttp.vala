@@ -1,3 +1,27 @@
+//
+//
+//  Author:
+//       Edwin De La Cruz <admin@edwinspire.com>
+//
+//  Copyright (c) 2013 edwinspire
+//  Web Site http://edwinspire.com
+//
+//  Quito - Ecuador
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 //New file source
 using Gee;
 using GLib;
@@ -780,7 +804,6 @@ try{
 	filekf.set_string("uHTTP", "Root", _rootpath);
 	filekf.set_comment("uHTTP", "Root", "Carpeta raíz de los documentos del servidor web. La ruta puede ser absoluta, o si la ruta inicia con * se tomará como relativa a la ubicación donde está corriendo el servidor. Si se deja vacio se tomará como raiz una cartepa llamada uhttproot dentro de la ubicación actual del servidor.");
 
-
 	filekf.set_boolean("uHTTP", "RequestPrintOnConsole", this.RequestPrintOnConsole);
 	filekf.set_comment("uHTTP", "RequestPrintOnConsole", "Imprime en consola las peticiones realizadas al servidor");
 
@@ -813,19 +836,8 @@ public signal void RequestVirtualUrl(Request request, DataOutputStream dos);
 [Description(nick = "Config uHTTP", blurb = " Data Config uHTTP")]
 public uHttpServerCongif Config = new uHttpServerCongif();
 
-
-//[Description(nick = "Port", blurb = "Default: 8080")]
-//public uint16 Port = 8080;
-
-//[Description(nick = "Index", blurb = "Index page, default: index.html")]
-//public string Index = "index.html";
-
-//public bool RequestPrintOnConsole = false;
-
 [Description(nick = "Virtual Url", blurb = "List of Virtual URL (para ser manejado por el usuario)")]
 public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
-//[Description(nick = "Path Root", blurb = "Default: rootweb on current directory.")]
-//	public string Root = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir (), "rootweb");
 
 [Description(nick = "Constructor uHttpServer", blurb = "")]  
   public uHttpServer(int max_threads = 100) {
