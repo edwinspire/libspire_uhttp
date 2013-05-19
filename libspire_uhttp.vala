@@ -1211,7 +1211,7 @@ return Path.build_path (Path.DIR_SEPARATOR_S, Config.Root, Filex);
 
 
 
-private static string ReadJavaScriptFile(string path){
+public static string ReadJavaScriptFile(string path){
 return (string)LoadFile(path);
 }
 
