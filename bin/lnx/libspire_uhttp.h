@@ -357,6 +357,7 @@ void edwinspire_uhttp_uhttp_server_run_without_mainloop (edwinspireuHttpuHttpSer
 gchar* edwinspire_uhttp_uhttp_server_GenUrl (const gchar* root, const gchar* value);
 void edwinspire_uhttp_uhttp_server_serve_response (edwinspireuHttpuHttpServer* self, edwinspireuHttpResponse* response, GDataOutputStream* dos);
 gchar* edwinspire_uhttp_uhttp_server_PathLocalFile (edwinspireuHttpuHttpServer* self, const gchar* Filex);
+gchar* edwinspire_uhttp_uhttp_server_ReadFile (const gchar* path);
 guint8* edwinspire_uhttp_uhttp_server_LoadFile (const gchar* Path, int* result_length1);
 
 
