@@ -1209,10 +1209,12 @@ public string PathLocalFile(string Filex){
 return Path.build_path (Path.DIR_SEPARATOR_S, Config.Root, Filex);
 }
 
-
-
-public static string ReadJavaScriptFile(string path){
+public static string ReadFile(string path){
 return (string)LoadFile(path);
+}
+
+private static string ReadJavaScriptFile(string path){
+return ReadFile(path);
 }
 
 // Carga los datos de un archivo local
