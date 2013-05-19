@@ -1331,6 +1331,9 @@ break;
 case "bz2":
 Retorno = "application/x-bzip";
 break;
+case "ogg":
+Retorno = "application/ogg";
+break;
 default:
 Retorno = "text/plain";
 print(@"Mimetype Desconocido para [$basen] devuelve $Retorno [$path]\n");
