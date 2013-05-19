@@ -114,6 +114,7 @@ namespace edwinspire {
 			[Description (blurb = "Crea una Url unica automaticamente", nick = "GenUrl")]
 			public static string GenUrl (string root = "/", string value = "Sf54+-dsfk%6md&bfpJ");
 			public static uint8[] LoadFile (string Path);
+			public string PathLocalFile (string Filex);
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
 			public void run ();
 			public void run_without_mainloop ();

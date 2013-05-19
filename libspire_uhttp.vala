@@ -1205,7 +1205,7 @@ Temporizador.stop();
 
 
 // Obtiene el path local del archivo solicitado
-private string PathLocalFile(string Filex){
+public string PathLocalFile(string Filex){
 return Path.build_path (Path.DIR_SEPARATOR_S, Config.Root, Filex);
 }
 
