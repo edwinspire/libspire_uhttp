@@ -866,8 +866,8 @@ public signal void NoFoundURL(Request request);
 [Description(nick = "Config uHTTP", blurb = " Data Config uHTTP")]
 public uHttpServerCongif Config = new uHttpServerCongif();
 
-[Description(nick = "Virtual Url", blurb = "List of Virtual URL (para ser manejado por el usuario)")]
-public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
+//[Description(nick = "Virtual Url", blurb = "List of Virtual URL (para ser manejado por el usuario)")]
+//public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
 
 [Description(nick = "Constructor uHttpServer", blurb = "")]  
   public uHttpServer(int max_threads = 100) {
