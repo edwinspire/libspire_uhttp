@@ -292,7 +292,6 @@ struct _edwinspireuHttpuHttpServerCongif {
 	guint16 Port;
 	gchar* Index;
 	gboolean RequestPrintOnConsole;
-	GeeHashMap* VirtualUrl;
 	gchar* Root;
 };
 

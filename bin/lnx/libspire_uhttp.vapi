@@ -134,8 +134,6 @@ namespace edwinspire {
 			public bool RequestPrintOnConsole;
 			[Description (blurb = "Default: rootweb on current directory.", nick = "Path Root")]
 			public string Root;
-			[Description (blurb = "List of Virtual URL (para ser manejado por el usuario)", nick = "Virtual Url")]
-			public Gee.HashMap<string,string> VirtualUrl;
 			public uHttpServerCongif ();
 			public string ToXml (bool fieldtextasbase64 = true);
 			public void read ();

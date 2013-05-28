@@ -692,8 +692,8 @@ public string Index = "index.html";
 
 public bool RequestPrintOnConsole = false;
 
-[Description(nick = "Virtual Url", blurb = "List of Virtual URL (para ser manejado por el usuario)")]
-public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
+//[Description(nick = "Virtual Url", blurb = "List of Virtual URL (para ser manejado por el usuario)")]
+//public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
 [Description(nick = "Path Root", blurb = "Default: rootweb on current directory.")]
 	public string Root = "*uhttproot";
 
