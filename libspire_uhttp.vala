@@ -1068,7 +1068,7 @@ this.connection_handler_virtual(request, dos);
     return false;
   }
 
-
+/*
 private string VirtualUrlsToXml(bool fieldtextasbase64 = true){
 
 string Retorno = "";
@@ -1095,6 +1095,8 @@ Retorno = TempS.str;
 
 return Retorno;
 }
+
+*/
 
 
 // Decodifica los datos provenientes de una requerimiento
