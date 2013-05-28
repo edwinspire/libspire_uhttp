@@ -938,7 +938,8 @@ return root+Checksum.compute_for_string(ChecksumType.MD5, value+"-"+tv.to_iso860
 
  uHttp.Response response = new uHttp.Response();
       response.Header.Status = StatusCode.NOT_FOUND;
-   response.Data =  "".data;
+ response.Data = Response.HtmErrorPage("uHTTP WebServer", "404 - Página no encontrada").data;
+  response.Header.ContentType = "text/html";
 
 this.serve_response( response, dos );
 
@@ -1053,11 +1054,12 @@ textjoin.append_printf("%s ", ReadJavaScriptFile(pathjs.str));
 
 }else{
 //print("No found\n");
-     response.Header.Status = StatusCode.NOT_FOUND;
-  response.Data = "NO FOUND PAGE".data;
-  response.Header.ContentType = "text/html";
-    serve_response( response, dos );
-stderr.printf("Path no found: %s\n", request.Path);
+//     response.Header.Status = StatusCode.NOT_FOUND;
+//  response.Data = Response.HtmErrorPage("uHTTP WebServer", "404 - Página no encontrada").data;
+//  response.Header.ContentType = "text/html";
+//    serve_response( response, dos );
+// stderr.printf("Path no found: %s\n", request.Path);
+this.connection_handler_virtual(request, dos);
 }
 }else{
 RequestVirtualUrl(request, dos);
