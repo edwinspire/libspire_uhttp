@@ -665,7 +665,7 @@ string Base = """<!DOCTYPE html>
     <div style="margin: 5px; font-family: Garamond, serif; line-height: 1em; color: #fa8c05; font-weight: bold; font-size: 40px; text-shadow: 0px 0px 0 rgb(226,116,-19),1px 1px 0 rgb(211,101,-34),2px 2px 0 rgb(197,87,-48),3px 3px 0 rgb(182,72,-63),4px 4px 0 rgb(168,58,-77),5px 5px 0 rgb(153,43,-92), 6px 6px 0 rgb(139,29,-106),7px 7px 6px rgba(0,0,0,0.6),7px 7px 1px rgba(0,0,0,0.5),0px 0px 6px rgba(0,0,0,.2); text-align: center;">
       @Error</div>
     <div style="color: white; position: relative; top: 80px; text-align: center;">
-      uHTTP Micro WebServer</br>software@edwinspire.com</div>
+      uHTTP Micro WebServer - software@edwinspire.com</div>
   </div>
   </div>
 </body>
