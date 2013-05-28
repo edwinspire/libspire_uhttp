@@ -108,8 +108,6 @@ namespace edwinspire {
 		public class uHttpServer : GLib.Object {
 			[Description (blurb = " Data Config uHTTP", nick = "Config uHTTP")]
 			public edwinspire.uHttp.uHttpServerCongif Config;
-			[Description (blurb = "List of Virtual URL (para ser manejado por el usuario)", nick = "Virtual Url")]
-			public Gee.HashMap<string,string> VirtualUrl;
 			[Description (blurb = "", nick = "Constructor uHttpServer")]
 			public uHttpServer (int max_threads = 100);
 			[Description (blurb = "Crea una Url unica automaticamente", nick = "GenUrl")]
@@ -123,8 +121,8 @@ namespace edwinspire {
 			public void run_without_mainloop ();
 			[Description (blurb = "", nick = "Server Response")]
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
-			[Description (blurb = "", nick = "Signal Request Virtual URL")]
-			public signal void RequestVirtualUrl (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
+			[Description (blurb = "Señal se dispara cuando una página no es encontrada en el servidor", nick = "Signal Request URL No Found")]
+			public signal void NoFoundURL (edwinspire.uHttp.Request request);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Micro embebed HTTP Web Server config file", nick = "HTTP Server Config")]

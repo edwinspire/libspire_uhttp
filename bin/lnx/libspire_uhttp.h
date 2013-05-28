@@ -304,7 +304,6 @@ struct _edwinspireuHttpuHttpServer {
 	GObject parent_instance;
 	edwinspireuHttpuHttpServerPrivate * priv;
 	edwinspireuHttpuHttpServerCongif* Config;
-	GeeHashMap* VirtualUrl;
 };
 
 struct _edwinspireuHttpuHttpServerClass {
