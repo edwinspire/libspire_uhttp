@@ -82,6 +82,7 @@ namespace edwinspire {
 			public uint8[] Data;
 			public edwinspire.uHttp.ResponseHeader Header;
 			public Response ();
+			public static string HtmErrorPage (string title = "uHTTP WebServer", string error);
 			public string ToString ();
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
