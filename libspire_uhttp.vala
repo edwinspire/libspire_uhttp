@@ -859,8 +859,6 @@ public class uHttpServer:GLib.Object {
 [Description(nick = "Signal Request URL No Found", blurb = "Señal se dispara cuando una página no es encontrada en el servidor")]
 public signal void NoFoundURL(Request request);
 
-
-
   private ThreadedSocketService tss;
 
 [Description(nick = "Config uHTTP", blurb = " Data Config uHTTP")]
@@ -901,7 +899,16 @@ public uHttpServerCongif Config = new uHttpServerCongif();
     MainLoop ml = new MainLoop();
     //start listening 
     tss.start();
-    stdout.printf("Serving on port %s\n", Config.Port.to_string());
+
+print("Start uHTTP Micro WebServer");
+print("Licence: LGPL\n");
+print("Contact: edwinspire@gmail.com\n");
+print("Contact: software@edwinspire.com\n");
+print("Contact: http://www.edwinspire.com\n\n");
+print("Configure\n");
+stdout.printf("Port: %s\n", Config.Port.to_string());
+stdout.printf("Root: %s\n", Config.Root);
+stdout.printf("Index: %s\n", Config.Index);
 //tss.
     //run the main loop
     ml.run();
