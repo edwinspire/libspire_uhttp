@@ -993,8 +993,6 @@ request.print();
 warning(e.message+"\n");
     }
 
-if(!VirtualUrl.values.contains(request.Path)){
-
     Response response = new Response();
 
 if(request.Path == "/"){
@@ -1064,10 +1062,6 @@ NoFoundURL(request);
 // stderr.printf("Path no found: %s\n", request.Path);
 
 // Si no se han encontrado el archivo dentro del servidor se buscará en las paginas virtuales. 
-this.connection_handler_virtual(request, dos);
-}
-}else{
-RequestVirtualUrl(request, dos);
 this.connection_handler_virtual(request, dos);
 }
 
