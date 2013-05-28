@@ -1002,15 +1002,6 @@ print("Llama al Doc Raiz\n");
     response.Header.ContentType = "text/html";
     serve_response( response, dos );
 
-
-}else if(request.Path  == "/virtualurls.uhttp"){
-// Devuelva una lista en xml de todas las paginas virtuales del sistema
-
-        response.Header.Status = StatusCode.OK;
-    response.Data = LoadFile(this.VirtualUrlsToXml());
-    response.Header.ContentType = "text/xml";
-    serve_response( response, dos );
-
 }else if(request.Path  == "/config.uhttp"){
 // Devuelva una lista en xml de la configuración del sistema
 
