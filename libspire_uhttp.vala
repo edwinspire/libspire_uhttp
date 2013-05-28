@@ -856,8 +856,10 @@ return Retorno;
 [Description(nick = "HTTP Server", blurb = "Micro embebed HTTP Web Server")]
 public class uHttpServer:GLib.Object {
 
-[Description(nick = "Signal Request Virtual URL", blurb = "")]
-public signal void RequestVirtualUrl(Request request, DataOutputStream dos);
+[Description(nick = "Signal Request URL No Found", blurb = "Señal se dispara cuando una página no es encontrada en el servidor")]
+public signal void NoFoundURL(Request request);
+
+
 
   private ThreadedSocketService tss;
 
@@ -1053,12 +1055,15 @@ textjoin.append_printf("%s ", ReadJavaScriptFile(pathjs.str));
     serve_response( response, dos );
 
 }else{
+NoFoundURL(request);
 //print("No found\n");
 //     response.Header.Status = StatusCode.NOT_FOUND;
 //  response.Data = Response.HtmErrorPage("uHTTP WebServer", "404 - Página no encontrada").data;
 //  response.Header.ContentType = "text/html";
 //    serve_response( response, dos );
 // stderr.printf("Path no found: %s\n", request.Path);
+
+// Si no se han encontrado el archivo dentro del servidor se buscará en las paginas virtuales. 
 this.connection_handler_virtual(request, dos);
 }
 }else{
