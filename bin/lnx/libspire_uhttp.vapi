@@ -116,8 +116,9 @@ namespace edwinspire {
 			public static uint8[] LoadFile (string Path);
 			public string PathLocalFile (string Filex);
 			public static string ReadFile (string path);
+			public virtual bool connection_handler_virtual (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
-			public void run ();
+			public virtual void run ();
 			public void run_without_mainloop ();
 			[Description (blurb = "", nick = "Server Response")]
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
