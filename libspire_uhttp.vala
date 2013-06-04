@@ -25,7 +25,6 @@
 //New file source
 using Gee;
 using GLib;
-//using Sqlite;
 
 namespace edwinspire.uHttp{
 
@@ -112,22 +111,6 @@ POST,
 HEAD
 }
 
-/*
-public class HtmlEntity:GLib{
-
-public HtmlEntity(){
-
-}
-
-public static string Encode(){
-
-}
-public static string Decode(){
-
-}
-
-}
-*/
 
 //******************************************
 //******************************************
