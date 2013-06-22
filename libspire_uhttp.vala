@@ -28,7 +28,7 @@ using GLib;
 
 namespace edwinspire.uHttp{
 
-const string VERSION = "uHttp Server Version 0.1 Alpha";
+const string VERSION = "uHttp Server Version 0.2 Alpha";
 
 /*
 	public enum DateFormat {
@@ -863,7 +863,31 @@ public uHttpServerCongif Config = new uHttpServerCongif();
     tss.run.connect( connection_handler );
   }
 
+public static string EnumToXml(Type typeenum, bool fieldtextasbase64 = true){
+var Retorno = new StringBuilder("<enum>");
+var TempNick = new StringBuilder();
 
+    EnumClass enum_class = (EnumClass) typeenum.class_ref ();
+foreach(var item in enum_class.values){
+
+TempNick.truncate();
+if(item.value_nick.length>0){
+TempNick.append(item.value_nick);
+}else{
+TempNick.append(item.value_name);
+}
+
+if(fieldtextasbase64){
+Retorno.append_printf("<item><name>%s</name><value>%s</value></item>", Base64.encode(TempNick.str.data), item.value.to_string());
+}else{
+Retorno.append_printf("<item><name>%s</name><value>%s</value></item>", TempNick.str, item.value.to_string());
+}
+
+}
+
+Retorno.append("</enum>");
+return Retorno.str;
+}
   
 [Description(nick = "Run Server", blurb = "Run on MainLoop")]  
   public virtual void run() {

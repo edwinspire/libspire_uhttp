@@ -353,6 +353,7 @@ gboolean edwinspire_uhttp_uhttp_server_congif_write (edwinspireuHttpuHttpServerC
 GType edwinspire_uhttp_uhttp_server_get_type (void) G_GNUC_CONST;
 edwinspireuHttpuHttpServer* edwinspire_uhttp_uhttp_server_new (gint max_threads);
 edwinspireuHttpuHttpServer* edwinspire_uhttp_uhttp_server_construct (GType object_type, gint max_threads);
+gchar* edwinspire_uhttp_uhttp_server_EnumToXml (GType typeenum, gboolean fieldtextasbase64);
 void edwinspire_uhttp_uhttp_server_run (edwinspireuHttpuHttpServer* self);
 void edwinspire_uhttp_uhttp_server_run_without_mainloop (edwinspireuHttpuHttpServer* self);
 gchar* edwinspire_uhttp_uhttp_server_GenUrl (const gchar* root, const gchar* value);

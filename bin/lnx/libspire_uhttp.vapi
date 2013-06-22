@@ -110,6 +110,7 @@ namespace edwinspire {
 			public edwinspire.uHttp.uHttpServerCongif Config;
 			[Description (blurb = "", nick = "Constructor uHttpServer")]
 			public uHttpServer (int max_threads = 100);
+			public static string EnumToXml (GLib.Type typeenum, bool fieldtextasbase64 = true);
 			[Description (blurb = "Crea una Url unica automaticamente", nick = "GenUrl")]
 			public static string GenUrl (string root = "/", string value = "Sf54+-dsfk%6md&bfpJ");
 			public static uint8[] LoadFile (string Path);
