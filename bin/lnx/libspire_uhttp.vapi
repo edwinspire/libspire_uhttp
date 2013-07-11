@@ -39,7 +39,6 @@ namespace edwinspire {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Request")]
 		public class Request : GLib.Object {
-			public edwinspire.uHttp.RequestMethod Method;
 			public Request ();
 			public void from_lines (string lines);
 			public void print ();
@@ -48,6 +47,7 @@ namespace edwinspire {
 			[Description (blurb = "Content sent by User Agent from POST", nick = "Content Form")]
 			public Gee.HashMap<string,string> Form { get; private set; }
 			public Gee.HashMap<string,string> Header { get; private set; }
+			public edwinspire.uHttp.RequestMethod Method { get; private set; }
 			public string Path { get; private set; }
 			[Description (blurb = "Query pased by url, Method GET", nick = "Query")]
 			public Gee.HashMap<string,string> Query { get; private set; }
