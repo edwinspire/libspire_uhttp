@@ -713,8 +713,14 @@ Header["Content-Type"] = "text/html";
 
 public string ToString(){
 var Cadena = new StringBuilder();
-Cadena.append_printf("%s\n", HtmlStatusCode(this.Status));
-Cadena.append_printf("%s\n", uHttpServerConfig.HashMapToString(this.Header));
+Cadena.append_printf("%s", HtmlStatusCode(this.Status));
+
+if(this.Header.has_key("Sec-WebSocket-Accept")){
+Cadena.append("\r\n");//this is the end websocket
+}else{
+Cadena.append("\n");//this is the end of the return headers
+}
+Cadena.append_printf("%s", uHttpServerConfig.HashMapToString(this.Header));
 return Cadena.str;
 }
 
@@ -1481,6 +1487,7 @@ Temporizador.start();
 var Encabezado = new StringBuilder();
 Encabezado.append_printf("%s", response.ToString());
 Encabezado.append("\n");//this is the end of the return headers
+
 
 //print("Encabezado: %s\n", Encabezado.str);
 
