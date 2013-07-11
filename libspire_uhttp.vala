@@ -553,7 +553,7 @@ return Retorno;
 [Description(nick = "HTTP Request", blurb = "")]
 public class Request:GLib.Object {
 public RequestMethod Method = RequestMethod.UNKNOW;
-public  string Path = "";
+public  string Path {get; private set; default = "";}
 [Description(nick = "Query", blurb = "Query pased by url, Method GET")]
 public  HashMap<string, string> Query {get; private set; default = new HashMap<string, string>();}
 public HashMap<string, string> Header {get; private set; default = new HashMap<string, string>();}
