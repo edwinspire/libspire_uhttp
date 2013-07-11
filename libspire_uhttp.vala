@@ -656,6 +656,7 @@ return 0;
 
 public void print(){
 stdout.printf("<*** REQUEST ***>\n");
+stdout.printf("<<isWebSocketHandshake>>: %s\n", this.isWebSocketHandshake.to_string());
 stdout.printf("<<Method>>: %s\n", this.Method.to_string());
 stdout.printf("<<Path>>: %s\n", Path);
 stdout.printf("<<Header>>:\n%s\n", uHttpServerConfig.HashMapToString(this.Header));
@@ -1286,19 +1287,39 @@ textjoin.append_printf("%s ", ReadJavaScriptFile(pathjs.str));
     response.Header["Content-Type"] = GetMimeTypeToFile(request.Path);
     serve_response( response, dos );
 
-}else{
+}else if(request.Path == "/uhttp-websocket-echo.uhttp"){
 
 if(request.isWebSocketHandshake){
-        response.Status = StatusCode.OK;
+
+/*
+HTTP/1.1 101 Web Socket Protocol Handshake
+Date: Thu, 11 Jul 2013 07:25:19 GMT
+Server: Kaazing Gateway
+Upgrade: WebSocket
+Access-Control-Allow-Origin: http://www.websocket.org
+Access-Control-Allow-Credentials: true
+Sec-WebSocket-Accept: 0hUmf3igIrmXtazIXQYQC6XV0/8=
+Connection: Upgrade
+Access-Control-Allow-Headers: content-type
+*/
+
+        response.Status = StatusCode.SWITCHING_PROTOCOLS;
     response.Data = "".data;
-//    response.Header.ContentType = GetMimeTypeToFile(request.Path);
+    response.Header["Upgrade"] = "WebSocket";
+    response.Header["Access-Control-Allow-Credentials"] = "yes";
+    response.Header["Sec-WebSocket-Accept"] = "0hUmf3igIrmXtazIXQYQC6XV0/8=";
+    response.Header["Connection"] = "Upgrade";
+    response.Header["Access-Control-Allow-Headers"] = "content-type";
     serve_response( response, dos );
 
-}else{
-NoFoundURL(request);
+
 this.connection_handler_virtual(request, dos);
 }
 
+
+}else{
+
+NoFoundURL(request);
 //print("No found\n");
 //     response.Header.Status = StatusCode.NOT_FOUND;
 //  response.Data = Response.HtmErrorPage("uHTTP WebServer", "404 - Página no encontrada").data;
@@ -1307,7 +1328,7 @@ this.connection_handler_virtual(request, dos);
 // stderr.printf("Path no found: %s\n", request.Path);
 
 // Si no se han encontrado el archivo dentro del servidor se buscará en las paginas virtuales. 
-
+this.connection_handler_virtual(request, dos);
 }
 
     return false;
