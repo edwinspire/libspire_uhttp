@@ -579,9 +579,9 @@ public void print(){
 stdout.printf("<*** REQUEST ***>\n");
 stdout.printf("<<Method>>: %s\n", this.Method.to_string());
 stdout.printf("<<Path>>: %s\n", Path);
-stdout.printf("<<Header>>:\n%s\n", uHttpServerCongif.HashMapToString(this.Header));
-stdout.printf("<<Query>>:\n%s\n", uHttpServerCongif.HashMapToString(this.Query));
-stdout.printf("<<Form:>>\n%s\n", uHttpServerCongif.HashMapToString(this.Form));
+stdout.printf("<<Header>>:\n%s\n", uHttpServerConfig.HashMapToString(this.Header));
+stdout.printf("<<Query>>:\n%s\n", uHttpServerConfig.HashMapToString(this.Query));
+stdout.printf("<<Form:>>\n%s\n", uHttpServerConfig.HashMapToString(this.Form));
 }
 
 public uint8[] Data{
@@ -670,7 +670,7 @@ return Retorno;
 }
 
 [Description(nick = "HTTP Server Config", blurb = "Micro embebed HTTP Web Server config file")]
-public class uHttpServerCongif:GLib.Object {
+public class uHttpServerConfig:GLib.Object {
 
 [Description(nick = "Signal on write file", blurb = "")]
 public signal void FileWrited();
@@ -686,7 +686,7 @@ public bool RequestPrintOnConsole = false;
 [Description(nick = "Path Root", blurb = "Default: rootweb on current directory.")]
 	public string Root = "*uhttproot";
 
-public uHttpServerCongif(){
+public uHttpServerConfig(){
 try{
         // Reference a local file name
         var file = File.new_for_path ("uhttp.conf");
@@ -861,7 +861,7 @@ public signal void NoFoundURL(Request request);
   private ThreadedSocketService tss;
 
 [Description(nick = "Config uHTTP", blurb = " Data Config uHTTP")]
-public uHttpServerCongif Config = new uHttpServerCongif();
+public uHttpServerConfig Config = new uHttpServerConfig();
 
 //[Description(nick = "Virtual Url", blurb = "List of Virtual URL (para ser manejado por el usuario)")]
 //public HashMap<string, string> VirtualUrl = new HashMap<string, string>();

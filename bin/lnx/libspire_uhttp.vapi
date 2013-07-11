@@ -82,7 +82,7 @@ namespace edwinspire {
 		[Description (blurb = "Micro embebed HTTP Web Server", nick = "HTTP Server")]
 		public class uHttpServer : GLib.Object {
 			[Description (blurb = " Data Config uHTTP", nick = "Config uHTTP")]
-			public edwinspire.uHttp.uHttpServerCongif Config;
+			public edwinspire.uHttp.uHttpServerConfig Config;
 			[Description (blurb = "", nick = "Constructor uHttpServer")]
 			public uHttpServer (int max_threads = 100);
 			public static string EnumToXml (GLib.Type typeenum, bool fieldtextasbase64 = true);
@@ -102,7 +102,7 @@ namespace edwinspire {
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Micro embebed HTTP Web Server config file", nick = "HTTP Server Config")]
-		public class uHttpServerCongif : GLib.Object {
+		public class uHttpServerConfig : GLib.Object {
 			[Description (blurb = "Index page, default: index.html", nick = "Index")]
 			public string Index;
 			[Description (blurb = "Default: 8080", nick = "Port")]
@@ -110,7 +110,7 @@ namespace edwinspire {
 			public bool RequestPrintOnConsole;
 			[Description (blurb = "Default: rootweb on current directory.", nick = "Path Root")]
 			public string Root;
-			public uHttpServerCongif ();
+			public uHttpServerConfig ();
 			public static string HashMapToString (Gee.HashMap<string,string> hm);
 			public string ToXml (bool fieldtextasbase64 = true);
 			public void read ();
