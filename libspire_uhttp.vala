@@ -158,6 +158,7 @@ return Retorno;
 }
 }
 
+/*
 //******************************************
 //******************************************
 [Description(nick = "HTTP Header", blurb = "HTTP Base Header")]
@@ -260,6 +261,8 @@ return Cadena.str;
 
 }
 
+*/
+
 /*
 [Description(nick = "HTTP Request Header", blurb = "")]
 public class RequestHeader:Header{
@@ -359,7 +362,7 @@ return Cadena.str;
 }
 */
 
-
+/*
 [Description(nick = "HTTP Response Header", blurb = "")]
 public class ResponseHeader:Header{
 public string AcceptRanges = "";
@@ -549,7 +552,7 @@ return Retorno;
 }
 
 }
-
+*/
 [Description(nick = "HTTP Request", blurb = "")]
 public class Request:GLib.Object {
 public RequestMethod Method {get; private set; default = RequestMethod.UNKNOW;}

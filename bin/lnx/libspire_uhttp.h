@@ -31,28 +31,6 @@ typedef struct _edwinspireuHttpForm edwinspireuHttpForm;
 typedef struct _edwinspireuHttpFormClass edwinspireuHttpFormClass;
 typedef struct _edwinspireuHttpFormPrivate edwinspireuHttpFormPrivate;
 
-#define EDWINSPIRE_UHTTP_TYPE_HEADER (edwinspire_uhttp_header_get_type ())
-#define EDWINSPIRE_UHTTP_HEADER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_HEADER, edwinspireuHttpHeader))
-#define EDWINSPIRE_UHTTP_HEADER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_HEADER, edwinspireuHttpHeaderClass))
-#define EDWINSPIRE_UHTTP_IS_HEADER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_HEADER))
-#define EDWINSPIRE_UHTTP_IS_HEADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_HEADER))
-#define EDWINSPIRE_UHTTP_HEADER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_HEADER, edwinspireuHttpHeaderClass))
-
-typedef struct _edwinspireuHttpHeader edwinspireuHttpHeader;
-typedef struct _edwinspireuHttpHeaderClass edwinspireuHttpHeaderClass;
-typedef struct _edwinspireuHttpHeaderPrivate edwinspireuHttpHeaderPrivate;
-
-#define EDWINSPIRE_UHTTP_TYPE_RESPONSE_HEADER (edwinspire_uhttp_response_header_get_type ())
-#define EDWINSPIRE_UHTTP_RESPONSE_HEADER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_RESPONSE_HEADER, edwinspireuHttpResponseHeader))
-#define EDWINSPIRE_UHTTP_RESPONSE_HEADER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_RESPONSE_HEADER, edwinspireuHttpResponseHeaderClass))
-#define EDWINSPIRE_UHTTP_IS_RESPONSE_HEADER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_RESPONSE_HEADER))
-#define EDWINSPIRE_UHTTP_IS_RESPONSE_HEADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_RESPONSE_HEADER))
-#define EDWINSPIRE_UHTTP_RESPONSE_HEADER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_RESPONSE_HEADER, edwinspireuHttpResponseHeaderClass))
-
-typedef struct _edwinspireuHttpResponseHeader edwinspireuHttpResponseHeader;
-typedef struct _edwinspireuHttpResponseHeaderClass edwinspireuHttpResponseHeaderClass;
-typedef struct _edwinspireuHttpResponseHeaderPrivate edwinspireuHttpResponseHeaderPrivate;
-
 #define EDWINSPIRE_UHTTP_TYPE_REQUEST (edwinspire_uhttp_request_get_type ())
 #define EDWINSPIRE_UHTTP_REQUEST(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_REQUEST, edwinspireuHttpRequest))
 #define EDWINSPIRE_UHTTP_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_REQUEST, edwinspireuHttpRequestClass))
@@ -173,55 +151,6 @@ struct _edwinspireuHttpFormClass {
 	GObjectClass parent_class;
 };
 
-struct _edwinspireuHttpHeader {
-	GObject parent_instance;
-	edwinspireuHttpHeaderPrivate * priv;
-	gchar* CacheControl;
-	gchar* Connection;
-	gchar* ContentEncoding;
-	gchar* ContentLenguaje;
-	gint ContentLength;
-	gchar* ContentLocation;
-	gchar* ContentMD5;
-	gchar* ContentRange;
-	gchar* ContentType;
-	gchar* Date;
-	gchar* Expires;
-	gchar* LastModified;
-	gchar* Pragma;
-	gchar* Range;
-	gchar* Trailer;
-	gchar* TransferEncoding;
-	gchar* Upgrade;
-	gchar* Via;
-	gchar* Warning;
-	gchar* HttpVersion;
-};
-
-struct _edwinspireuHttpHeaderClass {
-	GObjectClass parent_class;
-	void (*print) (edwinspireuHttpHeader* self);
-	gchar* (*ToString) (edwinspireuHttpHeader* self);
-};
-
-struct _edwinspireuHttpResponseHeader {
-	edwinspireuHttpHeader parent_instance;
-	edwinspireuHttpResponseHeaderPrivate * priv;
-	gchar* AcceptRanges;
-	gchar* Age;
-	gchar* ETag;
-	gchar* Location;
-	gchar* ProxyAuthenticate;
-	gchar* RetryAfter;
-	gchar* Server;
-	gchar* WWWAuthenticate;
-	edwinspireuHttpStatusCode Status;
-};
-
-struct _edwinspireuHttpResponseHeaderClass {
-	edwinspireuHttpHeaderClass parent_class;
-};
-
 struct _edwinspireuHttpRequest {
 	GObject parent_instance;
 	edwinspireuHttpRequestPrivate * priv;
@@ -277,16 +206,6 @@ GType edwinspire_uhttp_form_get_type (void) G_GNUC_CONST;
 edwinspireuHttpForm* edwinspire_uhttp_form_new (void);
 edwinspireuHttpForm* edwinspire_uhttp_form_construct (GType object_type);
 GeeHashMap* edwinspire_uhttp_form_DataDecode (const gchar* data);
-GType edwinspire_uhttp_header_get_type (void) G_GNUC_CONST;
-edwinspireuHttpHeader* edwinspire_uhttp_header_new (void);
-edwinspireuHttpHeader* edwinspire_uhttp_header_construct (GType object_type);
-void edwinspire_uhttp_header_print (edwinspireuHttpHeader* self);
-gchar* edwinspire_uhttp_header_ToString (edwinspireuHttpHeader* self);
-GType edwinspire_uhttp_response_header_get_type (void) G_GNUC_CONST;
-edwinspireuHttpResponseHeader* edwinspire_uhttp_response_header_new (void);
-edwinspireuHttpResponseHeader* edwinspire_uhttp_response_header_construct (GType object_type);
-gchar* edwinspire_uhttp_response_header_StatusString (edwinspireuHttpResponseHeader* self);
-gchar* edwinspire_uhttp_response_header_HtmlStatusCode (edwinspireuHttpStatusCode sc);
 GType edwinspire_uhttp_request_get_type (void) G_GNUC_CONST;
 edwinspireuHttpRequest* edwinspire_uhttp_request_new (void);
 edwinspireuHttpRequest* edwinspire_uhttp_request_construct (GType object_type);

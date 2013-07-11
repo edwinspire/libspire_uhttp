@@ -10,33 +10,6 @@ namespace edwinspire {
 			public static Gee.HashMap<string,string> DataDecode (string? data);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		[Description (blurb = "HTTP Base Header", nick = "HTTP Header")]
-		public class Header : GLib.Object {
-			public string CacheControl;
-			public string Connection;
-			public string ContentEncoding;
-			public int ContentLength;
-			public string ContentLenguaje;
-			public string ContentLocation;
-			public string ContentMD5;
-			public string ContentRange;
-			public string ContentType;
-			public string Date;
-			public string Expires;
-			public string HttpVersion;
-			public string LastModified;
-			public string Pragma;
-			public string Range;
-			public string Trailer;
-			public string TransferEncoding;
-			public string Upgrade;
-			public string Via;
-			public string Warning;
-			public Header ();
-			public virtual string ToString ();
-			public virtual void print ();
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Request")]
 		public class Request : GLib.Object {
 			public Request ();
@@ -62,24 +35,6 @@ namespace edwinspire {
 			public Response ();
 			public static string HtmErrorPage (string title = "uHTTP WebServer", string error);
 			public string ToString ();
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
-		[Description (blurb = "", nick = "HTTP Response Header")]
-		public class ResponseHeader : edwinspire.uHttp.Header {
-			public string AcceptRanges;
-			public string Age;
-			public string ETag;
-			public string Location;
-			public string ProxyAuthenticate;
-			public string RetryAfter;
-			public string Server;
-			public edwinspire.uHttp.StatusCode Status;
-			public string WWWAuthenticate;
-			public ResponseHeader ();
-			[Description (blurb = "", nick = "enum StatusCode to HTTP Status")]
-			public static string HtmlStatusCode (edwinspire.uHttp.StatusCode sc);
-			public string StatusString ();
-			public override string ToString ();
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Micro embebed HTTP Web Server", nick = "HTTP Server")]
