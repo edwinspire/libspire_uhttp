@@ -555,7 +555,8 @@ public RequestMethod Method = RequestMethod.UNKNOW;
 public  string Path = "";
 [Description(nick = "Query", blurb = "Query pased by url, Method GET")]
 public  HashMap<string, string> Query = new HashMap<string, string>();
-public RequestHeader Header = new RequestHeader();
+public HashMap<string, string> Header = new HashMap<string, string>();
+//public RequestHeader Header = new RequestHeader();
 [Description(nick = "Content data", blurb = "Content sent by User Agent")]
 private uint8[] DatasInternal =  new uint8[0];
 [Description(nick = "Content Form", blurb = "Content sent by User Agent from POST")]
@@ -566,20 +567,20 @@ public Request(){
 }
 
 //public string 
+public int ContentLength{
+get{
+return int.parse(this.Header["Content-Length"]);
+}
+}
+
 
 public void print(){
-stdout.printf("Request\n");
-stdout.printf("Path: %s\n", Path);
-Header.print();
-stdout.printf("\nQuery:\n");
-foreach(var q in Query.entries){
-stdout.printf("%s: %s\n", q.key, q.value);
-}
-stdout.printf("\nForm:\n");
-foreach(var f in Form.entries){
-stdout.printf("%s: %s\n", f.key, f.value);
-}
-
+stdout.printf("<*** REQUEST ***>\n");
+stdout.printf("<<Method>>: %s\n", this.Method.to_string());
+stdout.printf("<<Path>>: %s\n", Path);
+stdout.printf("<<Header>>:\n%s\n", uHttpServerCongif.HashMapToString(this.Header));
+stdout.printf("<<Query>>:\n%s\n", uHttpServerCongif.HashMapToString(this.Query));
+stdout.printf("<<Form:>>\n%s\n", uHttpServerCongif.HashMapToString(this.Form));
 }
 
 public uint8[] Data{
@@ -590,7 +591,10 @@ return DatasInternal;
 set{
 DatasInternal = value;
 Form.clear();
-if(DatasInternal!=null && this.Header.ContentLength>0){
+
+if(this.Header.has_key("Content-Length")){
+int CLength = this.ContentLength;
+if(DatasInternal!=null && CLength>0){
 
 string Cadena = (string)Data;
 var CadenaTempo = new StringBuilder();
@@ -598,7 +602,7 @@ var CadenaTempo = new StringBuilder();
 unichar caracter;
 for(int i = 0; Cadena.get_next_char(ref i, out caracter);){
 
-if(i>this.Header.ContentLength){
+if(i>CLength){
 break;
 }
 if((caracter.type() != UnicodeType.UNASSIGNED) && (caracter.type() != UnicodeType.CONTROL) && caracter.validate()){
@@ -609,6 +613,9 @@ break;
 }
 Form = uHttp.Form.DataDecode(CadenaTempo.str);
 }
+
+}
+
 }
 
 }
@@ -675,8 +682,6 @@ public string Index = "index.html";
 
 public bool RequestPrintOnConsole = false;
 
-//[Description(nick = "Virtual Url", blurb = "List of Virtual URL (para ser manejado por el usuario)")]
-//public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
 [Description(nick = "Path Root", blurb = "Default: rootweb on current directory.")]
 	public string Root = "*uhttproot";
 
@@ -701,6 +706,16 @@ this.write();
 		stdout.printf ("cError: %s\n", e.message);
 }
 }
+
+public static string HashMapToString(HashMap<string, string> hm){
+var Retorno = new StringBuilder();
+foreach(var r in hm.entries){
+Retorno.append_printf("%s: %s\n", r.key, r.value);
+}
+
+return Retorno.str;
+}
+
 
 public void read(){
 
@@ -993,8 +1008,8 @@ maxline--;
 request = DecodeRequest(PrimerBloque.str);
 PrimerBloque.truncate();
 
-if(request.Header.ContentLength>0){
-uint8[] datos = new uint8[request.Header.ContentLength];
+if(request.ContentLength>0){
+uint8[] datos = new uint8[request.ContentLength];
 dis.read (datos);
 request.Data = datos;
 }
@@ -1142,6 +1157,74 @@ if(kv.length>1){
 string Key = Uri.unescape_string(kv[0].replace("+", " "));
 string Value = Uri.unescape_string(kv[1].replace("+", " "));
 Retorno.Query[Key] = Value;
+}
+
+}
+}
+
+}
+
+}
+}else{
+// Decodificamos el contenido del Header
+MatchInfo match;
+if(regexbase.match(line, RegexMatchFlags.ANCHORED, out match)){
+
+Retorno.Header[match.fetch_named("key")] = match.fetch_named("value");
+
+}
+
+}
+i++;
+}
+
+
+    } catch(Error e) {
+      stderr.printf(e.message+"\n");
+    }
+return Retorno;
+}
+
+
+/*
+// Decodifica los datos provenientes de una requerimiento
+private static Request DecodeRequest_xxx(string lines){
+//print("<<<%s>>>\n", lines);
+Request Retorno = new Request();
+    try {
+Regex regexbase = new Regex("""(?<key>[a-zA-Z\-]+): (?<value>[a-zA-Z0-9]+)""");
+
+int i = 0;
+
+foreach(var line in lines.split("\r")){
+//print("%s\n", line);
+if(i==0){
+
+// Decodificamos la primera linea
+if(line.has_prefix("GET")){
+Retorno.Method   = RequestMethod.GET;
+}else if(line.has_prefix("POST")){
+Retorno.Method   = RequestMethod.POST;
+}else if(line.has_prefix("HEAD")){
+Retorno.Method   = RequestMethod.HEAD;
+}
+    //get the parts from the line
+    string[] partsline = line.split(" ");
+
+if(partsline.length==3){
+
+var partsquery = partsline[1].split("?");
+
+if(partsquery.length>0){
+Retorno.Path = partsquery[0];
+
+if(partsquery.length>1){
+foreach(var part in partsquery[1].split("&")){
+var kv = part.split("=");
+if(kv.length>1){
+string Key = Uri.unescape_string(kv[0].replace("+", " "));
+string Value = Uri.unescape_string(kv[1].replace("+", " "));
+Retorno.Query[Key] = Value;
 //print("%s >>>>>>>>>>>>>>>>> %s\n", kv[1], Value);
 //Retorno.Query[Uri.unescape_string(kv[0])] = Uri.unescape_string(kv[1]);
 }
@@ -1199,7 +1282,7 @@ i++;
     }
 return Retorno;
 }
-
+*/
 
 
 

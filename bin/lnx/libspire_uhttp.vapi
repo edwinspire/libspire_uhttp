@@ -39,13 +39,14 @@ namespace edwinspire {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Request")]
 		public class Request : GLib.Object {
-			public edwinspire.uHttp.RequestHeader Header;
+			public Gee.HashMap<string,string> Header;
 			public edwinspire.uHttp.RequestMethod Method;
 			public string Path;
 			[Description (blurb = "Query pased by url, Method GET", nick = "Query")]
 			public Gee.HashMap<string,string> Query;
 			public Request ();
 			public void print ();
+			public int ContentLength { get; }
 			public uint8[] Data { get; set; }
 			[Description (blurb = "Content sent by User Agent from POST", nick = "Content Form")]
 			public Gee.HashMap<string,string> Form { get; private set; }
@@ -136,6 +137,7 @@ namespace edwinspire {
 			[Description (blurb = "Default: rootweb on current directory.", nick = "Path Root")]
 			public string Root;
 			public uHttpServerCongif ();
+			public static string HashMapToString (Gee.HashMap<string,string> hm);
 			public string ToXml (bool fieldtextasbase64 = true);
 			public void read ();
 			public bool write ();

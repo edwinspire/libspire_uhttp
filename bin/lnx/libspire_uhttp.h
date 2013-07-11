@@ -267,7 +267,7 @@ struct _edwinspireuHttpRequest {
 	edwinspireuHttpRequestMethod Method;
 	gchar* Path;
 	GeeHashMap* Query;
-	edwinspireuHttpRequestHeader* Header;
+	GeeHashMap* Header;
 };
 
 struct _edwinspireuHttpRequestClass {
@@ -337,6 +337,7 @@ edwinspireuHttpRequest* edwinspire_uhttp_request_new (void);
 edwinspireuHttpRequest* edwinspire_uhttp_request_construct (GType object_type);
 void edwinspire_uhttp_request_print (edwinspireuHttpRequest* self);
 GeeHashMap* edwinspire_uhttp_request_get_Form (edwinspireuHttpRequest* self);
+gint edwinspire_uhttp_request_get_ContentLength (edwinspireuHttpRequest* self);
 guint8* edwinspire_uhttp_request_get_Data (edwinspireuHttpRequest* self, int* result_length1);
 void edwinspire_uhttp_request_set_Data (edwinspireuHttpRequest* self, guint8* value, int value_length1);
 GType edwinspire_uhttp_response_get_type (void) G_GNUC_CONST;
@@ -347,6 +348,7 @@ gchar* edwinspire_uhttp_response_HtmErrorPage (const gchar* title, const gchar* 
 GType edwinspire_uhttp_uhttp_server_congif_get_type (void) G_GNUC_CONST;
 edwinspireuHttpuHttpServerCongif* edwinspire_uhttp_uhttp_server_congif_new (void);
 edwinspireuHttpuHttpServerCongif* edwinspire_uhttp_uhttp_server_congif_construct (GType object_type);
+gchar* edwinspire_uhttp_uhttp_server_congif_HashMapToString (GeeHashMap* hm);
 void edwinspire_uhttp_uhttp_server_congif_read (edwinspireuHttpuHttpServerCongif* self);
 gchar* edwinspire_uhttp_uhttp_server_congif_ToXml (edwinspireuHttpuHttpServerCongif* self, gboolean fieldtextasbase64);
 gboolean edwinspire_uhttp_uhttp_server_congif_write (edwinspireuHttpuHttpServerCongif* self);
