@@ -567,6 +567,70 @@ public Request(){
 
 }
 
+// Decodifica los datos provenientes de una requerimiento
+public void from_lines(string lines){
+//print("<<<%s>>>\n", lines);
+    try {
+Regex regexbase = new Regex("""(?<key>[\w\-]+): (?<value>[\w|\W]+)""");
+
+int i = 0;
+
+foreach(var line in lines.split("\r")){
+//print("%s\n", line);
+if(i==0){
+
+// Decodificamos la primera linea
+if(line.has_prefix("GET")){
+this.Method   = RequestMethod.GET;
+}else if(line.has_prefix("POST")){
+this.Method   = RequestMethod.POST;
+}else if(line.has_prefix("HEAD")){
+this.Method   = RequestMethod.HEAD;
+}
+    //get the parts from the line
+    string[] partsline = line.split(" ");
+
+if(partsline.length==3){
+
+var partsquery = partsline[1].split("?");
+
+if(partsquery.length>0){
+this.Path = partsquery[0];
+
+if(partsquery.length>1){
+foreach(var part in partsquery[1].split("&")){
+var kv = part.split("=");
+if(kv.length>1){
+string Key = Uri.unescape_string(kv[0].replace("+", " "));
+string Value = Uri.unescape_string(kv[1].replace("+", " "));
+this.Query[Key] = Value;
+}
+
+}
+}
+
+}
+
+}
+}else{
+// Decodificamos el contenido del Header
+MatchInfo match;
+if(regexbase.match(line, RegexMatchFlags.ANCHORED, out match)){
+
+this.Header[match.fetch_named("key")] = match.fetch_named("value");
+
+}
+
+}
+i++;
+}
+
+
+    } catch(Error e) {
+      stderr.printf(e.message+"\n");
+    }
+}
+
 //public string 
 public int ContentLength{
 get{
@@ -1008,7 +1072,7 @@ break;
 }
 maxline--;
 }
-request = DecodeRequest(PrimerBloque.str);
+request.from_lines(PrimerBloque.str);
 PrimerBloque.truncate();
 
 if(request.ContentLength>0){
@@ -1122,71 +1186,7 @@ return Retorno;
 */
 
 
-// Decodifica los datos provenientes de una requerimiento
-private static Request DecodeRequest(string lines){
-//print("<<<%s>>>\n", lines);
-Request Retorno = new Request();
-    try {
-Regex regexbase = new Regex("""(?<key>[\w\-]+): (?<value>[\w|\W]+)""");
 
-int i = 0;
-
-foreach(var line in lines.split("\r")){
-//print("%s\n", line);
-if(i==0){
-
-// Decodificamos la primera linea
-if(line.has_prefix("GET")){
-Retorno.Method   = RequestMethod.GET;
-}else if(line.has_prefix("POST")){
-Retorno.Method   = RequestMethod.POST;
-}else if(line.has_prefix("HEAD")){
-Retorno.Method   = RequestMethod.HEAD;
-}
-    //get the parts from the line
-    string[] partsline = line.split(" ");
-
-if(partsline.length==3){
-
-var partsquery = partsline[1].split("?");
-
-if(partsquery.length>0){
-Retorno.Path = partsquery[0];
-
-if(partsquery.length>1){
-foreach(var part in partsquery[1].split("&")){
-var kv = part.split("=");
-if(kv.length>1){
-string Key = Uri.unescape_string(kv[0].replace("+", " "));
-string Value = Uri.unescape_string(kv[1].replace("+", " "));
-Retorno.Query[Key] = Value;
-}
-
-}
-}
-
-}
-
-}
-}else{
-// Decodificamos el contenido del Header
-MatchInfo match;
-if(regexbase.match(line, RegexMatchFlags.ANCHORED, out match)){
-
-Retorno.Header[match.fetch_named("key")] = match.fetch_named("value");
-
-}
-
-}
-i++;
-}
-
-
-    } catch(Error e) {
-      stderr.printf(e.message+"\n");
-    }
-return Retorno;
-}
 
 
 /*

@@ -45,6 +45,7 @@ namespace edwinspire {
 			[Description (blurb = "Query pased by url, Method GET", nick = "Query")]
 			public Gee.HashMap<string,string> Query;
 			public Request ();
+			public void from_lines (string lines);
 			public void print ();
 			public int ContentLength { get; }
 			public uint8[] Data { get; set; }

@@ -293,6 +293,7 @@ gchar* edwinspire_uhttp_response_header_HtmlStatusCode (edwinspireuHttpStatusCod
 GType edwinspire_uhttp_request_get_type (void) G_GNUC_CONST;
 edwinspireuHttpRequest* edwinspire_uhttp_request_new (void);
 edwinspireuHttpRequest* edwinspire_uhttp_request_construct (GType object_type);
+void edwinspire_uhttp_request_from_lines (edwinspireuHttpRequest* self, const gchar* lines);
 void edwinspire_uhttp_request_print (edwinspireuHttpRequest* self);
 GeeHashMap* edwinspire_uhttp_request_get_Form (edwinspireuHttpRequest* self);
 gint edwinspire_uhttp_request_get_ContentLength (edwinspireuHttpRequest* self);
