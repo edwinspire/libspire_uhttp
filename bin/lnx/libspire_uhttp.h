@@ -236,7 +236,8 @@ struct _edwinspireuHttpResponse {
 	edwinspireuHttpResponsePrivate * priv;
 	guint8* Data;
 	gint Data_length1;
-	edwinspireuHttpResponseHeader* Header;
+	edwinspireuHttpStatusCode Status;
+	GeeHashMap* Header;
 };
 
 struct _edwinspireuHttpResponseClass {
@@ -296,6 +297,7 @@ const gchar* edwinspire_uhttp_request_get_Path (edwinspireuHttpRequest* self);
 GeeHashMap* edwinspire_uhttp_request_get_Query (edwinspireuHttpRequest* self);
 GeeHashMap* edwinspire_uhttp_request_get_Header (edwinspireuHttpRequest* self);
 GeeHashMap* edwinspire_uhttp_request_get_Form (edwinspireuHttpRequest* self);
+gboolean edwinspire_uhttp_request_get_isWebSocketHandshake (edwinspireuHttpRequest* self);
 gint edwinspire_uhttp_request_get_ContentLength (edwinspireuHttpRequest* self);
 guint8* edwinspire_uhttp_request_get_Data (edwinspireuHttpRequest* self, int* result_length1);
 void edwinspire_uhttp_request_set_Data (edwinspireuHttpRequest* self, guint8* value, int value_length1);

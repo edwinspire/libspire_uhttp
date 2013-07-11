@@ -51,12 +51,14 @@ namespace edwinspire {
 			public string Path { get; private set; }
 			[Description (blurb = "Query pased by url, Method GET", nick = "Query")]
 			public Gee.HashMap<string,string> Query { get; private set; }
+			public bool isWebSocketHandshake { get; private set; }
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Response from server", nick = "HTTP Response")]
 		public class Response : GLib.Object {
 			public uint8[] Data;
-			public edwinspire.uHttp.ResponseHeader Header;
+			public Gee.HashMap<string,string> Header;
+			public edwinspire.uHttp.StatusCode Status;
 			public Response ();
 			public static string HtmErrorPage (string title = "uHTTP WebServer", string error);
 			public string ToString ();

@@ -562,6 +562,8 @@ public HashMap<string, string> Header {get; private set; default = new HashMap<s
 private uint8[] DatasInternal =  new uint8[0];
 [Description(nick = "Content Form", blurb = "Content sent by User Agent from POST")]
 public HashMap<string, string> Form {get; private set; default = new HashMap<string, string>();}
+public bool isWebSocketHandshake {get; private set; default = false;}
+
 
 public Request(){
 
@@ -629,6 +631,11 @@ i++;
     } catch(Error e) {
       stderr.printf(e.message+"\n");
     }
+
+if(this.Header.has_key("Sec-WebSocket-Key")){
+this.isWebSocketHandshake = true;
+}
+
 }
 
 //public string 
@@ -693,18 +700,155 @@ Form = uHttp.Form.DataDecode(CadenaTempo.str);
 [Description(nick = "HTTP Response", blurb = "Response from server")]
 public class Response:GLib.Object {
 public  uint8[] Data = new uint8[0];
-public ResponseHeader Header = new ResponseHeader();
+public StatusCode Status = StatusCode.NOT_IMPLEMENTED;
+public HashMap<string, string> Header = new HashMap<string, string>();
 public Response(){
-Header.Server = VERSION;
-Header.ContentType = "text/html";
+Header["Server"] = VERSION;
+Header["Content-Type"] = "text/html";
 }
 
 public string ToString(){
 var Cadena = new StringBuilder();
-Cadena.append_printf("%s\n", this.Header.StatusString());
-Cadena.append_printf("%s", this.Header.ToString());
+Cadena.append_printf("%s\n", HtmlStatusCode(this.Status));
+Cadena.append_printf("%s\n", uHttpServerConfig.HashMapToString(this.Header));
 return Cadena.str;
 }
+
+[Description(nick = "enum StatusCode to HTTP Status", blurb = "")]  
+private static string HtmlStatusCode(StatusCode sc){
+string Retorno = "";
+switch(sc){
+	case 	StatusCode.NONE:
+Retorno =  "";
+break;
+	case StatusCode.CONTINUE:
+Retorno =  "HTTP/1.1 100 CONTINUE";
+break;
+	case 	StatusCode.SWITCHING_PROTOCOLS:
+Retorno =  "HTTP/1.1 101 SWITCHING PROTOCOLS";
+break;
+	case StatusCode.OK:
+Retorno =  "HTTP/1.1 200 OK";
+break;
+	case 	StatusCode.CREATED:
+Retorno =  "HTTP/1.1 201 CREATED";
+break;
+	case	StatusCode.ACCEPTED:
+Retorno =  "HTTP/1.1 202 ACCEPTED";
+break;
+	case	StatusCode.NON_AUTHORITATIVE:
+Retorno =  "HTTP/1.1 203 NON AUTHORITATIVE INFORMATION";
+break;
+	case	StatusCode.NO_CONTENT:
+Retorno =  "HTTP/1.1 204 NO CONTENT";
+break;
+	case	StatusCode.RESET_CONTENT:
+Retorno =  "HTTP/1.1 205 RESET CONTENT";
+break;
+	case	StatusCode.PARTIAL_CONTENT:
+Retorno =  "HTTP/1.1 206 PARTIAL CONTENT";
+break;
+	case	StatusCode.MULTIPLE_CHOICES:
+Retorno =  "HTTP/1.1 300 MULTIPLE CHOICES";
+break;
+	case	StatusCode.MOVED_PERMANENTLY:
+Retorno =  "HTTP/1.1 301 MOVED PERMANENTLY";
+break;
+	case	StatusCode.FOUND:
+Retorno =  "HTTP/1.1 302 FOUND";
+break;
+
+	case	StatusCode.SEE_OTHER:
+Retorno =  "HTTP/1.1 303 SEE OTHER";
+break;
+	case	StatusCode.NOT_MODIFIED:
+Retorno =  "HTTP/1.1 304 NOT MODIFIED";
+break;
+	case	StatusCode.USE_PROXY:
+Retorno =  "HTTP/1.1 305 USE PROXY";
+break;
+	case	StatusCode.TEMPORARY_REDIRECT:
+Retorno =  "HTTP/1.1 307 TEMPORARY REDIRECT";
+break;
+	case	StatusCode.BAD_REQUEST:
+Retorno =  "HTTP/1.1 400 BAD REQUEST";
+break;
+	case	StatusCode.UNAUTHORIZED:
+Retorno =  "HTTP/1.1 401 UNAUTHORIZED";
+break;
+	case	StatusCode.PAYMENT_REQUIRED:
+Retorno =  "HTTP/1.1 402 UNAUTHORIZED";
+break;
+	case	StatusCode.FORBIDDEN:
+Retorno =  "HTTP/1.1 403 FORBIDDEN";
+break;
+	case	StatusCode.NOT_FOUND:
+Retorno =  "HTTP/1.1 404 NOT FOUND";
+break;
+	case	StatusCode.METHOD_NOT_ALLOWED:
+Retorno =  "HTTP/1.1 405 METHOD NOT ALLOWED";
+break;
+	case	StatusCode.NOT_ACCEPTABLE:
+Retorno =  "HTTP/1.1 406 NOT ACCEPTABLE";
+break;
+	case	StatusCode.PROXY_AUTHENTICATION_REQUIRED:
+Retorno =  "HTTP/1.1 407 PROXY AUTHENTICATION REQUIRED";
+break;
+	case	StatusCode.REQUEST_TIMEOUT:
+Retorno =  "HTTP/1.1 408 REQUEST TIMEOUT";
+break;
+
+	case	StatusCode.CONFLICT:
+Retorno =  "HTTP/1.1 409 CONFLICT";
+break;
+	case	StatusCode.GONE:
+Retorno =  "HTTP/1.1 410 GONE";
+break;
+	case	StatusCode.LENGTH_REQUIRED:
+Retorno =  "HTTP/1.1 411 LENGTH REQUIRED";
+break;
+
+	case	StatusCode.PRECONDITION_FAILED:
+Retorno =  "HTTP/1.1 412 PRECONDITION FAILED";
+break;
+	case	StatusCode.REQUEST_ENTITY_TOO_LARGE:
+Retorno =  "HTTP/1.1 413 REQUEST ENTITY TOO LARGE";
+break;
+	case	StatusCode.REQUEST_URI_TOO_LONG:
+Retorno =  "HTTP/1.1 414 REQUEST URI TOO LONG";
+break;
+	case	StatusCode.UNSUPPORTED_MEDIA_TYPE:
+Retorno =  "HTTP/1.1 415 UNSUPPORTED MEDIA TYPE";
+break;
+	case	StatusCode.REQUESTED_RANGE_NOT_SATISFIABLE:
+Retorno =  "HTTP/1.1 416 REQUESTED RANGE NOT SATISFIABLE";
+break;
+	case	StatusCode.EXPECTATION_FAILED:
+Retorno =  "HTTP/1.1 417 EXPECTATION FAILED";
+break;
+	case	StatusCode.INTERNAL_SERVER_ERROR:
+Retorno =  "HTTP/1.1 500 INTERNAL SERVER ERROR";
+break;
+	case	StatusCode.NOT_IMPLEMENTED:
+Retorno =  "HTTP/1.1 501 NOT IMPLEMENTED";
+break;
+	case	StatusCode.BAD_GATEWAY:
+Retorno =  "HTTP/1.1 502 BAD GATEWAY";
+break;
+	case	StatusCode.SERVICE_UNAVAILABLE:
+Retorno =  "HTTP/1.1 503 SERVICE UNAVAILABLE";
+break;
+	case	StatusCode.GATEWAY_TIMEOUT:
+Retorno =  "HTTP/1.1 504 GATEWAY TIMEOUT";
+break;
+	case	StatusCode.HTTP_VERSION_NOT_SUPPORTED:
+Retorno =  "HTTP/1.1 505 HTTP VERSION NOT SUPPORTED";
+break;
+}
+
+return Retorno;
+}
+
 
 public static string HtmErrorPage(string title = "uHTTP WebServer", string error){
 
@@ -1035,9 +1179,9 @@ return root+Checksum.compute_for_string(ChecksumType.MD5, value+"-"+tv.to_iso860
  public virtual bool connection_handler_virtual(Request request, DataOutputStream dos){
 
  uHttp.Response response = new uHttp.Response();
-      response.Header.Status = StatusCode.NOT_FOUND;
+      response.Status = StatusCode.NOT_FOUND;
  response.Data = Response.HtmErrorPage("uHTTP WebServer", "404 - Página no encontrada").data;
-  response.Header.ContentType = "text/html";
+  response.Header["Content-Type"] = "text/html";
 
 this.serve_response( response, dos );
 
@@ -1093,17 +1237,17 @@ warning(e.message+"\n");
 
 if(request.Path == "/"){
 print("Llama al Doc Raiz\n");
-        response.Header.Status = StatusCode.OK;
+        response.Status = StatusCode.OK;
     response.Data = LoadFile(PathLocalFile(Config.Index));
-    response.Header.ContentType = "text/html";
+    response.Header["Content-Type"] = "text/html";
     serve_response( response, dos );
 
 }else if(request.Path  == "/config.uhttp"){
 // Devuelva una lista en xml de la configuración del sistema
 
-        response.Header.Status = StatusCode.OK;
+        response.Status = StatusCode.OK;
     response.Data = LoadFile(Config.ToXml());
-    response.Header.ContentType = "text/xml";
+    response.Header["Content-Type"] = "text/xml";
     serve_response( response, dos );
 
 }else if(request.Path  == "/joinjsfiles.uhttp"){
@@ -1113,8 +1257,8 @@ print("Llama al Doc Raiz\n");
 // el formato de envio es /joinjsfiles.uhttp?files=/script1,/script2,/script3
 var textjoin = new StringBuilder();
 var pathjs = new StringBuilder();
-        response.Header.Status = StatusCode.OK;
-    response.Header.ContentType = "application/javascript";
+        response.Status = StatusCode.OK;
+    response.Header["Content-Type"] = "application/javascript";
 
 if(request.Query.has_key("files")){
 
@@ -1134,13 +1278,24 @@ textjoin.append_printf("%s ", ReadJavaScriptFile(pathjs.str));
 
 }else if(FileUtils.test(PathLocalFile(request.Path), GLib.FileTest.IS_REGULAR)){
 // Es un archivo local. Lo carga y lo envia al cliente
-        response.Header.Status = StatusCode.OK;
+        response.Status = StatusCode.OK;
     response.Data = LoadFile(PathLocalFile(request.Path));
-    response.Header.ContentType = GetMimeTypeToFile(request.Path);
+    response.Header["Content-Type"] = GetMimeTypeToFile(request.Path);
+    serve_response( response, dos );
+
+}else{
+
+if(request.isWebSocketHandshake){
+        response.Status = StatusCode.OK;
+    response.Data = "".data;
+//    response.Header.ContentType = GetMimeTypeToFile(request.Path);
     serve_response( response, dos );
 
 }else{
 NoFoundURL(request);
+this.connection_handler_virtual(request, dos);
+}
+
 //print("No found\n");
 //     response.Header.Status = StatusCode.NOT_FOUND;
 //  response.Data = Response.HtmErrorPage("uHTTP WebServer", "404 - Página no encontrada").data;
@@ -1149,7 +1304,7 @@ NoFoundURL(request);
 // stderr.printf("Path no found: %s\n", request.Path);
 
 // Si no se han encontrado el archivo dentro del servidor se buscará en las paginas virtuales. 
-this.connection_handler_virtual(request, dos);
+
 }
 
     return false;
