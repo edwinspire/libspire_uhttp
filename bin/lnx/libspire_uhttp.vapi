@@ -52,32 +52,6 @@ namespace edwinspire {
 			public Gee.HashMap<string,string> Form { get; private set; }
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		[Description (blurb = "", nick = "HTTP Request Header")]
-		public class RequestHeader : edwinspire.uHttp.Header {
-			public string Accept;
-			public string AcceptCharset;
-			public string AcceptEncoding;
-			public string AcceptLanguage;
-			public string Autorization;
-			public string Except;
-			public string From;
-			public string Host;
-			public string IfMatch;
-			public string IfModifiedSince;
-			public string IfNoneMatch;
-			public string IfRange;
-			public string IfUnmodifiedSince;
-			public string MaxFordwards;
-			public string ProxyAutorization;
-			public string Referer;
-			public string TE;
-			public string UserAgent;
-			public string Vary;
-			public RequestHeader ();
-			public override string ToString ();
-			public override void print ();
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Response from server", nick = "HTTP Response")]
 		public class Response : GLib.Object {
 			public uint8[] Data;

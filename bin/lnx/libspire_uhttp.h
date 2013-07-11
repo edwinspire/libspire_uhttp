@@ -42,17 +42,6 @@ typedef struct _edwinspireuHttpHeader edwinspireuHttpHeader;
 typedef struct _edwinspireuHttpHeaderClass edwinspireuHttpHeaderClass;
 typedef struct _edwinspireuHttpHeaderPrivate edwinspireuHttpHeaderPrivate;
 
-#define EDWINSPIRE_UHTTP_TYPE_REQUEST_HEADER (edwinspire_uhttp_request_header_get_type ())
-#define EDWINSPIRE_UHTTP_REQUEST_HEADER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_REQUEST_HEADER, edwinspireuHttpRequestHeader))
-#define EDWINSPIRE_UHTTP_REQUEST_HEADER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_REQUEST_HEADER, edwinspireuHttpRequestHeaderClass))
-#define EDWINSPIRE_UHTTP_IS_REQUEST_HEADER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_REQUEST_HEADER))
-#define EDWINSPIRE_UHTTP_IS_REQUEST_HEADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_REQUEST_HEADER))
-#define EDWINSPIRE_UHTTP_REQUEST_HEADER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_REQUEST_HEADER, edwinspireuHttpRequestHeaderClass))
-
-typedef struct _edwinspireuHttpRequestHeader edwinspireuHttpRequestHeader;
-typedef struct _edwinspireuHttpRequestHeaderClass edwinspireuHttpRequestHeaderClass;
-typedef struct _edwinspireuHttpRequestHeaderPrivate edwinspireuHttpRequestHeaderPrivate;
-
 #define EDWINSPIRE_UHTTP_TYPE_RESPONSE_HEADER (edwinspire_uhttp_response_header_get_type ())
 #define EDWINSPIRE_UHTTP_RESPONSE_HEADER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_RESPONSE_HEADER, edwinspireuHttpResponseHeader))
 #define EDWINSPIRE_UHTTP_RESPONSE_HEADER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_RESPONSE_HEADER, edwinspireuHttpResponseHeaderClass))
@@ -215,34 +204,6 @@ struct _edwinspireuHttpHeaderClass {
 	gchar* (*ToString) (edwinspireuHttpHeader* self);
 };
 
-struct _edwinspireuHttpRequestHeader {
-	edwinspireuHttpHeader parent_instance;
-	edwinspireuHttpRequestHeaderPrivate * priv;
-	gchar* Accept;
-	gchar* AcceptCharset;
-	gchar* AcceptEncoding;
-	gchar* AcceptLanguage;
-	gchar* Autorization;
-	gchar* Except;
-	gchar* From;
-	gchar* Host;
-	gchar* IfMatch;
-	gchar* IfModifiedSince;
-	gchar* IfNoneMatch;
-	gchar* IfRange;
-	gchar* IfUnmodifiedSince;
-	gchar* MaxFordwards;
-	gchar* ProxyAutorization;
-	gchar* Referer;
-	gchar* TE;
-	gchar* UserAgent;
-	gchar* Vary;
-};
-
-struct _edwinspireuHttpRequestHeaderClass {
-	edwinspireuHttpHeaderClass parent_class;
-};
-
 struct _edwinspireuHttpResponseHeader {
 	edwinspireuHttpHeader parent_instance;
 	edwinspireuHttpResponseHeaderPrivate * priv;
@@ -324,9 +285,6 @@ edwinspireuHttpHeader* edwinspire_uhttp_header_new (void);
 edwinspireuHttpHeader* edwinspire_uhttp_header_construct (GType object_type);
 void edwinspire_uhttp_header_print (edwinspireuHttpHeader* self);
 gchar* edwinspire_uhttp_header_ToString (edwinspireuHttpHeader* self);
-GType edwinspire_uhttp_request_header_get_type (void) G_GNUC_CONST;
-edwinspireuHttpRequestHeader* edwinspire_uhttp_request_header_new (void);
-edwinspireuHttpRequestHeader* edwinspire_uhttp_request_header_construct (GType object_type);
 GType edwinspire_uhttp_response_header_get_type (void) G_GNUC_CONST;
 edwinspireuHttpResponseHeader* edwinspire_uhttp_response_header_new (void);
 edwinspireuHttpResponseHeader* edwinspire_uhttp_response_header_construct (GType object_type);

@@ -260,7 +260,7 @@ return Cadena.str;
 
 }
 
-
+/*
 [Description(nick = "HTTP Request Header", blurb = "")]
 public class RequestHeader:Header{
 public string Accept = "";
@@ -357,6 +357,7 @@ return Cadena.str;
 }
 
 }
+*/
 
 
 [Description(nick = "HTTP Response Header", blurb = "")]
