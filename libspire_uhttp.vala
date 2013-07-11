@@ -570,7 +570,12 @@ public Request(){
 //public string 
 public int ContentLength{
 get{
+//GLib.print("this.Header[Content-Length] = %s\n", this.Header["Content-Length"].to_string());
+if(this.Header.has_key("Content-Length")){
 return int.parse(this.Header["Content-Length"]);
+}else{
+return 0;
+}
 }
 }
 
@@ -593,7 +598,6 @@ set{
 DatasInternal = value;
 Form.clear();
 
-if(this.Header.has_key("Content-Length")){
 int CLength = this.ContentLength;
 if(DatasInternal!=null && CLength>0){
 
@@ -613,8 +617,6 @@ break;
 }
 }
 Form = uHttp.Form.DataDecode(CadenaTempo.str);
-}
-
 }
 
 }
@@ -1125,7 +1127,7 @@ private static Request DecodeRequest(string lines){
 //print("<<<%s>>>\n", lines);
 Request Retorno = new Request();
     try {
-Regex regexbase = new Regex("""(?<key>[a-zA-Z\-]+): (?<value>[a-zA-Z0-9]+)""");
+Regex regexbase = new Regex("""(?<key>[\w\-]+): (?<value>[\w|\W]+)""");
 
 int i = 0;
 
