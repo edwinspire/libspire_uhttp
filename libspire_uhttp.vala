@@ -555,8 +555,8 @@ public class Request:GLib.Object {
 public RequestMethod Method = RequestMethod.UNKNOW;
 public  string Path = "";
 [Description(nick = "Query", blurb = "Query pased by url, Method GET")]
-public  HashMap<string, string> Query = new HashMap<string, string>();
-public HashMap<string, string> Header = new HashMap<string, string>();
+public  HashMap<string, string> Query {get; private set; default = new HashMap<string, string>();}
+public HashMap<string, string> Header {get; private set; default = new HashMap<string, string>();}
 //public RequestHeader Header = new RequestHeader();
 [Description(nick = "Content data", blurb = "Content sent by User Agent")]
 private uint8[] DatasInternal =  new uint8[0];

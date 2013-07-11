@@ -227,8 +227,6 @@ struct _edwinspireuHttpRequest {
 	edwinspireuHttpRequestPrivate * priv;
 	edwinspireuHttpRequestMethod Method;
 	gchar* Path;
-	GeeHashMap* Query;
-	GeeHashMap* Header;
 };
 
 struct _edwinspireuHttpRequestClass {
@@ -295,6 +293,8 @@ edwinspireuHttpRequest* edwinspire_uhttp_request_new (void);
 edwinspireuHttpRequest* edwinspire_uhttp_request_construct (GType object_type);
 void edwinspire_uhttp_request_from_lines (edwinspireuHttpRequest* self, const gchar* lines);
 void edwinspire_uhttp_request_print (edwinspireuHttpRequest* self);
+GeeHashMap* edwinspire_uhttp_request_get_Query (edwinspireuHttpRequest* self);
+GeeHashMap* edwinspire_uhttp_request_get_Header (edwinspireuHttpRequest* self);
 GeeHashMap* edwinspire_uhttp_request_get_Form (edwinspireuHttpRequest* self);
 gint edwinspire_uhttp_request_get_ContentLength (edwinspireuHttpRequest* self);
 guint8* edwinspire_uhttp_request_get_Data (edwinspireuHttpRequest* self, int* result_length1);
