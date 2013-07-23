@@ -55,6 +55,7 @@ namespace edwinspire {
 			public void run_without_mainloop ();
 			[Description (blurb = "", nick = "Server Response")]
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
+			public long writeData (uint8[] data_, GLib.DataOutputStream dos);
 			[Description (blurb = "Señal se dispara cuando una página no es encontrada en el servidor", nick = "Signal Request URL No Found")]
 			public signal void NoFoundURL (edwinspire.uHttp.Request request);
 		}

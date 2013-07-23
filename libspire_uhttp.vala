@@ -717,12 +717,23 @@ Cadena.append_printf("%s", HtmlStatusCode(this.Status));
 
 if(this.Header.has_key("Sec-WebSocket-Accept")){
 Cadena.append("\r\n");//this is the end websocket
+this.Header["Sec-WebSocket-Accept"] = this.CalcHandshake();
 }else{
 Cadena.append("\n");//this is the end of the return headers
 }
-Cadena.append_printf("%s", uHttpServerConfig.HashMapToString(this.Header));
+Cadena.append_printf("%s\r", uHttpServerConfig.HashMapToString(this.Header));
 return Cadena.str;
 }
+
+private string CalcHandshake(){
+string Retorno = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+if(this.Header.has_key("Sec-WebSocket-Key")){
+Retorno = Base64.encode(Checksum.compute_for_string(ChecksumType.SHA1, Retorno+this.Header["Sec-WebSocket-Key"]).data);
+}
+
+return Retorno;
+}
+
 
 [Description(nick = "enum StatusCode to HTTP Status", blurb = "")]  
 private static string HtmlStatusCode(StatusCode sc){
@@ -1481,7 +1492,7 @@ return Retorno;
 
 var Temporizador = new Timer();
 Temporizador.start();
-
+/*
     try {
 
 var Encabezado = new StringBuilder();
@@ -1507,6 +1518,10 @@ if(response.Data.length>0){
           written += dos.write (response.Data[written:response.Data.length]);
       }
 }
+
+
+
+
 //print("[Enviados: %fMB]\n", (float)(writtenhead+written)/1000000);
 //dos.flush();
 //response.dispose();
@@ -1514,7 +1529,14 @@ if(response.Data.length>0){
 //      stderr.printf(e.message+"\n");
 warning(e.message+"\n");
     }
+*/
 
+var Encabezado = new StringBuilder();
+Encabezado.append_printf("%s", response.ToString());
+Encabezado.append("\n");//this is the end of the return headers
+
+writeData(Encabezado.str.data, dos);
+writeData(response.Data, dos);
 
 if((Temporizador.elapsed()*1000)>2000){
 stderr.printf("uHttpServer slow response\n");
@@ -1525,6 +1547,23 @@ Temporizador.stop();
   }
 
 
+public long writeData(uint8[] data_, DataOutputStream dos){
+
+   long written = 0;
+
+try{
+if(data_.length>0){
+      while (written < data_.length) { 
+          // sum of the bytes of 'text' that already have been written to the stream
+          written += dos.write (data_[written:data_.length]);
+      }
+}
+    } catch( Error e ) {
+//      stderr.printf(e.message+"\n");
+warning(e.message+"\n");
+    }
+return written;
+}
 
 // Obtiene el path local del archivo solicitado
 public string PathLocalFile(string Filex){
