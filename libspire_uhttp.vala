@@ -1546,7 +1546,6 @@ Temporizador.stop();
 
   }
 
-
 public long writeData(uint8[] data_, DataOutputStream dos){
 
    long written = 0;
