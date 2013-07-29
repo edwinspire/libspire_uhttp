@@ -10,104 +10,37 @@ namespace edwinspire {
 			public static Gee.HashMap<string,string> DataDecode (string? data);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		[Description (blurb = "HTTP Base Header", nick = "HTTP Header")]
-		public class Header : GLib.Object {
-			public string CacheControl;
-			public string Connection;
-			public string ContentEncoding;
-			public int ContentLength;
-			public string ContentLenguaje;
-			public string ContentLocation;
-			public string ContentMD5;
-			public string ContentRange;
-			public string ContentType;
-			public string Date;
-			public string Expires;
-			public string HttpVersion;
-			public string LastModified;
-			public string Pragma;
-			public string Range;
-			public string Trailer;
-			public string TransferEncoding;
-			public string Upgrade;
-			public string Via;
-			public string Warning;
-			public Header ();
-			public virtual string ToString ();
-			public virtual void print ();
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Request")]
 		public class Request : GLib.Object {
-			public edwinspire.uHttp.RequestHeader Header;
-			public edwinspire.uHttp.RequestMethod Method;
-			public string Path;
-			[Description (blurb = "Query pased by url, Method GET", nick = "Query")]
-			public Gee.HashMap<string,string> Query;
 			public Request ();
+			public void from_lines (string lines);
 			public void print ();
+			public int ContentLength { get; }
 			public uint8[] Data { get; set; }
 			[Description (blurb = "Content sent by User Agent from POST", nick = "Content Form")]
 			public Gee.HashMap<string,string> Form { get; private set; }
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
-		[Description (blurb = "", nick = "HTTP Request Header")]
-		public class RequestHeader : edwinspire.uHttp.Header {
-			public string Accept;
-			public string AcceptCharset;
-			public string AcceptEncoding;
-			public string AcceptLanguage;
-			public string Autorization;
-			public string Except;
-			public string From;
-			public string Host;
-			public string IfMatch;
-			public string IfModifiedSince;
-			public string IfNoneMatch;
-			public string IfRange;
-			public string IfUnmodifiedSince;
-			public string MaxFordwards;
-			public string ProxyAutorization;
-			public string Referer;
-			public string TE;
-			public string UserAgent;
-			public string Vary;
-			public RequestHeader ();
-			public override string ToString ();
-			public override void print ();
+			public Gee.HashMap<string,string> Header { get; private set; }
+			public edwinspire.uHttp.RequestMethod Method { get; private set; }
+			public string Path { get; private set; }
+			[Description (blurb = "Query pased by url, Method GET", nick = "Query")]
+			public Gee.HashMap<string,string> Query { get; private set; }
+			public bool isWebSocketHandshake { get; private set; }
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Response from server", nick = "HTTP Response")]
 		public class Response : GLib.Object {
 			public uint8[] Data;
-			public edwinspire.uHttp.ResponseHeader Header;
+			public Gee.HashMap<string,string> Header;
+			public edwinspire.uHttp.StatusCode Status;
 			public Response ();
 			public static string HtmErrorPage (string title = "uHTTP WebServer", string error);
 			public string ToString ();
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		[Description (blurb = "", nick = "HTTP Response Header")]
-		public class ResponseHeader : edwinspire.uHttp.Header {
-			public string AcceptRanges;
-			public string Age;
-			public string ETag;
-			public string Location;
-			public string ProxyAuthenticate;
-			public string RetryAfter;
-			public string Server;
-			public edwinspire.uHttp.StatusCode Status;
-			public string WWWAuthenticate;
-			public ResponseHeader ();
-			[Description (blurb = "", nick = "enum StatusCode to HTTP Status")]
-			public static string HtmlStatusCode (edwinspire.uHttp.StatusCode sc);
-			public string StatusString ();
-			public override string ToString ();
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Micro embebed HTTP Web Server", nick = "HTTP Server")]
 		public class uHttpServer : GLib.Object {
 			[Description (blurb = " Data Config uHTTP", nick = "Config uHTTP")]
-			public edwinspire.uHttp.uHttpServerCongif Config;
+			public edwinspire.uHttp.uHttpServerConfig Config;
 			[Description (blurb = "", nick = "Constructor uHttpServer")]
 			public uHttpServer (int max_threads = 100);
 			public static string EnumToXml (GLib.Type typeenum, bool fieldtextasbase64 = true);
@@ -122,12 +55,13 @@ namespace edwinspire {
 			public void run_without_mainloop ();
 			[Description (blurb = "", nick = "Server Response")]
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
+			public long writeData (uint8[] data_, GLib.DataOutputStream dos);
 			[Description (blurb = "Señal se dispara cuando una página no es encontrada en el servidor", nick = "Signal Request URL No Found")]
 			public signal void NoFoundURL (edwinspire.uHttp.Request request);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Micro embebed HTTP Web Server config file", nick = "HTTP Server Config")]
-		public class uHttpServerCongif : GLib.Object {
+		public class uHttpServerConfig : GLib.Object {
 			[Description (blurb = "Index page, default: index.html", nick = "Index")]
 			public string Index;
 			[Description (blurb = "Default: 8080", nick = "Port")]
@@ -135,7 +69,8 @@ namespace edwinspire {
 			public bool RequestPrintOnConsole;
 			[Description (blurb = "Default: rootweb on current directory.", nick = "Path Root")]
 			public string Root;
-			public uHttpServerCongif ();
+			public uHttpServerConfig ();
+			public static string HashMapToString (Gee.HashMap<string,string> hm);
 			public string ToXml (bool fieldtextasbase64 = true);
 			public void read ();
 			public bool write ();
