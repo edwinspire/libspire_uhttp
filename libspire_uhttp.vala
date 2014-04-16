@@ -918,10 +918,8 @@ public bool RequestPrintOnConsole = false;
 	public string Root = "*uhttproot";
 
 public uHttpServerConfig(){
-try{
         // Reference a local file name
         var file = File.new_for_path ("uhttp.conf");
-{
 
             // Test for the existence of file
             if (file.query_exists ()) {
@@ -929,13 +927,6 @@ this.read();
             }else{
 this.save("");
 this.write();
-}
-
-
-}
-
-}catch(GLib.Error e){
-		stdout.printf ("cError: %s\n", e.message);
 }
 }
 
@@ -947,7 +938,6 @@ Retorno.append_printf("%s: %s\n", r.key, r.value);
 
 return Retorno.str;
 }
-
 
 public void read(){
 
@@ -1089,13 +1079,14 @@ public class uHttpServer:GLib.Object {
 [Description(nick = "Signal Request URL No Found", blurb = "Señal se dispara cuando una página no es encontrada en el servidor")]
 public signal void NoFoundURL(Request request);
 
+public signal void heartbeat(int seconds);
+
+public int heartbeatseconds = 30;
+
   private ThreadedSocketService tss;
 
 [Description(nick = "Config uHTTP", blurb = " Data Config uHTTP")]
 public uHttpServerConfig Config = new uHttpServerConfig();
-
-//[Description(nick = "Virtual Url", blurb = "List of Virtual URL (para ser manejado por el usuario)")]
-//public HashMap<string, string> VirtualUrl = new HashMap<string, string>();
 
 [Description(nick = "Constructor uHttpServer", blurb = "")]  
   public uHttpServer(int max_threads = 100) {
@@ -1105,10 +1096,33 @@ public uHttpServerConfig Config = new uHttpServerConfig();
      * there is a connection to our connection handler
      */
 
-//VirtualUrl["uhttp_joinjsfiles"] = "/uhttp_joinjsfiles.js";
+	this.thread_heartbeat();
 
     tss.run.connect( connection_handler );
   }
+
+private void thread_heartbeat(){
+  if (!Thread.supported()) {
+        stderr.printf("Cannot run without threads.\n");
+    }else{
+try{
+Thread.create<void>(this.trigger_heartbeat, false);
+}
+catch(ThreadError e){
+print(e.message);
+}
+}
+}
+
+private void trigger_heartbeat(){
+while(true){
+if(this.heartbeatseconds < 1){
+this.heartbeatseconds = 1;
+}
+this.heartbeat(this.heartbeatseconds);
+Thread.usleep(1000000*this.heartbeatseconds);
+}
+}
 
 public static string EnumToXml(Type typeenum, bool fieldtextasbase64 = true){
 var Retorno = new StringBuilder("<enum>");
@@ -1163,8 +1177,7 @@ print("Configure\n");
 stdout.printf("Port: %s\n", Config.Port.to_string());
 stdout.printf("Root: %s\n", Config.Root);
 stdout.printf("Index: %s\n", Config.Index);
-//tss.
-    //run the main loop
+
     ml.run();
   }
 
@@ -1245,6 +1258,8 @@ uint8[] datos = new uint8[request.ContentLength];
 dis.read (datos);
 request.Data = datos;
 }
+
+//print("Data ::>> "+(string)request.Data);
 
 if(Config.RequestPrintOnConsole){
 request.print();
@@ -1563,6 +1578,21 @@ warning(e.message+"\n");
     }
 return written;
 }
+
+public void sendEventHeader(DataOutputStream dos){
+
+uHttp.Response Retorno = new uHttp.Response();
+  Retorno.Header["Content-Type"] = "text/event-stream";
+  Retorno.Header["Cache-Control"] = "no-cache";
+    Retorno.Status = StatusCode.OK;
+
+this.serve_response( Retorno, dos );
+}
+
+public long sendEvent(string data, DataOutputStream dos){
+return this.writeData(("data: "+data+"\n\n").data, dos);
+}
+
 
 // Obtiene el path local del archivo solicitado
 public string PathLocalFile(string Filex){

@@ -41,6 +41,7 @@ namespace edwinspire {
 		public class uHttpServer : GLib.Object {
 			[Description (blurb = " Data Config uHTTP", nick = "Config uHTTP")]
 			public edwinspire.uHttp.uHttpServerConfig Config;
+			public int heartbeatseconds;
 			[Description (blurb = "", nick = "Constructor uHttpServer")]
 			public uHttpServer (int max_threads = 100);
 			public static string EnumToXml (GLib.Type typeenum, bool fieldtextasbase64 = true);
@@ -53,11 +54,14 @@ namespace edwinspire {
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
 			public virtual void run ();
 			public void run_without_mainloop ();
+			public long sendEvent (string data, GLib.DataOutputStream dos);
+			public void sendEventHeader (GLib.DataOutputStream dos);
 			[Description (blurb = "", nick = "Server Response")]
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
 			public long writeData (uint8[] data_, GLib.DataOutputStream dos);
 			[Description (blurb = "Señal se dispara cuando una página no es encontrada en el servidor", nick = "Signal Request URL No Found")]
 			public signal void NoFoundURL (edwinspire.uHttp.Request request);
+			public signal void heartbeat (int seconds);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Micro embebed HTTP Web Server config file", nick = "HTTP Server Config")]
