@@ -108,7 +108,8 @@ public enum RequestMethod{
 UNKNOW,
 GET,
 POST,
-HEAD
+HEAD,
+PUT
 }
 
 
@@ -567,23 +568,27 @@ private uint8[] DatasInternal =  new uint8[0];
 public HashMap<string, string> Form {get; private set; default = new HashMap<string, string>();}
 public bool isWebSocketHandshake {get; private set; default = false;}
 
+public MultiPartFormData MultiPartForm{public get; private set; default = new MultiPartFormData();}
 
 public Request(){
 
 }
 
+
+
+
 // Decodifica los datos provenientes de una requerimiento
 public void from_lines(string lines){
-//print("<<<%s>>>\n", lines);
+//GLib.print("%s\n", lines);
     try {
 Regex regexbase = new Regex("""(?<key>[\w\-]+): (?<value>[\w|\W]+)""");
 
 int i = 0;
 
 foreach(var line in lines.split("\r")){
-//print("%s\n", line);
-if(i==0){
 
+if(i==0){
+// GLib.print("%s\n", line);
 // Decodificamos la primera linea
 if(line.has_prefix("GET")){
 this.Method   = RequestMethod.GET;
@@ -591,6 +596,8 @@ this.Method   = RequestMethod.GET;
 this.Method   = RequestMethod.POST;
 }else if(line.has_prefix("HEAD")){
 this.Method   = RequestMethod.HEAD;
+}else if(line.has_prefix("PUT")){
+this.Method   = RequestMethod.PUT;
 }
     //get the parts from the line
     string[] partsline = line.split(" ");
@@ -621,9 +628,7 @@ this.Query[Key] = Value;
 // Decodificamos el contenido del Header
 MatchInfo match;
 if(regexbase.match(line, RegexMatchFlags.ANCHORED, out match)){
-
 this.Header[match.fetch_named("key")] = match.fetch_named("value");
-
 }
 
 }
@@ -634,6 +639,7 @@ i++;
     } catch(Error e) {
       stderr.printf(e.message+"\n");
     }
+
 
 if(this.Header.has_key("Sec-WebSocket-Key")){
 this.isWebSocketHandshake = true;
@@ -660,6 +666,7 @@ stdout.printf("<<isWebSocketHandshake>>: %s\n", this.isWebSocketHandshake.to_str
 stdout.printf("<<Method>>: %s\n", this.Method.to_string());
 stdout.printf("<<Path>>: %s\n", Path);
 stdout.printf("<<Header>>:\n%s\n", uHttpServerConfig.HashMapToString(this.Header));
+//stdout.printf("<<Boundary>>:\n%s\n", this.boundary);
 stdout.printf("<<Query>>:\n%s\n", uHttpServerConfig.HashMapToString(this.Query));
 stdout.printf("<<Form:>>\n%s\n", uHttpServerConfig.HashMapToString(this.Form));
 }
@@ -672,6 +679,18 @@ return DatasInternal;
 set{
 DatasInternal = value;
 Form.clear();
+//stdout.printf("Data leng: %s\n", value.length.to_string());
+
+if(this.Method == RequestMethod.POST){
+if(Header.has_key("Content-Type")){
+if(Header["Content-Type"].has_prefix("multipart/form-data")){
+MultiPartForm.decode(Header["Content-Type"], value);
+}
+}
+}
+
+
+if(!MultiPartForm.is_multipart_form_data){
 
 int CLength = this.ContentLength;
 if(DatasInternal!=null && CLength>0){
@@ -685,7 +704,7 @@ for(int i = 0; Cadena.get_next_char(ref i, out caracter);){
 if(i>CLength){
 break;
 }
-if((caracter.type() != UnicodeType.UNASSIGNED) && (caracter.type() != UnicodeType.CONTROL) && caracter.validate()){
+if(character_valid(caracter)){
 CadenaTempo.append_unichar(caracter);
 }else{
 break;
@@ -693,13 +712,419 @@ break;
 }
 Form = uHttp.Form.DataDecode(CadenaTempo.str);
 }
+}
+
+}
+
+
+
+}
+
+public static bool character_valid(unichar uc){
+bool R = false;
+if((uc.type() != UnicodeType.UNASSIGNED) && (uc.type() != UnicodeType.CONTROL) && uc.validate()){
+R = true;
+}
+return R;
+}
+
+/*
+private bool get_multipart_form_data(){
+this.is_multipart_form_data = false;
+// Chequeamos si el Content-Type es multipart/form-data y extraemos el boundary
+if(this.Header.has_key("Content-Type")){
+if(this.Method == RequestMethod.POST && this.Header["Content-Type"].has_prefix("multipart/form-data")){
+
+try{
+Regex regexbase2 = new Regex("""multipart/form-data; boundary=(?<value>[-|\w|\W]+)""");
+
+MatchInfo match2;
+if(regexbase2.match(this.Header["Content-Type"], RegexMatchFlags.ANCHORED, out match2)){
+
+if(match2.fetch_named("value") != null){
+this.boundary = match2.fetch_named("value");
+this.is_multipart_form_data = true;
+}
+
+}
+}
+
+catch(Error e){
+      stderr.printf(e.message+"\n");
+}
+
+// Si es multipart entonces obtenemos las partes individuales
+if(this.is_multipart_form_data){
+//string nameHeader = "";
+//string valueHeader = "";
+
+StringBuilder temp = new StringBuilder();
+StringBuilder temp2 = new StringBuilder();
+//bool start = false;
+var e= new ArrayList<uint8>();
+int i = 0;
+int j = 0;
+int lasti = 0;
+int block = 0;
+bool header = false;
+bool data = false;
+int lastSalto = 0;
+foreach(var x in this.Data){
+if(character_valid(x)){
+temp.append_unichar(x);
+//temp2.append_unichar(x);
+}
+
+if(block > 0 && data && j > 0){
+e.add(x);
+}
+
+if( i > 0 && x == '\n' && this.Data[i-1] == '\r'){
+//lastSalto = i-1;
+
+if(temp.str.has_suffix(this.boundary)){
+//temp.truncate(0);
+
+if(block>0 && data && j > 0){
+//int f = i-temp.str.data.length-2;
+//e.resize(e.length-this.boundary.data.length);
+//e.resize(1);
+//stdout.printf("\nDatos:\n%s\n", (string)e.slice(0, e.size-this.boundary.data.length-5).to_array());
+
+
+try {
+        // an output file in the current working directory
+        var file = File.new_for_path ("out"+block.to_string()+".mp3");
+
+        // delete if file already exists
+        if (file.query_exists ()) {
+            file.delete ();
+        }
+
+        // creating a file and a DataOutputStream to the file
+      
+        var dos = new DataOutputStream (file.create (FileCreateFlags.REPLACE_DESTINATION));
+
+        uint8[] dataw = e.slice(0, e.size-this.boundary.data.length-6).to_array();
+        long written = 0;
+        while (written < dataw.length) { 
+            // sum of the bytes of 'text' that already have been written to the stream
+            written += dos.write (dataw[written:dataw.length]);
+        }
+    } catch (Error e) {
+        stderr.printf ("%s\n", e.message);
+//        return 1;
+    }
+
+
+//stdout.printf("\ne2=(%i)\n", e.length);
+e.clear();
+}
+
+temp.truncate(0);
+
+block++;
+stdout.printf("\n***INICIA [%i]***\n", block);
+header = false;
+data = false;
+j = 0;
+
+}
+
+
+if(block>0 && !header && !data && temp.str == ""){
+stdout.printf("\n***HEADERS***\n");
+header = true;
+j = 0;
+data = false;
+//stdout.printf("\n[%s](%i)\n", temp.str, block);
+temp.truncate(0);
+}else if(block > 0 && header && !data && temp.str == ""){
+stdout.printf("\n***DATOS***\n");
+data = true;
+header = false;
+temp.truncate(0);
+j = i;
+//stdout.printf("\n[%s](%i)\n", i, block);
+}else if(block > 0 && !header && data && temp.str == ""){
+stdout.printf("\n***FIN***\n");
+data = false;
+header = false;
+temp.truncate(0);
+}else if(block > 0 && header){
+stdout.printf("\n[%s](%i)\n", temp.str, block);
+temp.truncate(0);
+}
+
+
+}
+
+
+
+
+
+i++;
+//temp.truncate();
+}
+
+stdout.printf("\nDatos:\n%s\n", (string)e.to_array());
+
+//stdout.printf("\n-(%s)-\n", (string)(this.Data[0:1]));
+
+
+
+
+}
+
+}
+}
+
+return this.is_multipart_form_data;
+}
+*/
+/*
+private void decode_part_from_multipart_form_data(string d){
+string HeaderName = "";
+string Headervalue = "";
+try{
+Regex header = new Regex("""(?<header>[\w\-]+): (?<value>[\w\-]+)""");
+Regex parameter = new Regex("""(?<name>[\w\-]+)="(?<value>[\w\-\\.]+)"""+"\"");
+// Separamos el header y sus parametros
+foreach(var y in Regex.split_simple(";\\s", d)){
+//stdout.printf("[%s]\n", y);
+
+MatchInfo matchX;
+
+if(parameter.match(y, RegexMatchFlags.ANCHORED, out matchX)){
+stdout.printf("n: %s -> v: %s\n", matchX.fetch_named("name"), matchX.fetch_named("value"));
+}else if(header.match(y, RegexMatchFlags.ANCHORED, out matchX)){
+HeaderName = matchX.fetch_named("header");
+Headervalue = matchX.fetch_named("value");
+stdout.printf("h: %s -> v: %s\n", HeaderName, Headervalue);
+}else{
+stdout.printf("En teoria estos son datos: %s\n", y.length.to_string());
+}
+
+}
+}
+catch(Error e){
+      stderr.printf(e.message+"\n");
+}
+
+
+
+}
+*/
+
+}
+
+public class MultiPartFormDataHeader:GLib.Object {
+
+public string name{set; get; default = "";}
+public string value{set; get; default = "";}
+public HashMap<string, string> param {get; set; default = new HashMap<string, string>();}
+
+public MultiPartFormDataHeader(){
 
 }
 
 }
 
 
+public class MultiPartFormDataPart:GLib.Object {
+
+public ArrayList<MultiPartFormDataHeader> Headers {get; set; default = new ArrayList<MultiPartFormDataHeader>();}
+public uint8[] data{get; set; default = {};}
+
+public MultiPartFormDataPart(){
+
 }
+
+}
+
+
+public class MultiPartFormData:GLib.Object {
+
+public HashMap<int, MultiPartFormDataPart> Parts{get; private set; default = new HashMap<int, MultiPartFormDataPart>();}
+
+[Description(nick = "Multi Part Form Boundary", blurb = "Boundary")]
+public string boundary {get; private set; default = "uHTTPServerxyzqwertyuiopasdf2f3g5h5j";}
+
+public bool is_multipart_form_data{get; private set; default = false;}
+
+
+public MultiPartFormData(){
+
+}
+
+public void decode(string ContentTypeHeader, uint8[] d){
+
+// Chequeamos si el Content-Type es multipart/form-data y extraemos el boundary
+try{
+Regex regexbase2 = new Regex("""multipart/form-data; boundary=(?<value>[-|\w|\W]+)""");
+
+MatchInfo match2;
+if(regexbase2.match(ContentTypeHeader, RegexMatchFlags.ANCHORED, out match2)){
+
+if(match2.fetch_named("value") != null){
+this.boundary = match2.fetch_named("value");
+this.is_multipart_form_data = true;
+}
+
+}
+}
+
+catch(Error e){
+      stderr.printf(e.message+"\n");
+}
+
+// Si es multipart entonces obtenemos las partes individuales
+if(this.is_multipart_form_data){
+//string nameHeader = "";
+//string valueHeader = "";
+
+StringBuilder temp = new StringBuilder();
+//bool start = false;
+var e= new ArrayList<uint8>();
+int i = 0;
+int j = 0;
+
+int block = 0;
+bool header = false;
+bool data = false;
+
+
+try{
+Regex RxHeader = new Regex("""(?<header>[\w+\-]+): (?<value>[\w\-\/]+)""");
+Regex RxHeaderWparam = new Regex("""(?<header>[\w+\-]+): (?<value>[\w\-\/]+);(?<parameters>[\d.\-\w\/\\\s\=\\;"]+)""");
+Regex RxHeaderParameter = new Regex("""\s+(?<name>[\w+\-]+)="(?<value>[\d.\-\w\/\\\s\=\\;]+)"""+"\"");
+
+foreach(var x in d){
+if(Request.character_valid(x)){
+temp.append_unichar(x);
+//temp2.append_unichar(x);
+}
+
+if(block > 0 && data && j > 0){
+e.add(x);
+}
+
+if( i > 0 && x == '\n' && d[i-1] == '\r'){
+//lastSalto = i-1;
+
+if(temp.str.has_suffix(this.boundary)){
+//temp.truncate(0);
+
+if(block>0 && data && j > 0){
+//int f = i-temp.str.data.length-2;
+//e.resize(e.length-this.boundary.data.length);
+//e.resize(1);
+//stdout.printf("\nDatos:\n%s\n", (string)e.slice(0, e.size-this.boundary.data.length-6).to_array());
+//stdout.printf("\ne2=(%i)\n", e.length);
+this.Parts[block].data = e.slice(0, e.size-this.boundary.data.length-6).to_array();
+//stdout.printf("\ndatalength=(%i)\n", this.Parts[block].data.length);
+e.clear();
+}
+
+temp.truncate(0);
+
+block++;
+//stdout.printf("\n***INICIA [%i]***\n", block);
+header = false;
+data = false;
+j = 0;
+this.Parts[block] = new MultiPartFormDataPart();
+}
+
+
+if(block>0 && !header && !data && temp.str == ""){
+//stdout.printf("\n***HEADERS***\n");
+header = true;
+j = 0;
+data = false;
+//stdout.printf("\n[%s](%i)\n", temp.str, block);
+temp.truncate(0);
+}else if(block > 0 && header && !data && temp.str == ""){
+//stdout.printf("\n***DATOS***\n");
+data = true;
+header = false;
+temp.truncate(0);
+j = i;
+//stdout.printf("\n[%s](%i)\n", i, block);
+}else if(block > 0 && !header && data && temp.str == ""){
+//stdout.printf("\n***FIN***\n");
+data = false;
+header = false;
+temp.truncate(0);
+}else if(block > 0 && header){
+
+var h = new MultiPartFormDataHeader();
+//stdout.printf("\n[%s](%i)\n", temp.str, block);
+MatchInfo matchH;
+if(RxHeaderWparam.match(temp.str, RegexMatchFlags.ANCHORED, out matchH)){
+// Con parametros
+h.name = matchH.fetch_named("header");
+h.value = matchH.fetch_named("value");
+this.Parts[block].Headers.add(h);
+stdout.printf("\n[%s][%s][%s]\n", h.name, h.value, matchH.fetch_named("parameters"));
+
+var ps = matchH.fetch_named("parameters").split(";");
+
+MatchInfo matchP;
+foreach(var p in ps){
+ if(RxHeaderParameter.match(p, RegexMatchFlags.ANCHORED, out matchP)){
+// Parametros
+h.param[matchP.fetch_named("name")] = matchP.fetch_named("value"); 
+stdout.printf("\n[%s]=[%s]\n", matchP.fetch_named("name"), matchP.fetch_named("value"));
+}
+}
+
+}else if(RxHeader.match(temp.str, RegexMatchFlags.ANCHORED, out matchH)){
+// Sin parametros
+h.name = matchH.fetch_named("header");
+h.value = matchH.fetch_named("value");
+//h.
+this.Parts[block].Headers.add(h);
+stdout.printf("\n[%s][%s]\n", h.name, h.value);
+}
+
+temp.truncate(0);
+}
+
+
+}
+
+
+
+
+
+i++;
+//temp.truncate();
+}
+
+
+
+
+
+
+
+}
+
+catch(Error e){
+      stderr.printf(e.message+"\n");
+}
+
+stdout.printf("\nDatos:\n%s\n", (string)e.to_array());
+
+}
+
+
+
+}
+
+
+}
+
 
 [Description(nick = "HTTP Response", blurb = "Response from server")]
 public class Response:GLib.Object {
@@ -1233,13 +1658,15 @@ return false;
     DataInputStream dis = new DataInputStream(connection.input_stream);
     DataOutputStream dos = new DataOutputStream(connection.output_stream);  
 
+//	stdout.printf(connection.has_pending().to_string());
+
     try {
 
     string firstblock ="";
 
 var PrimerBloque = new StringBuilder();
 
-int maxline = 100;
+int maxline = 500;
 while(maxline>0){
 firstblock = dis.read_line( out size );
 if(firstblock != null){
@@ -1254,12 +1681,21 @@ request.from_lines(PrimerBloque.str);
 PrimerBloque.truncate();
 
 if(request.ContentLength>0){
+size_t sz;
 uint8[] datos = new uint8[request.ContentLength];
-dis.read (datos);
+dis.read_all (datos, out sz);
 request.Data = datos;
+
+//stdout.printf("Data %s ::>> %s = %s\n", sz.to_string(), connection.has_pending().to_string(), datos.length.to_string());
+/*foreach(var z in datos){
+stdout.printf("%s", z.to_string());
+}
+*/
 }
 
-//print("Data ::>> "+(string)request.Data);
+
+//	stdout.printf();
+//print("Data ::>> \n"+(string)request.Data);
 
 if(Config.RequestPrintOnConsole){
 request.print();
@@ -1287,6 +1723,7 @@ print("Llama al Doc Raiz\n");
     serve_response( response, dos );
 
 }else if(request.Path  == "/joinjsfiles.uhttp"){
+//TODO:
 // Esta seccion es una utilidad del servidor que permite unir varios archivos javascript en uno solo y enviarlo a cliente, esto elimina la cantidad de peticiones hechas al servidor y carga mas rapido la pagina. 
 // Los scripts separados por comas, sin el .js y el path relativo o absoluto
 // Recordar que es una peticion GET por lo que el limite del string 
@@ -1366,139 +1803,6 @@ this.connection_handler_virtual(request, dos);
     return false;
   }
 
-/*
-private string VirtualUrlsToXml(bool fieldtextasbase64 = true){
-
-string Retorno = "";
-var TempS = new StringBuilder("<uhttp>");
-if(fieldtextasbase64){
-TempS.append_printf("<row><name>%s</name><url>%s</url></row>", Base64.encode("joinjsfiles.uhttp".data), Base64.encode("/joinjsfiles.uhttp".data));
-TempS.append_printf("<row><name>%s</name><url>%s</url></row>", Base64.encode("virtualurls.uhttp".data), Base64.encode("/virtualurls.uhttp".data));
-}else{
-TempS.append_printf("<row><name>%s</name><url>%s</url></row>", "joinjsfiles.uhttp", "/joinjsfiles.uhttp");
-TempS.append_printf("<row><name>%s</name><url>%s</url></row>", "virtualurls.uhttp", "/virtualurls.uhttp");
-}
-
-
-foreach(var url in VirtualUrl.entries){
-if(fieldtextasbase64){
-TempS.append_printf("<row><name>%s</name><url>%s</url></row>", Base64.encode(url.key.data), Base64.encode(url.value.data));
-}else{
-TempS.append_printf("<row><name>%s</name><url>%s</url></row>", url.key, url.value);
-}
-}
-
-TempS.append("</uhttp>");
-Retorno = TempS.str;
-
-return Retorno;
-}
-
-*/
-
-
-
-
-
-/*
-// Decodifica los datos provenientes de una requerimiento
-private static Request DecodeRequest_xxx(string lines){
-//print("<<<%s>>>\n", lines);
-Request Retorno = new Request();
-    try {
-Regex regexbase = new Regex("""(?<key>[a-zA-Z\-]+): (?<value>[a-zA-Z0-9]+)""");
-
-int i = 0;
-
-foreach(var line in lines.split("\r")){
-//print("%s\n", line);
-if(i==0){
-
-// Decodificamos la primera linea
-if(line.has_prefix("GET")){
-Retorno.Method   = RequestMethod.GET;
-}else if(line.has_prefix("POST")){
-Retorno.Method   = RequestMethod.POST;
-}else if(line.has_prefix("HEAD")){
-Retorno.Method   = RequestMethod.HEAD;
-}
-    //get the parts from the line
-    string[] partsline = line.split(" ");
-
-if(partsline.length==3){
-
-var partsquery = partsline[1].split("?");
-
-if(partsquery.length>0){
-Retorno.Path = partsquery[0];
-
-if(partsquery.length>1){
-foreach(var part in partsquery[1].split("&")){
-var kv = part.split("=");
-if(kv.length>1){
-string Key = Uri.unescape_string(kv[0].replace("+", " "));
-string Value = Uri.unescape_string(kv[1].replace("+", " "));
-Retorno.Query[Key] = Value;
-//print("%s >>>>>>>>>>>>>>>>> %s\n", kv[1], Value);
-//Retorno.Query[Uri.unescape_string(kv[0])] = Uri.unescape_string(kv[1]);
-}
-
-}
-}
-
-}
-
-}
-}else{
-// Decodificamos el contenido del Header
-MatchInfo match;
-if(regexbase.match(line, RegexMatchFlags.ANCHORED, out match)){
-//TODO// Completaar el resto de opciones
-switch(match.fetch_named("key")){
-case "Content-Length":
-Retorno.Header.ContentLength = int.parse(match.fetch_named("value"));
-break;
-case "Host":
-Retorno.Header.Host = match.fetch_named("value");
-break;
-case "User-Agent":
-Retorno.Header.UserAgent = match.fetch_named("value");
-break;
-case "Accept":
-Retorno.Header.Accept = match.fetch_named("value");
-break;
-case "Accept-Language":
-Retorno.Header.AcceptLanguage = match.fetch_named("value");
-break;
-case "Accept-Encoding":
-Retorno.Header.AcceptEncoding = match.fetch_named("value");
-break;
-case "Connection":
-Retorno.Header.Connection = match.fetch_named("value");
-break;
-case "Accept-Charset":
-Retorno.Header.AcceptCharset = match.fetch_named("value");
-break;
-case "Referer":
-Retorno.Header.Referer = match.fetch_named("value");
-break;
-}
-
-}
-
-}
-i++;
-}
-
-
-    } catch(Error e) {
-      stderr.printf(e.message+"\n");
-    }
-return Retorno;
-}
-*/
-
-
 
 
   //********************************************************************
@@ -1507,44 +1811,6 @@ return Retorno;
 
 var Temporizador = new Timer();
 Temporizador.start();
-/*
-    try {
-
-var Encabezado = new StringBuilder();
-Encabezado.append_printf("%s", response.ToString());
-Encabezado.append("\n");//this is the end of the return headers
-
-
-//print("Encabezado: %s\n", Encabezado.str);
-
-// Enviamos los datos del enzabezado
-      long writtenhead = 0;
-      while (writtenhead < Encabezado.str.data.length) { 
-          // sum of the bytes of 'text' that already have been written to the stream
-          writtenhead += dos.write (Encabezado.str.data[writtenhead:Encabezado.str.data.length]);
-      }
-
-// Enviamos los datos
-//written = 0;
-   long written = 0;
-if(response.Data.length>0){
-      while (written < response.Data.length) { 
-          // sum of the bytes of 'text' that already have been written to the stream
-          written += dos.write (response.Data[written:response.Data.length]);
-      }
-}
-
-
-
-
-//print("[Enviados: %fMB]\n", (float)(writtenhead+written)/1000000);
-//dos.flush();
-//response.dispose();
-    } catch( Error e ) {
-//      stderr.printf(e.message+"\n");
-warning(e.message+"\n");
-    }
-*/
 
 var Encabezado = new StringBuilder();
 Encabezado.append_printf("%s", response.ToString());
@@ -1642,8 +1908,8 @@ switch(basen){
 case "html":
 Retorno = "text/html";
 break;
-case "htm":
-Retorno = "text/html";
+case "wav":
+Retorno = "audio/wav";
 break;
 case "xml":
 Retorno = "text/xml";
@@ -1723,6 +1989,9 @@ Retorno = "application/x-bzip";
 break;
 case "ogg":
 Retorno = "application/ogg";
+break;
+case "mp3":
+Retorno = "audio/mpeg3";
 break;
 default:
 Retorno = "text/plain";

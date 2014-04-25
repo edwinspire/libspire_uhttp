@@ -10,9 +10,32 @@ namespace edwinspire {
 			public static Gee.HashMap<string,string> DataDecode (string? data);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class MultiPartFormData : GLib.Object {
+			public MultiPartFormData ();
+			public void decode (string ContentTypeHeader, uint8[] d);
+			public Gee.HashMap<int,edwinspire.uHttp.MultiPartFormDataPart> Parts { get; private set; }
+			[Description (blurb = "Boundary", nick = "Multi Part Form Boundary")]
+			public string boundary { get; private set; }
+			public bool is_multipart_form_data { get; private set; }
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class MultiPartFormDataHeader : GLib.Object {
+			public MultiPartFormDataHeader ();
+			public string name { get; set; }
+			public Gee.HashMap<string,string> param { get; set; }
+			public string value { get; set; }
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class MultiPartFormDataPart : GLib.Object {
+			public MultiPartFormDataPart ();
+			public Gee.ArrayList<edwinspire.uHttp.MultiPartFormDataHeader> Headers { get; set; }
+			public uint8[] data { get; set; }
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Request")]
 		public class Request : GLib.Object {
 			public Request ();
+			public static bool character_valid (unichar uc);
 			public void from_lines (string lines);
 			public void print ();
 			public int ContentLength { get; }
@@ -21,6 +44,7 @@ namespace edwinspire {
 			public Gee.HashMap<string,string> Form { get; private set; }
 			public Gee.HashMap<string,string> Header { get; private set; }
 			public edwinspire.uHttp.RequestMethod Method { get; private set; }
+			public edwinspire.uHttp.MultiPartFormData MultiPartForm { get; private set; }
 			public string Path { get; private set; }
 			[Description (blurb = "Query pased by url, Method GET", nick = "Query")]
 			public Gee.HashMap<string,string> Query { get; private set; }
@@ -93,7 +117,8 @@ namespace edwinspire {
 			UNKNOW,
 			GET,
 			POST,
-			HEAD
+			HEAD,
+			PUT
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Status Code")]
