@@ -669,6 +669,27 @@ stdout.printf("<<Header>>:\n%s\n", uHttpServerConfig.HashMapToString(this.Header
 //stdout.printf("<<Boundary>>:\n%s\n", this.boundary);
 stdout.printf("<<Query>>:\n%s\n", uHttpServerConfig.HashMapToString(this.Query));
 stdout.printf("<<Form:>>\n%s\n", uHttpServerConfig.HashMapToString(this.Form));
+
+stdout.printf("<<MultiPartForm>>:\n");
+stdout.printf("[Is Multipart]: %s\n", this.MultiPartForm.is_multipart_form_data.to_string());
+
+if(this.MultiPartForm.is_multipart_form_data){
+foreach(var r in this.MultiPartForm.Parts.entries){
+
+stdout.printf("[Headers]:\n");
+foreach(var v in r.value.Headers){
+stdout.printf("%s: %s\n", v.name, v.value);
+
+if(v.param.size > 0){
+stdout.printf("[Parametros]\n%s\n", uHttpServerConfig.HashMapToString(v.param));
+}
+
+}
+stdout.printf("[Data (%s bytes)]\n%s\n", r.value.data.length.to_string(), (string)r.value.data);
+
+}
+}
+
 }
 
 public uint8[] Data{
@@ -1102,7 +1123,7 @@ i++;
 //temp.truncate();
 }
 
-
+this.Parts[block].data = e.slice(0, e.size-this.boundary.data.length-8).to_array();
 
 
 
@@ -1114,7 +1135,7 @@ catch(Error e){
       stderr.printf(e.message+"\n");
 }
 
-stdout.printf("\nDatos:\n%s\n", (string)e.to_array());
+//stdout.printf("\nDatos:\n%s\n", (string)e.to_array());
 
 }
 
