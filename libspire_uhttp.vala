@@ -1126,11 +1126,6 @@ uint8[] datos = new uint8[request.ContentLength];
 dis.read_all (datos, out sz);
 request.Data = datos;
 
-//stdout.printf("Data %s ::>> %s = %s\n", sz.to_string(), connection.has_pending().to_string(), datos.length.to_string());
-/*foreach(var z in datos){
-stdout.printf("%s", z.to_string());
-}
-*/
 }
 
 
