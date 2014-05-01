@@ -273,7 +273,6 @@ edwinspireuHttpRequest* edwinspire_uhttp_request_new (void);
 edwinspireuHttpRequest* edwinspire_uhttp_request_construct (GType object_type);
 void edwinspire_uhttp_request_from_lines (edwinspireuHttpRequest* self, const gchar* lines);
 void edwinspire_uhttp_request_print (edwinspireuHttpRequest* self);
-gboolean edwinspire_uhttp_request_character_valid (gunichar uc);
 edwinspireuHttpRequestMethod edwinspire_uhttp_request_get_Method (edwinspireuHttpRequest* self);
 const gchar* edwinspire_uhttp_request_get_Path (edwinspireuHttpRequest* self);
 GeeHashMap* edwinspire_uhttp_request_get_Query (edwinspireuHttpRequest* self);
@@ -297,6 +296,7 @@ void edwinspire_uhttp_multi_part_form_data_header_set_param (edwinspireuHttpMult
 GType edwinspire_uhttp_multi_part_form_data_part_get_type (void) G_GNUC_CONST;
 edwinspireuHttpMultiPartFormDataPart* edwinspire_uhttp_multi_part_form_data_part_new (void);
 edwinspireuHttpMultiPartFormDataPart* edwinspire_uhttp_multi_part_form_data_part_construct (GType object_type);
+gchar* edwinspire_uhttp_multi_part_form_data_part_data_to_string_valid_chars (edwinspireuHttpMultiPartFormDataPart* self);
 GeeArrayList* edwinspire_uhttp_multi_part_form_data_part_get_Headers (edwinspireuHttpMultiPartFormDataPart* self);
 void edwinspire_uhttp_multi_part_form_data_part_set_Headers (edwinspireuHttpMultiPartFormDataPart* self, GeeArrayList* value);
 guint8* edwinspire_uhttp_multi_part_form_data_part_get_data (edwinspireuHttpMultiPartFormDataPart* self, int* result_length1);
@@ -325,6 +325,8 @@ edwinspireuHttpuHttpServer* edwinspire_uhttp_uhttp_server_construct (GType objec
 gchar* edwinspire_uhttp_uhttp_server_EnumToXml (GType typeenum, gboolean fieldtextasbase64);
 void edwinspire_uhttp_uhttp_server_run (edwinspireuHttpuHttpServer* self);
 void edwinspire_uhttp_uhttp_server_run_without_mainloop (edwinspireuHttpuHttpServer* self);
+gboolean edwinspire_uhttp_uhttp_server_character_valid (gunichar uc);
+gchar* edwinspire_uhttp_uhttp_server_data_to_string_valid_chars (guint8* d, int d_length1);
 gchar* edwinspire_uhttp_uhttp_server_GenUrl (const gchar* root, const gchar* value);
 gboolean edwinspire_uhttp_uhttp_server_connection_handler_virtual (edwinspireuHttpuHttpServer* self, edwinspireuHttpRequest* request, GDataOutputStream* dos);
 void edwinspire_uhttp_uhttp_server_serve_response (edwinspireuHttpuHttpServer* self, edwinspireuHttpResponse* response, GDataOutputStream* dos);

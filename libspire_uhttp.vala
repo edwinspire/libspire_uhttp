@@ -331,7 +331,7 @@ for(int i = 0; Cadena.get_next_char(ref i, out caracter);){
 if(i>CLength){
 break;
 }
-if(character_valid(caracter)){
+if(uHttpServer.character_valid(caracter)){
 CadenaTempo.append_unichar(caracter);
 }else{
 break;
@@ -347,13 +347,7 @@ Form = uHttp.Form.DataDecode(CadenaTempo.str);
 
 }
 
-public static bool character_valid(unichar uc){
-bool R = false;
-if((uc.type() != UnicodeType.UNASSIGNED) && (uc.type() != UnicodeType.CONTROL) && uc.validate()){
-R = true;
-}
-return R;
-}
+
 
 
 }
@@ -379,6 +373,12 @@ public uint8[] data{get; set; default = {};}
 public MultiPartFormDataPart(){
 
 }
+
+public string data_to_string_valid_chars(){
+return uHttpServer.data_to_string_valid_chars(this.data);
+}
+
+
 
 }
 
@@ -440,7 +440,7 @@ Regex RxHeaderWparam = new Regex("""(?<header>[\w+\-]+): (?<value>[\w\-\/]+);(?<
 Regex RxHeaderParameter = new Regex("""\s+(?<name>[\w+\-]+)="(?<value>[\d.\-\w\/\\\s\=\\;]+)"""+"\"");
 
 foreach(var x in d){
-if(Request.character_valid(x)){
+if(uHttpServer.character_valid(x)){
 temp.append_unichar(x);
 //temp2.append_unichar(x);
 }
@@ -1066,6 +1066,24 @@ public void run_without_mainloop(){
 //tss.
     //run the main loop
   //  ml.run();
+}
+
+public static bool character_valid(unichar uc){
+bool R = false;
+if((uc.type() != UnicodeType.UNASSIGNED) && (uc.type() != UnicodeType.CONTROL) && uc.validate()){
+R = true;
+}
+return R;
+}
+
+public static string data_to_string_valid_chars(uint8[] d){
+var R = new StringBuilder();
+foreach(var v in d){
+if(character_valid(v)){
+R.append_unichar(v);
+}
+}
+return R.str;
 }
 
 [Description(nick = "GenUrl", blurb = "Crea una Url unica automaticamente")]  

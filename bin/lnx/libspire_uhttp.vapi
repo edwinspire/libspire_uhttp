@@ -28,6 +28,7 @@ namespace edwinspire {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class MultiPartFormDataPart : GLib.Object {
 			public MultiPartFormDataPart ();
+			public string data_to_string_valid_chars ();
 			public Gee.ArrayList<edwinspire.uHttp.MultiPartFormDataHeader> Headers { get; set; }
 			public uint8[] data { get; set; }
 		}
@@ -35,7 +36,6 @@ namespace edwinspire {
 		[Description (blurb = "", nick = "HTTP Request")]
 		public class Request : GLib.Object {
 			public Request ();
-			public static bool character_valid (unichar uc);
 			public void from_lines (string lines);
 			public void print ();
 			public int ContentLength { get; }
@@ -74,7 +74,9 @@ namespace edwinspire {
 			public static uint8[] LoadFile (string Path);
 			public string PathLocalFile (string Filex);
 			public static string ReadFile (string path);
+			public static bool character_valid (unichar uc);
 			public virtual bool connection_handler_virtual (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
+			public static string data_to_string_valid_chars (uint8[] d);
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
 			public virtual void run ();
 			public void run_without_mainloop ();
