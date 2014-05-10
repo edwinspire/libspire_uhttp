@@ -13,7 +13,7 @@ namespace edwinspire {
 		public class MultiPartFormData : GLib.Object {
 			public MultiPartFormData ();
 			public void decode (string ContentTypeHeader, uint8[] d);
-			public Gee.HashMap<int,edwinspire.uHttp.MultiPartFormDataPart> Parts { get; private set; }
+			public Gee.ArrayList<edwinspire.uHttp.MultiPartFormDataPart> Parts { get; private set; }
 			[Description (blurb = "Boundary", nick = "Multi Part Form Boundary")]
 			public string boundary { get; private set; }
 			public bool is_multipart_form_data { get; private set; }
@@ -21,6 +21,7 @@ namespace edwinspire {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class MultiPartFormDataHeader : GLib.Object {
 			public MultiPartFormDataHeader ();
+			public string get_param_for_name (string name);
 			public string name { get; set; }
 			public Gee.HashMap<string,string> param { get; set; }
 			public string value { get; set; }
@@ -28,7 +29,11 @@ namespace edwinspire {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class MultiPartFormDataPart : GLib.Object {
 			public MultiPartFormDataPart ();
-			public string data_to_string_valid_chars ();
+			public string get_content_disposition_param (string name);
+			public string get_data_as_string_valid_unichars ();
+			public string get_head_param (string head, string name);
+			public edwinspire.uHttp.MultiPartFormDataHeader get_header_content_disposition ();
+			public edwinspire.uHttp.MultiPartFormDataHeader get_header_for_name (string name);
 			public Gee.ArrayList<edwinspire.uHttp.MultiPartFormDataHeader> Headers { get; set; }
 			public uint8[] data { get; set; }
 		}
@@ -74,9 +79,8 @@ namespace edwinspire {
 			public static uint8[] LoadFile (string Path);
 			public string PathLocalFile (string Filex);
 			public static string ReadFile (string path);
-			public static bool character_valid (unichar uc);
 			public virtual bool connection_handler_virtual (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
-			public static string data_to_string_valid_chars (uint8[] d);
+			public static string get_data_as_string_valid_unichars (uint8[] d);
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
 			public virtual void run ();
 			public void run_without_mainloop ();

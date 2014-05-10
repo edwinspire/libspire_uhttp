@@ -280,10 +280,10 @@ stdout.printf("<<MultiPartForm>>:\n");
 stdout.printf("[Is Multipart]: %s\n", this.MultiPartForm.is_multipart_form_data.to_string());
 
 if(this.MultiPartForm.is_multipart_form_data){
-foreach(var r in this.MultiPartForm.Parts.entries){
+foreach(var r in this.MultiPartForm.Parts){
 
 stdout.printf("[Headers]:\n");
-foreach(var v in r.value.Headers){
+foreach(var v in r.Headers){
 stdout.printf("%s: %s\n", v.name, v.value);
 
 if(v.param.size > 0){
@@ -291,7 +291,14 @@ stdout.printf("[Parametros]\n%s\n", uHttpServerConfig.HashMapToString(v.param));
 }
 
 }
-stdout.printf("[Data (%s bytes)]\n%s\n", r.value.data.length.to_string(), (string)r.value.data);
+
+
+if(r.data.length > 1024){
+stdout.printf("[Data (%s bytes)]\nData > 1024 bytes, no show!\n", r.data.length.to_string());
+}else{
+stdout.printf("[Data (%s bytes)]\n%s\n", r.data.length.to_string(), r.get_data_as_string_valid_unichars());
+}
+
 
 }
 }
@@ -321,23 +328,7 @@ if(!MultiPartForm.is_multipart_form_data){
 
 int CLength = this.ContentLength;
 if(DatasInternal!=null && CLength>0){
-
-string Cadena = (string)Data;
-var CadenaTempo = new StringBuilder();
-// Formamos una cadena solo con los caracteres validos
-unichar caracter;
-for(int i = 0; Cadena.get_next_char(ref i, out caracter);){
-
-if(i>CLength){
-break;
-}
-if(uHttpServer.character_valid(caracter)){
-CadenaTempo.append_unichar(caracter);
-}else{
-break;
-}
-}
-Form = uHttp.Form.DataDecode(CadenaTempo.str);
+Form = uHttp.Form.DataDecode(uHttpServer.get_data_as_string_valid_unichars(Data));
 }
 }
 
@@ -362,6 +353,17 @@ public MultiPartFormDataHeader(){
 
 }
 
+
+public string get_param_for_name(string name){
+string Retorno = "";
+if(this.param.has_key(name)){
+Retorno = this.param[name];
+}
+return Retorno;
+}
+
+
+
 }
 
 
@@ -374,10 +376,35 @@ public MultiPartFormDataPart(){
 
 }
 
-public string data_to_string_valid_chars(){
-return uHttpServer.data_to_string_valid_chars(this.data);
+public string get_head_param(string head, string name){
+string Retorno = "";
+this.get_header_for_name(head).get_param_for_name(name);
+return Retorno;
 }
 
+public MultiPartFormDataHeader get_header_content_disposition(){
+return this.get_header_for_name("Content-Disposition");
+}
+
+public string get_content_disposition_param(string name){
+return this.get_header_content_disposition().get_param_for_name(name);
+}
+
+
+public MultiPartFormDataHeader get_header_for_name(string name){
+var H = new MultiPartFormDataHeader();
+foreach(var h in this.Headers){
+if(h.name == name){
+H = h;
+break;
+}
+}
+return H;
+}
+
+public string get_data_as_string_valid_unichars(){
+return uHttpServer.get_data_as_string_valid_unichars(this.data);
+}
 
 
 }
@@ -385,7 +412,8 @@ return uHttpServer.data_to_string_valid_chars(this.data);
 
 public class MultiPartFormData:GLib.Object {
 
-public HashMap<int, MultiPartFormDataPart> Parts{get; private set; default = new HashMap<int, MultiPartFormDataPart>();}
+private HashMap<int, MultiPartFormDataPart> PartsInternal = new HashMap<int, MultiPartFormDataPart>();
+public ArrayList<MultiPartFormDataPart> Parts {get; private set; default = new ArrayList<MultiPartFormDataPart>();}
 
 [Description(nick = "Multi Part Form Boundary", blurb = "Boundary")]
 public string boundary {get; private set; default = "uHTTPServerxyzqwertyuiopasdf2f3g5h5j";}
@@ -420,6 +448,8 @@ catch(Error e){
 
 // Si es multipart entonces obtenemos las partes individuales
 if(this.is_multipart_form_data){
+
+//stdout.printf("\n%s\n", (string)d);
 //string nameHeader = "";
 //string valueHeader = "";
 
@@ -440,8 +470,9 @@ Regex RxHeaderWparam = new Regex("""(?<header>[\w+\-]+): (?<value>[\w\-\/]+);(?<
 Regex RxHeaderParameter = new Regex("""\s+(?<name>[\w+\-]+)="(?<value>[\d.\-\w\/\\\s\=\\;]+)"""+"\"");
 
 foreach(var x in d){
-if(uHttpServer.character_valid(x)){
-temp.append_unichar(x);
+unichar uc = x;
+if(uc.validate() && !uc.iscntrl()){
+temp.append_unichar(uc);
 //temp2.append_unichar(x);
 }
 
@@ -456,13 +487,7 @@ if(temp.str.has_suffix(this.boundary)){
 //temp.truncate(0);
 
 if(block>0 && data && j > 0){
-//int f = i-temp.str.data.length-2;
-//e.resize(e.length-this.boundary.data.length);
-//e.resize(1);
-//stdout.printf("\nDatos:\n%s\n", (string)e.slice(0, e.size-this.boundary.data.length-6).to_array());
-//stdout.printf("\ne2=(%i)\n", e.length);
-this.Parts[block].data = e.slice(0, e.size-this.boundary.data.length-6).to_array();
-//stdout.printf("\ndatalength=(%i)\n", this.Parts[block].data.length);
+this.PartsInternal[block].data = e.slice(0, e.size-this.boundary.data.length-6).to_array();
 e.clear();
 }
 
@@ -473,7 +498,7 @@ block++;
 header = false;
 data = false;
 j = 0;
-this.Parts[block] = new MultiPartFormDataPart();
+this.PartsInternal[block] = new MultiPartFormDataPart();
 }
 
 
@@ -505,8 +530,8 @@ if(RxHeaderWparam.match(temp.str, RegexMatchFlags.ANCHORED, out matchH)){
 // Con parametros
 h.name = matchH.fetch_named("header");
 h.value = matchH.fetch_named("value");
-this.Parts[block].Headers.add(h);
-stdout.printf("\n[%s][%s][%s]\n", h.name, h.value, matchH.fetch_named("parameters"));
+this.PartsInternal[block].Headers.add(h);
+//stdout.printf("\n[%s][%s][%s]\n", h.name, h.value, matchH.fetch_named("parameters"));
 
 var ps = matchH.fetch_named("parameters").split(";");
 
@@ -515,7 +540,7 @@ foreach(var p in ps){
  if(RxHeaderParameter.match(p, RegexMatchFlags.ANCHORED, out matchP)){
 // Parametros
 h.param[matchP.fetch_named("name")] = matchP.fetch_named("value"); 
-stdout.printf("\n[%s]=[%s]\n", matchP.fetch_named("name"), matchP.fetch_named("value"));
+//stdout.printf("\n[%s]=[%s]\n", matchP.fetch_named("name"), matchP.fetch_named("value"));
 }
 }
 
@@ -524,8 +549,8 @@ stdout.printf("\n[%s]=[%s]\n", matchP.fetch_named("name"), matchP.fetch_named("v
 h.name = matchH.fetch_named("header");
 h.value = matchH.fetch_named("value");
 //h.
-this.Parts[block].Headers.add(h);
-stdout.printf("\n[%s][%s]\n", h.name, h.value);
+this.PartsInternal[block].Headers.add(h);
+//stdout.printf("\n[%s][%s]\n", h.name, h.value);
 }
 
 temp.truncate(0);
@@ -534,20 +559,18 @@ temp.truncate(0);
 
 }
 
-
-
-
-
 i++;
 //temp.truncate();
 }
+if(block>0){
+this.PartsInternal[block].data = e.slice(0, e.size-this.boundary.data.length-8).to_array();
+}
 
-this.Parts[block].data = e.slice(0, e.size-this.boundary.data.length-8).to_array();
+foreach(var m in this.PartsInternal.entries){
+this.Parts.add(m.value);
+}
 
-
-
-
-
+PartsInternal.clear();
 }
 
 catch(Error e){
@@ -1068,21 +1091,24 @@ public void run_without_mainloop(){
   //  ml.run();
 }
 
-public static bool character_valid(unichar uc){
-bool R = false;
-if((uc.type() != UnicodeType.UNASSIGNED) && (uc.type() != UnicodeType.CONTROL) && uc.validate()){
-R = true;
+public static string get_data_as_string_valid_unichars(uint8[] d){
+var R = new StringBuilder();
+string Cadena = (string)d;
+
+int CLength = d.length;
+unichar caracter;
+if(CLength > 0){
+for(int i = 0; Cadena.get_next_char(ref i, out caracter);){
+
+if(i>CLength){
+break;
 }
-return R;
+if(caracter.validate()){
+R.append_unichar(caracter);
+}
+}
 }
 
-public static string data_to_string_valid_chars(uint8[] d){
-var R = new StringBuilder();
-foreach(var v in d){
-if(character_valid(v)){
-R.append_unichar(v);
-}
-}
 return R.str;
 }
 
