@@ -302,6 +302,7 @@ edwinspireuHttpMultiPartFormDataHeader* edwinspire_uhttp_multi_part_form_data_pa
 gchar* edwinspire_uhttp_multi_part_form_data_part_get_content_disposition_param (edwinspireuHttpMultiPartFormDataPart* self, const gchar* name);
 edwinspireuHttpMultiPartFormDataHeader* edwinspire_uhttp_multi_part_form_data_part_get_header_for_name (edwinspireuHttpMultiPartFormDataPart* self, const gchar* name);
 gchar* edwinspire_uhttp_multi_part_form_data_part_get_data_as_string_valid_unichars (edwinspireuHttpMultiPartFormDataPart* self);
+gchar* edwinspire_uhttp_multi_part_form_data_part_compute_md5_for_data (edwinspireuHttpMultiPartFormDataPart* self);
 GeeArrayList* edwinspire_uhttp_multi_part_form_data_part_get_Headers (edwinspireuHttpMultiPartFormDataPart* self);
 void edwinspire_uhttp_multi_part_form_data_part_set_Headers (edwinspireuHttpMultiPartFormDataPart* self, GeeArrayList* value);
 guint8* edwinspire_uhttp_multi_part_form_data_part_get_data (edwinspireuHttpMultiPartFormDataPart* self, int* result_length1);
@@ -330,6 +331,8 @@ edwinspireuHttpuHttpServer* edwinspire_uhttp_uhttp_server_construct (GType objec
 gchar* edwinspire_uhttp_uhttp_server_EnumToXml (GType typeenum, gboolean fieldtextasbase64);
 void edwinspire_uhttp_uhttp_server_run (edwinspireuHttpuHttpServer* self);
 void edwinspire_uhttp_uhttp_server_run_without_mainloop (edwinspireuHttpuHttpServer* self);
+gboolean edwinspire_uhttp_uhttp_server_upload_file (edwinspireuHttpuHttpServer* self, const gchar* subpath_file, guint8* data, int data_length1, ...);
+gboolean edwinspire_uhttp_uhttp_server_save_file (const gchar* path, guint8* data, int data_length1);
 gchar* edwinspire_uhttp_uhttp_server_get_data_as_string_valid_unichars (guint8* d, int d_length1);
 gchar* edwinspire_uhttp_uhttp_server_GenUrl (const gchar* root, const gchar* value);
 gboolean edwinspire_uhttp_uhttp_server_connection_handler_virtual (edwinspireuHttpuHttpServer* self, edwinspireuHttpRequest* request, GDataOutputStream* dos);
@@ -340,6 +343,7 @@ glong edwinspire_uhttp_uhttp_server_sendEvent (edwinspireuHttpuHttpServer* self,
 gchar* edwinspire_uhttp_uhttp_server_PathLocalFile (edwinspireuHttpuHttpServer* self, const gchar* Filex);
 gchar* edwinspire_uhttp_uhttp_server_ReadFile (const gchar* path);
 guint8* edwinspire_uhttp_uhttp_server_LoadFile (const gchar* Path, int* result_length1);
+gchar* edwinspire_uhttp_uhttp_server_get_extension_file (const gchar* file_name);
 
 
 G_END_DECLS

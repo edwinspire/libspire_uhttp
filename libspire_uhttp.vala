@@ -323,7 +323,6 @@ MultiPartForm.decode(Header["Content-Type"], value);
 }
 }
 
-
 if(!MultiPartForm.is_multipart_form_data){
 
 int CLength = this.ContentLength;
@@ -334,12 +333,7 @@ Form = uHttp.Form.DataDecode(uHttpServer.get_data_as_string_valid_unichars(Data)
 
 }
 
-
-
 }
-
-
-
 
 }
 
@@ -404,6 +398,10 @@ return H;
 
 public string get_data_as_string_valid_unichars(){
 return uHttpServer.get_data_as_string_valid_unichars(this.data);
+}
+
+public string compute_md5_for_data(){
+return Checksum.compute_for_data (ChecksumType.MD5, this.data);
 }
 
 
@@ -1091,6 +1089,47 @@ public void run_without_mainloop(){
   //  ml.run();
 }
 
+public bool upload_file(string subpath_file, uint8[] data, ...){
+return save_file(Path.build_path (Path.DIR_SEPARATOR_S, this.Config.Root, subpath_file), data);
+}
+
+public static bool save_file(string path, uint8[] data){
+bool R = false;
+try{
+
+ stderr.printf ("PATH\n%s\n", path);
+
+        // Reference a local file name
+        var file = File.new_for_path (path);
+
+            // Test for the existence of file
+            if (!file.query_exists ()) {
+
+        var dos = new DataOutputStream (file.create (FileCreateFlags.REPLACE_DESTINATION));
+     
+        // For long string writes, a loop should be used, because sometimes not all data can be written in one run
+        // 'written' is used to check how much of the string has already been written
+        long written = 0;
+        while (written < data.length) { 
+            // sum of the bytes of 'text' that already have been written to the stream
+            written += dos.write (data[written:data.length]);
+        }
+
+if(data.length == written){
+R = true;
+}
+
+}
+
+
+
+}catch(GLib.Error e){
+		stdout.printf ("Error: %s\n", e.message);
+}
+return R;
+}
+
+
 public static string get_data_as_string_valid_unichars(uint8[] d){
 var R = new StringBuilder();
 string Cadena = (string)d;
@@ -1373,15 +1412,24 @@ GLib.warning ("[%s]\n%s\n", e.message, Path);
 }
 return buffer;
 }
+
+public static string get_extension_file(string file_name){
+string basen = Path.get_basename(file_name).reverse();
+var exten = basen.split(".");
+if(exten.length>0){
+basen = exten[0].reverse();
+}else{
+basen = "";
+}
+return basen;
+}
+
   // Define el MIME tpe segun la extension del archivo
 private static string GetMimeTypeToFile(string path){
 
 string Retorno = "text/plain";
 
-string basen = Path.get_basename(path).reverse();
-var exten = basen.split(".");
-if(exten.length>0){
-basen = exten[0].reverse();
+string basen = get_extension_file(path);
 //print("%s\n", basen);
 switch(basen){
 case "html":
@@ -1476,7 +1524,6 @@ default:
 Retorno = "text/plain";
 print(@"Mimetype Desconocido para [$basen] devuelve $Retorno [$path]\n");
 break;
-}
 }
 
 return Retorno;

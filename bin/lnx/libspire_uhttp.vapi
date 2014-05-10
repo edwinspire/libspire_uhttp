@@ -29,6 +29,7 @@ namespace edwinspire {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class MultiPartFormDataPart : GLib.Object {
 			public MultiPartFormDataPart ();
+			public string compute_md5_for_data ();
 			public string get_content_disposition_param (string name);
 			public string get_data_as_string_valid_unichars ();
 			public string get_head_param (string head, string name);
@@ -81,13 +82,16 @@ namespace edwinspire {
 			public static string ReadFile (string path);
 			public virtual bool connection_handler_virtual (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
 			public static string get_data_as_string_valid_unichars (uint8[] d);
+			public static string get_extension_file (string file_name);
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
 			public virtual void run ();
 			public void run_without_mainloop ();
+			public static bool save_file (string path, uint8[] data);
 			public long sendEvent (string data, GLib.DataOutputStream dos);
 			public void sendEventHeader (GLib.DataOutputStream dos);
 			[Description (blurb = "", nick = "Server Response")]
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
+			public bool upload_file (string subpath_file, uint8[] data, ...);
 			public long writeData (uint8[] data_, GLib.DataOutputStream dos);
 			[Description (blurb = "Señal se dispara cuando una página no es encontrada en el servidor", nick = "Signal Request URL No Found")]
 			public signal void NoFoundURL (edwinspire.uHttp.Request request);
