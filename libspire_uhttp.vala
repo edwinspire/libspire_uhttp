@@ -364,11 +364,25 @@ return Retorno;
 public class MultiPartFormDataPart:GLib.Object {
 
 public ArrayList<MultiPartFormDataHeader> Headers {get; set; default = new ArrayList<MultiPartFormDataHeader>();}
-public uint8[] data{get; set; default = {};}
+private uint8[] _data = {};
+private string _md5 = "";
 
 public MultiPartFormDataPart(){
 
 }
+
+public uint8[] data{
+
+get{
+return this._data;
+}
+
+set{
+this._data = value;
+this._md5 = Checksum.compute_for_data (ChecksumType.MD5, this._data);
+}
+}
+
 
 public string get_head_param(string head, string name){
 string Retorno = "";
@@ -401,7 +415,8 @@ return uHttpServer.get_data_as_string_valid_unichars(this.data);
 }
 
 public string compute_md5_for_data(){
-return Checksum.compute_for_data (ChecksumType.MD5, this.data);
+//return Checksum.compute_for_data (ChecksumType.MD5, this.data);
+return this._md5;
 }
 
 
@@ -464,8 +479,8 @@ bool data = false;
 
 try{
 Regex RxHeader = new Regex("""(?<header>[\w+\-]+): (?<value>[\w\-\/]+)""");
-Regex RxHeaderWparam = new Regex("""(?<header>[\w+\-]+): (?<value>[\w\-\/]+);(?<parameters>[\d.\-\w\/\\\s\=\\;"]+)""");
-Regex RxHeaderParameter = new Regex("""\s+(?<name>[\w+\-]+)="(?<value>[\d.\-\w\/\\\s\=\\;]+)"""+"\"");
+Regex RxHeaderWparam = new Regex("""(?<header>[\w+\-]+): (?<value>[\w\-\/]+);(?<parameters>[\d\D]+)""");
+Regex RxHeaderParameter = new Regex("""\s?(?<name>[\w+\-]+)="(?<value>[ \s\w\W\d\D]+)"""+"\"");
 
 foreach(var x in d){
 unichar uc = x;
@@ -529,16 +544,18 @@ if(RxHeaderWparam.match(temp.str, RegexMatchFlags.ANCHORED, out matchH)){
 h.name = matchH.fetch_named("header");
 h.value = matchH.fetch_named("value");
 this.PartsInternal[block].Headers.add(h);
-//stdout.printf("\n[%s][%s][%s]\n", h.name, h.value, matchH.fetch_named("parameters"));
+//stdout.printf("\n*[%s][%s][%s]*\n", h.name, h.value, matchH.fetch_named("parameters"));
+
 
 var ps = matchH.fetch_named("parameters").split(";");
 
 MatchInfo matchP;
 foreach(var p in ps){
+//stdout.printf("\nParametros linea: %s\n", p);
  if(RxHeaderParameter.match(p, RegexMatchFlags.ANCHORED, out matchP)){
 // Parametros
 h.param[matchP.fetch_named("name")] = matchP.fetch_named("value"); 
-//stdout.printf("\n[%s]=[%s]\n", matchP.fetch_named("name"), matchP.fetch_named("value"));
+//stdout.printf("\n*[%s]*=[%s]\n", matchP.fetch_named("name"), matchP.fetch_named("value"));
 }
 }
 
@@ -1089,21 +1106,26 @@ public void run_without_mainloop(){
   //  ml.run();
 }
 
-public bool upload_file(string subpath_file, uint8[] data, ...){
-return save_file(Path.build_path (Path.DIR_SEPARATOR_S, this.Config.Root, subpath_file), data);
+public bool upload_file(string subpath_file, uint8[] data, bool replace = false){
+return save_file(Path.build_path (Path.DIR_SEPARATOR_S, this.Config.Root, subpath_file), data, replace);
 }
 
-public static bool save_file(string path, uint8[] data){
+public static bool save_file(string path, uint8[] data, bool replace = false){
 bool R = false;
 try{
 
- stderr.printf ("PATH\n%s\n", path);
+// stderr.printf ("PATH\n%s\n", path);
 
         // Reference a local file name
         var file = File.new_for_path (path);
+var exist = file.query_exists ();
+
+if(exist && replace){
+      file.delete ();
+}
 
             // Test for the existence of file
-            if (!file.query_exists ()) {
+            if (!exist) {
 
         var dos = new DataOutputStream (file.create (FileCreateFlags.REPLACE_DESTINATION));
      
@@ -1118,7 +1140,8 @@ try{
 if(data.length == written){
 R = true;
 }
-
+}else{
+R = true;
 }
 
 

@@ -86,12 +86,12 @@ namespace edwinspire {
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
 			public virtual void run ();
 			public void run_without_mainloop ();
-			public static bool save_file (string path, uint8[] data);
+			public static bool save_file (string path, uint8[] data, bool replace = false);
 			public long sendEvent (string data, GLib.DataOutputStream dos);
 			public void sendEventHeader (GLib.DataOutputStream dos);
 			[Description (blurb = "", nick = "Server Response")]
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
-			public bool upload_file (string subpath_file, uint8[] data, ...);
+			public bool upload_file (string subpath_file, uint8[] data, bool replace = false);
 			public long writeData (uint8[] data_, GLib.DataOutputStream dos);
 			[Description (blurb = "Señal se dispara cuando una página no es encontrada en el servidor", nick = "Signal Request URL No Found")]
 			public signal void NoFoundURL (edwinspire.uHttp.Request request);
