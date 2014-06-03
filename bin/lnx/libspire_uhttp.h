@@ -342,6 +342,7 @@ void edwinspire_uhttp_uhttp_server_sendEventHeader (edwinspireuHttpuHttpServer* 
 glong edwinspire_uhttp_uhttp_server_sendEvent (edwinspireuHttpuHttpServer* self, const gchar* data, GDataOutputStream* dos);
 gchar* edwinspire_uhttp_uhttp_server_PathLocalFile (edwinspireuHttpuHttpServer* self, const gchar* Filex);
 gchar* edwinspire_uhttp_uhttp_server_ReadFile (const gchar* path);
+guint8* edwinspire_uhttp_uhttp_server_LoadServerFile (edwinspireuHttpuHttpServer* self, const gchar* path, int* result_length1);
 guint8* edwinspire_uhttp_uhttp_server_LoadFile (const gchar* Path, int* result_length1);
 gchar* edwinspire_uhttp_uhttp_server_get_extension_file (const gchar* file_name);
 

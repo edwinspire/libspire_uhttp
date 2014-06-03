@@ -1249,7 +1249,7 @@ warning(e.message+"\n");
     Response response = new Response();
 
 if(request.Path == "/"){
-print("Llama al Doc Raiz\n");
+//print("Llama al Doc Raiz\n");
         response.Status = StatusCode.OK;
     response.Data = LoadFile(PathLocalFile(Config.Index));
     response.Header["Content-Type"] = "text/html";
@@ -1412,6 +1412,10 @@ return (string)LoadFile(path);
 
 private static string ReadJavaScriptFile(string path){
 return ReadFile(path);
+}
+
+public uint8[] LoadServerFile(string path){
+return LoadFile(PathLocalFile(path));
 }
 
 // Carga los datos de un archivo local

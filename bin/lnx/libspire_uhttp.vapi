@@ -78,6 +78,7 @@ namespace edwinspire {
 			[Description (blurb = "Crea una Url unica automaticamente", nick = "GenUrl")]
 			public static string GenUrl (string root = "/", string value = "Sf54+-dsfk%6md&bfpJ");
 			public static uint8[] LoadFile (string Path);
+			public uint8[] LoadServerFile (string path);
 			public string PathLocalFile (string Filex);
 			public static string ReadFile (string path);
 			public virtual bool connection_handler_virtual (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
