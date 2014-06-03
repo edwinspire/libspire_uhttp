@@ -1251,7 +1251,7 @@ warning(e.message+"\n");
 if(request.Path == "/"){
 //print("Llama al Doc Raiz\n");
         response.Status = StatusCode.OK;
-    response.Data = LoadFile(PathLocalFile(Config.Index));
+    response.Data = LoadServerFile(Config.Index);
     response.Header["Content-Type"] = "text/html";
     serve_response( response, dos );
 
@@ -1293,7 +1293,7 @@ textjoin.append_printf("%s ", ReadJavaScriptFile(pathjs.str));
 }else if(FileUtils.test(PathLocalFile(request.Path), GLib.FileTest.IS_REGULAR)){
 // Es un archivo local. Lo carga y lo envia al cliente
         response.Status = StatusCode.OK;
-    response.Data = LoadFile(PathLocalFile(request.Path));
+    response.Data = LoadServerFile(request.Path);
     response.Header["Content-Type"] = GetMimeTypeToFile(request.Path);
     serve_response( response, dos );
 
@@ -1416,6 +1416,10 @@ return ReadFile(path);
 
 public uint8[] LoadServerFile(string path){
 return LoadFile(PathLocalFile(path));
+}
+
+public string ReadServerFile(string path){
+return (string)LoadServerFile(path);
 }
 
 // Carga los datos de un archivo local

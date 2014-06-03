@@ -343,6 +343,7 @@ glong edwinspire_uhttp_uhttp_server_sendEvent (edwinspireuHttpuHttpServer* self,
 gchar* edwinspire_uhttp_uhttp_server_PathLocalFile (edwinspireuHttpuHttpServer* self, const gchar* Filex);
 gchar* edwinspire_uhttp_uhttp_server_ReadFile (const gchar* path);
 guint8* edwinspire_uhttp_uhttp_server_LoadServerFile (edwinspireuHttpuHttpServer* self, const gchar* path, int* result_length1);
+gchar* edwinspire_uhttp_uhttp_server_ReadServerFile (edwinspireuHttpuHttpServer* self, const gchar* path);
 guint8* edwinspire_uhttp_uhttp_server_LoadFile (const gchar* Path, int* result_length1);
 gchar* edwinspire_uhttp_uhttp_server_get_extension_file (const gchar* file_name);
 

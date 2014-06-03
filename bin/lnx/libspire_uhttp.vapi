@@ -81,6 +81,7 @@ namespace edwinspire {
 			public uint8[] LoadServerFile (string path);
 			public string PathLocalFile (string Filex);
 			public static string ReadFile (string path);
+			public string ReadServerFile (string path);
 			public virtual bool connection_handler_virtual (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
 			public static string get_data_as_string_valid_unichars (uint8[] d);
 			public static string get_extension_file (string file_name);
