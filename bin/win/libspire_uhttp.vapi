@@ -10,6 +10,35 @@ namespace edwinspire {
 			public static Gee.HashMap<string,string> DataDecode (string? data);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class MultiPartFormData : GLib.Object {
+			public MultiPartFormData ();
+			public void decode (string ContentTypeHeader, uint8[] d);
+			public Gee.ArrayList<edwinspire.uHttp.MultiPartFormDataPart> Parts { get; private set; }
+			[Description (blurb = "Boundary", nick = "Multi Part Form Boundary")]
+			public string boundary { get; private set; }
+			public bool is_multipart_form_data { get; private set; }
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class MultiPartFormDataHeader : GLib.Object {
+			public MultiPartFormDataHeader ();
+			public string get_param_for_name (string name);
+			public string name { get; set; }
+			public Gee.HashMap<string,string> param { get; set; }
+			public string value { get; set; }
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class MultiPartFormDataPart : GLib.Object {
+			public MultiPartFormDataPart ();
+			public string compute_md5_for_data ();
+			public string get_content_disposition_param (string name);
+			public string get_data_as_string_valid_unichars ();
+			public string get_head_param (string head, string name);
+			public edwinspire.uHttp.MultiPartFormDataHeader get_header_content_disposition ();
+			public edwinspire.uHttp.MultiPartFormDataHeader get_header_for_name (string name);
+			public Gee.ArrayList<edwinspire.uHttp.MultiPartFormDataHeader> Headers { get; set; }
+			public uint8[] data { get; set; }
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Request")]
 		public class Request : GLib.Object {
 			public Request ();
@@ -21,6 +50,7 @@ namespace edwinspire {
 			public Gee.HashMap<string,string> Form { get; private set; }
 			public Gee.HashMap<string,string> Header { get; private set; }
 			public edwinspire.uHttp.RequestMethod Method { get; private set; }
+			public edwinspire.uHttp.MultiPartFormData MultiPartForm { get; private set; }
 			public string Path { get; private set; }
 			[Description (blurb = "Query pased by url, Method GET", nick = "Query")]
 			public Gee.HashMap<string,string> Query { get; private set; }
@@ -41,23 +71,33 @@ namespace edwinspire {
 		public class uHttpServer : GLib.Object {
 			[Description (blurb = " Data Config uHTTP", nick = "Config uHTTP")]
 			public edwinspire.uHttp.uHttpServerConfig Config;
+			public int heartbeatseconds;
 			[Description (blurb = "", nick = "Constructor uHttpServer")]
 			public uHttpServer (int max_threads = 100);
 			public static string EnumToXml (GLib.Type typeenum, bool fieldtextasbase64 = true);
 			[Description (blurb = "Crea una Url unica automaticamente", nick = "GenUrl")]
 			public static string GenUrl (string root = "/", string value = "Sf54+-dsfk%6md&bfpJ");
 			public static uint8[] LoadFile (string Path);
+			public uint8[] LoadServerFile (string path);
 			public string PathLocalFile (string Filex);
 			public static string ReadFile (string path);
+			public string ReadServerFile (string path);
 			public virtual bool connection_handler_virtual (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
+			public static string get_data_as_string_valid_unichars (uint8[] d);
+			public static string get_extension_file (string file_name);
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
 			public virtual void run ();
 			public void run_without_mainloop ();
+			public static bool save_file (string path, uint8[] data, bool replace = false);
+			public long sendEvent (string data, GLib.DataOutputStream dos);
+			public void sendEventHeader (GLib.DataOutputStream dos);
 			[Description (blurb = "", nick = "Server Response")]
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
+			public bool upload_file (string subpath_file, uint8[] data, bool replace = false);
 			public long writeData (uint8[] data_, GLib.DataOutputStream dos);
 			[Description (blurb = "Señal se dispara cuando una página no es encontrada en el servidor", nick = "Signal Request URL No Found")]
 			public signal void NoFoundURL (edwinspire.uHttp.Request request);
+			public signal void heartbeat (int seconds);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Micro embebed HTTP Web Server config file", nick = "HTTP Server Config")]
@@ -89,7 +129,8 @@ namespace edwinspire {
 			UNKNOW,
 			GET,
 			POST,
-			HEAD
+			HEAD,
+			PUT
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Status Code")]

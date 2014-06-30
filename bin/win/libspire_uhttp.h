@@ -42,6 +42,39 @@ typedef struct _edwinspireuHttpRequest edwinspireuHttpRequest;
 typedef struct _edwinspireuHttpRequestClass edwinspireuHttpRequestClass;
 typedef struct _edwinspireuHttpRequestPrivate edwinspireuHttpRequestPrivate;
 
+#define EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA (edwinspire_uhttp_multi_part_form_data_get_type ())
+#define EDWINSPIRE_UHTTP_MULTI_PART_FORM_DATA(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA, edwinspireuHttpMultiPartFormData))
+#define EDWINSPIRE_UHTTP_MULTI_PART_FORM_DATA_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA, edwinspireuHttpMultiPartFormDataClass))
+#define EDWINSPIRE_UHTTP_IS_MULTI_PART_FORM_DATA(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA))
+#define EDWINSPIRE_UHTTP_IS_MULTI_PART_FORM_DATA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA))
+#define EDWINSPIRE_UHTTP_MULTI_PART_FORM_DATA_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA, edwinspireuHttpMultiPartFormDataClass))
+
+typedef struct _edwinspireuHttpMultiPartFormData edwinspireuHttpMultiPartFormData;
+typedef struct _edwinspireuHttpMultiPartFormDataClass edwinspireuHttpMultiPartFormDataClass;
+
+#define EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_HEADER (edwinspire_uhttp_multi_part_form_data_header_get_type ())
+#define EDWINSPIRE_UHTTP_MULTI_PART_FORM_DATA_HEADER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_HEADER, edwinspireuHttpMultiPartFormDataHeader))
+#define EDWINSPIRE_UHTTP_MULTI_PART_FORM_DATA_HEADER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_HEADER, edwinspireuHttpMultiPartFormDataHeaderClass))
+#define EDWINSPIRE_UHTTP_IS_MULTI_PART_FORM_DATA_HEADER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_HEADER))
+#define EDWINSPIRE_UHTTP_IS_MULTI_PART_FORM_DATA_HEADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_HEADER))
+#define EDWINSPIRE_UHTTP_MULTI_PART_FORM_DATA_HEADER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_HEADER, edwinspireuHttpMultiPartFormDataHeaderClass))
+
+typedef struct _edwinspireuHttpMultiPartFormDataHeader edwinspireuHttpMultiPartFormDataHeader;
+typedef struct _edwinspireuHttpMultiPartFormDataHeaderClass edwinspireuHttpMultiPartFormDataHeaderClass;
+typedef struct _edwinspireuHttpMultiPartFormDataHeaderPrivate edwinspireuHttpMultiPartFormDataHeaderPrivate;
+
+#define EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_PART (edwinspire_uhttp_multi_part_form_data_part_get_type ())
+#define EDWINSPIRE_UHTTP_MULTI_PART_FORM_DATA_PART(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_PART, edwinspireuHttpMultiPartFormDataPart))
+#define EDWINSPIRE_UHTTP_MULTI_PART_FORM_DATA_PART_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_PART, edwinspireuHttpMultiPartFormDataPartClass))
+#define EDWINSPIRE_UHTTP_IS_MULTI_PART_FORM_DATA_PART(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_PART))
+#define EDWINSPIRE_UHTTP_IS_MULTI_PART_FORM_DATA_PART_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_PART))
+#define EDWINSPIRE_UHTTP_MULTI_PART_FORM_DATA_PART_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_MULTI_PART_FORM_DATA_PART, edwinspireuHttpMultiPartFormDataPartClass))
+
+typedef struct _edwinspireuHttpMultiPartFormDataPart edwinspireuHttpMultiPartFormDataPart;
+typedef struct _edwinspireuHttpMultiPartFormDataPartClass edwinspireuHttpMultiPartFormDataPartClass;
+typedef struct _edwinspireuHttpMultiPartFormDataPartPrivate edwinspireuHttpMultiPartFormDataPartPrivate;
+typedef struct _edwinspireuHttpMultiPartFormDataPrivate edwinspireuHttpMultiPartFormDataPrivate;
+
 #define EDWINSPIRE_UHTTP_TYPE_RESPONSE (edwinspire_uhttp_response_get_type ())
 #define EDWINSPIRE_UHTTP_RESPONSE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_RESPONSE, edwinspireuHttpResponse))
 #define EDWINSPIRE_UHTTP_RESPONSE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_RESPONSE, edwinspireuHttpResponseClass))
@@ -139,7 +172,8 @@ typedef enum  {
 	EDWINSPIRE_UHTTP_REQUEST_METHOD_UNKNOW,
 	EDWINSPIRE_UHTTP_REQUEST_METHOD_GET,
 	EDWINSPIRE_UHTTP_REQUEST_METHOD_POST,
-	EDWINSPIRE_UHTTP_REQUEST_METHOD_HEAD
+	EDWINSPIRE_UHTTP_REQUEST_METHOD_HEAD,
+	EDWINSPIRE_UHTTP_REQUEST_METHOD_PUT
 } edwinspireuHttpRequestMethod;
 
 struct _edwinspireuHttpForm {
@@ -157,6 +191,33 @@ struct _edwinspireuHttpRequest {
 };
 
 struct _edwinspireuHttpRequestClass {
+	GObjectClass parent_class;
+};
+
+struct _edwinspireuHttpMultiPartFormDataHeader {
+	GObject parent_instance;
+	edwinspireuHttpMultiPartFormDataHeaderPrivate * priv;
+};
+
+struct _edwinspireuHttpMultiPartFormDataHeaderClass {
+	GObjectClass parent_class;
+};
+
+struct _edwinspireuHttpMultiPartFormDataPart {
+	GObject parent_instance;
+	edwinspireuHttpMultiPartFormDataPartPrivate * priv;
+};
+
+struct _edwinspireuHttpMultiPartFormDataPartClass {
+	GObjectClass parent_class;
+};
+
+struct _edwinspireuHttpMultiPartFormData {
+	GObject parent_instance;
+	edwinspireuHttpMultiPartFormDataPrivate * priv;
+};
+
+struct _edwinspireuHttpMultiPartFormDataClass {
 	GObjectClass parent_class;
 };
 
@@ -189,6 +250,7 @@ struct _edwinspireuHttpuHttpServerConfigClass {
 struct _edwinspireuHttpuHttpServer {
 	GObject parent_instance;
 	edwinspireuHttpuHttpServerPrivate * priv;
+	gint heartbeatseconds;
 	edwinspireuHttpuHttpServerConfig* Config;
 };
 
@@ -217,9 +279,40 @@ GeeHashMap* edwinspire_uhttp_request_get_Query (edwinspireuHttpRequest* self);
 GeeHashMap* edwinspire_uhttp_request_get_Header (edwinspireuHttpRequest* self);
 GeeHashMap* edwinspire_uhttp_request_get_Form (edwinspireuHttpRequest* self);
 gboolean edwinspire_uhttp_request_get_isWebSocketHandshake (edwinspireuHttpRequest* self);
+GType edwinspire_uhttp_multi_part_form_data_get_type (void) G_GNUC_CONST;
+edwinspireuHttpMultiPartFormData* edwinspire_uhttp_request_get_MultiPartForm (edwinspireuHttpRequest* self);
 gint edwinspire_uhttp_request_get_ContentLength (edwinspireuHttpRequest* self);
 guint8* edwinspire_uhttp_request_get_Data (edwinspireuHttpRequest* self, int* result_length1);
 void edwinspire_uhttp_request_set_Data (edwinspireuHttpRequest* self, guint8* value, int value_length1);
+GType edwinspire_uhttp_multi_part_form_data_header_get_type (void) G_GNUC_CONST;
+edwinspireuHttpMultiPartFormDataHeader* edwinspire_uhttp_multi_part_form_data_header_new (void);
+edwinspireuHttpMultiPartFormDataHeader* edwinspire_uhttp_multi_part_form_data_header_construct (GType object_type);
+gchar* edwinspire_uhttp_multi_part_form_data_header_get_param_for_name (edwinspireuHttpMultiPartFormDataHeader* self, const gchar* name);
+const gchar* edwinspire_uhttp_multi_part_form_data_header_get_name (edwinspireuHttpMultiPartFormDataHeader* self);
+void edwinspire_uhttp_multi_part_form_data_header_set_name (edwinspireuHttpMultiPartFormDataHeader* self, const gchar* value);
+const gchar* edwinspire_uhttp_multi_part_form_data_header_get_value (edwinspireuHttpMultiPartFormDataHeader* self);
+void edwinspire_uhttp_multi_part_form_data_header_set_value (edwinspireuHttpMultiPartFormDataHeader* self, const gchar* value);
+GeeHashMap* edwinspire_uhttp_multi_part_form_data_header_get_param (edwinspireuHttpMultiPartFormDataHeader* self);
+void edwinspire_uhttp_multi_part_form_data_header_set_param (edwinspireuHttpMultiPartFormDataHeader* self, GeeHashMap* value);
+GType edwinspire_uhttp_multi_part_form_data_part_get_type (void) G_GNUC_CONST;
+edwinspireuHttpMultiPartFormDataPart* edwinspire_uhttp_multi_part_form_data_part_new (void);
+edwinspireuHttpMultiPartFormDataPart* edwinspire_uhttp_multi_part_form_data_part_construct (GType object_type);
+gchar* edwinspire_uhttp_multi_part_form_data_part_get_head_param (edwinspireuHttpMultiPartFormDataPart* self, const gchar* head, const gchar* name);
+edwinspireuHttpMultiPartFormDataHeader* edwinspire_uhttp_multi_part_form_data_part_get_header_content_disposition (edwinspireuHttpMultiPartFormDataPart* self);
+gchar* edwinspire_uhttp_multi_part_form_data_part_get_content_disposition_param (edwinspireuHttpMultiPartFormDataPart* self, const gchar* name);
+edwinspireuHttpMultiPartFormDataHeader* edwinspire_uhttp_multi_part_form_data_part_get_header_for_name (edwinspireuHttpMultiPartFormDataPart* self, const gchar* name);
+gchar* edwinspire_uhttp_multi_part_form_data_part_get_data_as_string_valid_unichars (edwinspireuHttpMultiPartFormDataPart* self);
+gchar* edwinspire_uhttp_multi_part_form_data_part_compute_md5_for_data (edwinspireuHttpMultiPartFormDataPart* self);
+GeeArrayList* edwinspire_uhttp_multi_part_form_data_part_get_Headers (edwinspireuHttpMultiPartFormDataPart* self);
+void edwinspire_uhttp_multi_part_form_data_part_set_Headers (edwinspireuHttpMultiPartFormDataPart* self, GeeArrayList* value);
+guint8* edwinspire_uhttp_multi_part_form_data_part_get_data (edwinspireuHttpMultiPartFormDataPart* self, int* result_length1);
+void edwinspire_uhttp_multi_part_form_data_part_set_data (edwinspireuHttpMultiPartFormDataPart* self, guint8* value, int value_length1);
+edwinspireuHttpMultiPartFormData* edwinspire_uhttp_multi_part_form_data_new (void);
+edwinspireuHttpMultiPartFormData* edwinspire_uhttp_multi_part_form_data_construct (GType object_type);
+void edwinspire_uhttp_multi_part_form_data_decode (edwinspireuHttpMultiPartFormData* self, const gchar* ContentTypeHeader, guint8* d, int d_length1);
+GeeArrayList* edwinspire_uhttp_multi_part_form_data_get_Parts (edwinspireuHttpMultiPartFormData* self);
+const gchar* edwinspire_uhttp_multi_part_form_data_get_boundary (edwinspireuHttpMultiPartFormData* self);
+gboolean edwinspire_uhttp_multi_part_form_data_get_is_multipart_form_data (edwinspireuHttpMultiPartFormData* self);
 GType edwinspire_uhttp_response_get_type (void) G_GNUC_CONST;
 edwinspireuHttpResponse* edwinspire_uhttp_response_new (void);
 edwinspireuHttpResponse* edwinspire_uhttp_response_construct (GType object_type);
@@ -238,13 +331,21 @@ edwinspireuHttpuHttpServer* edwinspire_uhttp_uhttp_server_construct (GType objec
 gchar* edwinspire_uhttp_uhttp_server_EnumToXml (GType typeenum, gboolean fieldtextasbase64);
 void edwinspire_uhttp_uhttp_server_run (edwinspireuHttpuHttpServer* self);
 void edwinspire_uhttp_uhttp_server_run_without_mainloop (edwinspireuHttpuHttpServer* self);
+gboolean edwinspire_uhttp_uhttp_server_upload_file (edwinspireuHttpuHttpServer* self, const gchar* subpath_file, guint8* data, int data_length1, gboolean replace);
+gboolean edwinspire_uhttp_uhttp_server_save_file (const gchar* path, guint8* data, int data_length1, gboolean replace);
+gchar* edwinspire_uhttp_uhttp_server_get_data_as_string_valid_unichars (guint8* d, int d_length1);
 gchar* edwinspire_uhttp_uhttp_server_GenUrl (const gchar* root, const gchar* value);
 gboolean edwinspire_uhttp_uhttp_server_connection_handler_virtual (edwinspireuHttpuHttpServer* self, edwinspireuHttpRequest* request, GDataOutputStream* dos);
 void edwinspire_uhttp_uhttp_server_serve_response (edwinspireuHttpuHttpServer* self, edwinspireuHttpResponse* response, GDataOutputStream* dos);
 glong edwinspire_uhttp_uhttp_server_writeData (edwinspireuHttpuHttpServer* self, guint8* data_, int data__length1, GDataOutputStream* dos);
+void edwinspire_uhttp_uhttp_server_sendEventHeader (edwinspireuHttpuHttpServer* self, GDataOutputStream* dos);
+glong edwinspire_uhttp_uhttp_server_sendEvent (edwinspireuHttpuHttpServer* self, const gchar* data, GDataOutputStream* dos);
 gchar* edwinspire_uhttp_uhttp_server_PathLocalFile (edwinspireuHttpuHttpServer* self, const gchar* Filex);
 gchar* edwinspire_uhttp_uhttp_server_ReadFile (const gchar* path);
+guint8* edwinspire_uhttp_uhttp_server_LoadServerFile (edwinspireuHttpuHttpServer* self, const gchar* path, int* result_length1);
+gchar* edwinspire_uhttp_uhttp_server_ReadServerFile (edwinspireuHttpuHttpServer* self, const gchar* path);
 guint8* edwinspire_uhttp_uhttp_server_LoadFile (const gchar* Path, int* result_length1);
+gchar* edwinspire_uhttp_uhttp_server_get_extension_file (const gchar* file_name);
 
 
 G_END_DECLS
