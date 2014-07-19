@@ -867,6 +867,34 @@ namespace edwinspire.uHttp {
 			return Retorno;
 		}
 	}
+	
+    public class TemporaryVariables:GLib.Object{
+
+        private HashMap<string, string> Values = new HashMap<string, string>();
+
+        public TemporaryVariables(){
+        }
+
+        public void set_value(string n, string v, int t = 10){
+        Values[n] = v; 
+        }
+
+        public string get_value(string n){
+        string r = "";
+        if(Values.has_key(n)){
+        r = Values[n];
+        }
+        return r;
+        }
+        
+        public string set_value_random_name(string v, int t = 10){
+        string n = "";
+        Values[n] = v;
+        return n; 
+        }       
+
+    }	
+	
 	[Description(nick = "HTTP Server", blurb = "Micro embebed HTTP Web Server")]
 	public class uHttpServer:GLib.Object {
 		[Description(nick = "Signal Request URL No Found", blurb = "Señal se dispara cuando una página no es encontrada en el servidor")]
@@ -876,6 +904,8 @@ namespace edwinspire.uHttp {
 		private ThreadedSocketService tss;
 		[Description(nick = "Config uHTTP", blurb = " Data Config uHTTP")]
 		public uHttpServerConfig Config = new uHttpServerConfig();
+  //  	[Description(nick = "", blurb = " Data Config uHTTP")]
+		public TemporaryVariables TempGlobalVars  = new TemporaryVariables();
 		[Description(nick = "Constructor uHttpServer", blurb = "")]  
 		  public uHttpServer(int max_threads = 100) {
 			//make the threaded socket service with hella possible threads

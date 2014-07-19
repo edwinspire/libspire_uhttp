@@ -67,10 +67,18 @@ namespace edwinspire {
 			public string ToString ();
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class TemporaryVariables : GLib.Object {
+			public TemporaryVariables ();
+			public string get_value (string n);
+			public void set_value (string n, string v, int t = 10);
+			public string set_value_random_name (string v, int t = 10);
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Micro embebed HTTP Web Server", nick = "HTTP Server")]
 		public class uHttpServer : GLib.Object {
 			[Description (blurb = " Data Config uHTTP", nick = "Config uHTTP")]
 			public edwinspire.uHttp.uHttpServerConfig Config;
+			public edwinspire.uHttp.TemporaryVariables TempGlobalVars;
 			public int heartbeatseconds;
 			[Description (blurb = "", nick = "Constructor uHttpServer")]
 			public uHttpServer (int max_threads = 100);

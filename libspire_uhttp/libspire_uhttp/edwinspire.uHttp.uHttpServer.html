@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+  <head>
+    <title>edwinspire.uHttp.uHttpServer -- Vala Binding Reference</title>
+    <link href="../style.css" rel="stylesheet" type="text/css"/><script src="../scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">edwinspire.uHttp.uHttpServer Reference Manual</div>
+    <div class="site_body">
+      <div class="site_navigation">
+        <ul class="navi_main">
+          <li class="package_index"><a href="../index.html">Packages</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="package"><a href="index.htm">libspire_uhttp</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace"><a href="edwinspire.html">edwinspire</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="namespace"><a href="edwinspire.uHttp.html">uHttp</a></li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="class">uHttpServer</li>
+        </ul>
+        <hr class="navi_hr"/>
+        <ul class="navi_main">
+          <li class="static_method"><a href="edwinspire.uHttp.uHttpServer.EnumToXml.html">EnumToXml</a></li>
+          <li class="static_method"><a href="edwinspire.uHttp.uHttpServer.GenUrl.html">GenUrl</a></li>
+          <li class="static_method"><a href="edwinspire.uHttp.uHttpServer.LoadFile.html">LoadFile</a></li>
+          <li class="static_method"><a href="edwinspire.uHttp.uHttpServer.ReadFile.html">ReadFile</a></li>
+          <li class="static_method"><a href="edwinspire.uHttp.uHttpServer.get_data_as_string_valid_unichars.html">get_data_as_string_valid_unichars
+            </a></li>
+          <li class="static_method"><a href="edwinspire.uHttp.uHttpServer.get_extension_file.html">get_extension_file</a></li>
+          <li class="static_method"><a href="edwinspire.uHttp.uHttpServer.save_file.html">save_file</a></li>
+          <li class="creation_method"><a href="edwinspire.uHttp.uHttpServer.uHttpServer.html">uHttpServer</a></li>
+          <li class="method"><a href="edwinspire.uHttp.uHttpServer.LoadServerFile.html">LoadServerFile</a></li>
+          <li class="method"><a href="edwinspire.uHttp.uHttpServer.PathLocalFile.html">PathLocalFile</a></li>
+          <li class="method"><a href="edwinspire.uHttp.uHttpServer.ReadServerFile.html">ReadServerFile</a></li>
+          <li class="virtual_method"><a href="edwinspire.uHttp.uHttpServer.connection_handler_virtual.html">connection_handler_virtual</a></li>
+          <li class="virtual_method"><a href="edwinspire.uHttp.uHttpServer.run.html">run</a></li>
+          <li class="method"><a href="edwinspire.uHttp.uHttpServer.run_without_mainloop.html">run_without_mainloop</a></li>
+          <li class="method"><a href="edwinspire.uHttp.uHttpServer.sendEvent.html">sendEvent</a></li>
+          <li class="method"><a href="edwinspire.uHttp.uHttpServer.sendEventHeader.html">sendEventHeader</a></li>
+          <li class="method"><a href="edwinspire.uHttp.uHttpServer.serve_response.html">serve_response</a></li>
+          <li class="method"><a href="edwinspire.uHttp.uHttpServer.upload_file.html">upload_file</a></li>
+          <li class="method"><a href="edwinspire.uHttp.uHttpServer.writeData.html">writeData</a></li>
+          <li class="signal"><a href="edwinspire.uHttp.uHttpServer.NoFoundURL.html">NoFoundURL</a></li>
+          <li class="signal"><a href="edwinspire.uHttp.uHttpServer.heartbeat.html">heartbeat</a></li>
+          <li class="field"><a href="edwinspire.uHttp.uHttpServer.Config.html">Config</a></li>
+          <li class="field"><a href="edwinspire.uHttp.uHttpServer.TempGlobalVars.html">TempGlobalVars</a></li>
+          <li class="field"><a href="edwinspire.uHttp.uHttpServer.heartbeatseconds.html">heartbeatseconds</a></li>
+        </ul>
+      </div>
+      <div class="site_content">
+        <h1 class="main_title">uHttpServer</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        
+        <img class="main_diagram" usemap="#edwinspire.uHttp.uHttpServer" alt="Object hierarchy for uHttpServer" src="img/edwinspire.uHttp.uHttpServer.png"/>
+      
+
+      <map id="edwinspire.uHttp.uHttpServer" name="edwinspire.uHttp.uHttpServer">
+<area shape="rect" id="node1" href="edwinspire.uHttp.uHttpServer.html" title="edwinspire.uHttp.uHttpServer" alt="" coords="5,101,245,149"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span css="class">uHttpServer</span></b> : <span class="main_type"><code>Object</code></span>
+        </div><br/>
+        <div class="namespace_note"><b>Namespace:</b> edwinspire.uHttp</div>
+        <div class="package_note"><b>Package:</b> libspire_uhttp</div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><code>string</code></span> <b><a href="edwinspire.uHttp.uHttpServer.EnumToXml.html" class="static_method">EnumToXml</a></b> (<span class="main_type"><code>Type</code></span> typeenum, <span class="main_basic_type"><code>bool</code></span> fieldtextasbase64 = <span class="main_optional_parameter">true</span>)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><code>bool</code></span> <b><a href="edwinspire.uHttp.uHttpServer.save_file.html" class="static_method">save_file</a></b> (<span class="main_basic_type"><code>string</code></span> path, <span class="main_basic_type"><code>uint8</code></span>[] data, <span class="main_basic_type"><code>bool</code></span> replace = <span class="main_optional_parameter">false</span>)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><code>string</code></span> <b><a href="edwinspire.uHttp.uHttpServer.get_data_as_string_valid_unichars.html" class="static_method">get_data_as_string_valid_unichars</a></b> (<span class="main_basic_type"><code>uint8</code></span>[] d)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><code>string</code></span> <b><a href="edwinspire.uHttp.uHttpServer.GenUrl.html" class="static_method">GenUrl</a></b> (<span class="main_basic_type"><code>string</code></span> root = <span class="main_optional_parameter">"/"</span>, <span class="main_basic_type"><code>string</code></span> value = <span class="main_optional_parameter">"Sf54+-dsfk%6md&amp;bfpJ"</span>)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><code>string</code></span> <b><a href="edwinspire.uHttp.uHttpServer.ReadFile.html" class="static_method">ReadFile</a></b> (<span class="main_basic_type"><code>string</code></span> path)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><code>uint8</code></span>[] <b><a href="edwinspire.uHttp.uHttpServer.LoadFile.html" class="static_method">LoadFile</a></b> (<span class="main_basic_type"><code>string</code></span> Path)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><code>string</code></span> <b><a href="edwinspire.uHttp.uHttpServer.get_extension_file.html" class="static_method">get_extension_file</a></b> (<span class="main_basic_type"><code>string</code></span> file_name)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+        </ul>
+        <h3 class="main_title">Creation methods:</h3>
+        <ul class="navi_inline">
+          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="edwinspire.uHttp.uHttpServer.uHttpServer.html" class="creation_method">uHttpServer</a></b> (<span class="main_basic_type"><code>int</code></span> max_threads = <span class="main_optional_parameter">100</span>)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+        </ul>
+        <h3 class="main_title">Methods:</h3>
+        <ul class="navi_inline">
+          <li class="virtual_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">virtual</span> <span class="main_keyword">void</span> <b><a href="edwinspire.uHttp.uHttpServer.run.html" class="virtual_method">run</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="edwinspire.uHttp.uHttpServer.run_without_mainloop.html" class="method">run_without_mainloop</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>bool</code></span> <b><a href="edwinspire.uHttp.uHttpServer.upload_file.html" class="method">upload_file</a></b> (<span class="main_basic_type"><code>string</code></span> subpath_file, <span class="main_basic_type"><code>uint8</code></span>[] data, <span class="main_basic_type"><code>bool</code></span> replace = <span class="main_optional_parameter">false</span>)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="virtual_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">virtual</span> <span class="main_basic_type"><code>bool</code></span> <b><a href="edwinspire.uHttp.uHttpServer.connection_handler_virtual.html" class="virtual_method">connection_handler_virtual</a></b> (<span class="main_type"><a href="edwinspire.uHttp.Request.html" class="class">Request</a></span> request, <span class="main_type"><code>DataOutputStream</code></span> dos)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="edwinspire.uHttp.uHttpServer.serve_response.html" class="method">serve_response</a></b> (<span class="main_type"><a href="edwinspire.uHttp.Response.html" class="class">Response</a></span> response, <span class="main_type"><code>DataOutputStream</code></span> dos)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>long</code></span> <b><a href="edwinspire.uHttp.uHttpServer.writeData.html" class="method">writeData</a></b> (<span class="main_basic_type"><code>uint8</code></span>[] data_, <span class="main_type"><code>DataOutputStream</code></span> dos)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="edwinspire.uHttp.uHttpServer.sendEventHeader.html" class="method">sendEventHeader</a></b> (<span class="main_type"><code>DataOutputStream</code></span> dos)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>long</code></span> <b><a href="edwinspire.uHttp.uHttpServer.sendEvent.html" class="method">sendEvent</a></b> (<span class="main_basic_type"><code>string</code></span> data, <span class="main_type"><code>DataOutputStream</code></span> dos)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>string</code></span> <b><a href="edwinspire.uHttp.uHttpServer.PathLocalFile.html" class="method">PathLocalFile</a></b> (<span class="main_basic_type"><code>string</code></span> Filex)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>uint8</code></span>[] <b><a href="edwinspire.uHttp.uHttpServer.LoadServerFile.html" class="method">LoadServerFile</a></b> (<span class="main_basic_type"><code>string</code></span> path)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>string</code></span> <b><a href="edwinspire.uHttp.uHttpServer.ReadServerFile.html" class="method">ReadServerFile</a></b> (<span class="main_basic_type"><code>string</code></span> path)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+        </ul>
+        <h3 class="main_title">Signals:</h3>
+        <ul class="navi_inline">
+          <li class="signal"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">signal</span> <span class="main_keyword">void</span> <b><a href="edwinspire.uHttp.uHttpServer.NoFoundURL.html" class="signal">NoFoundURL</a></b> (<span class="main_type"><a href="edwinspire.uHttp.Request.html" class="class">Request</a></span> request)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="signal"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">signal</span> <span class="main_keyword">void</span> <b><a href="edwinspire.uHttp.uHttpServer.heartbeat.html" class="signal">heartbeat</a></b> (<span class="main_basic_type"><code>int</code></span> seconds)
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+        </ul>
+        <h3 class="main_title">Fields:</h3>
+        <ul class="navi_inline">
+          <li class="field"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>int</code></span> <b><a href="edwinspire.uHttp.uHttpServer.heartbeatseconds.html" class="field">heartbeatseconds</a></b>
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="field"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="edwinspire.uHttp.uHttpServerConfig.html" class="class">uHttpServerConfig</a></span> <b><a href="edwinspire.uHttp.uHttpServer.Config.html" class="field">Config</a></b>
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+          <li class="field"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="edwinspire.uHttp.TemporaryVariables.html" class="class">TemporaryVariables</a></span> <b><a href="edwinspire.uHttp.uHttpServer.TempGlobalVars.html" class="field">TempGlobalVars</a></b>
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+        </ul>
+      </div>
+    </div><br/>
+    <div class="site_footer">Generated by <a href="http://www.valadoc.org/">Valadoc</a>
+    </div>
+  </body>
+</html>
