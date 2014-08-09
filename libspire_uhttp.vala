@@ -1107,7 +1107,7 @@ namespace edwinspire.uHttp {
 						// Verify that the file passed as an argument matches any of the regular expression patterns.
 						if(RegExp.match(file_name, RegexMatchFlags.ANCHORED, out match)) {
 						    this.add_cacheable_data(file_name);
-						    warning("Coincide\n-%s\n-%s\n\n", file_name, exp);
+						  //  warning("Coincide\n-%s\n-%s\n\n", file_name, exp);
 							Retorno = true;
 							break;
 							}
@@ -1127,12 +1127,12 @@ namespace edwinspire.uHttp {
             BinaryData R = new BinaryData();
             if(this.cache.has_key(file_name)){
                 R = this.cache[file_name];
-                message("Return from cache: %s\n", file_name);
+             //   message("Return from cache: %s\n", file_name);
             }else{
                 FileFunctions F = new FileFunctions();
                 F.file_name = file_name;
                 R = F.read_as_binarydata();    
-                message("Return from server: %s\n", file_name);         
+             //   message("Return from server: %s\n", file_name);         
             }
             return R;            
             }
@@ -1145,7 +1145,7 @@ namespace edwinspire.uHttp {
                 FileFunctions F = new FileFunctions();
                 F.file_name = file_name;
                 this.cache[file_name] = F.read_as_binarydata(); 
-                message("Load %s on the cache\n", file_name);                     
+                //message("Load %s on the cache\n", file_name);                     
             }       
         }
     
