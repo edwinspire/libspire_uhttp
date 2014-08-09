@@ -766,6 +766,7 @@ namespace edwinspire.uHttp {
 				this.save("");
 				this.write();
 			}
+			message(file.get_path());
 		}
 		public static string HashMapToString(HashMap<string, string> hm) {
 			var Retorno = new StringBuilder();
@@ -867,7 +868,7 @@ namespace edwinspire.uHttp {
 			return Retorno;
 		}
 	}
-	
+/*	
     public class TemporaryVariables:GLib.Object{
 
         private HashMap<string, string> Values = new HashMap<string, string>();
@@ -894,18 +895,273 @@ namespace edwinspire.uHttp {
         }       
 
     }	
+    */
+    
+    
+    /**
+    * Basic functions for reading and writing files.
+    */    
+    public class FileFunctions:GLib.Object{
+        /**
+        * file_name is the name of the file to be read or written. 
+        * You may need to put the full path.
+        */
+        public string file_name = "file.uhttp";
+           
+            public FileFunctions(){
+            }
+            /**
+            * Create the file if it does not exist with the data passed as a parameter.
+            */
+            public bool create_if_does_not_exist(uint8[] data = "".data){
+                    var file = File.new_for_path (this.file_name);
+
+                    if (!file.query_exists ()) {
+                        this.create_new_file(data);
+                    }
+                    return true;            
+            }
+            /**
+            * Create a new file with the data passed as a parameter.
+            */
+            public long create_new_file(uint8[] data = "".data){
+                return this.write_file(data);                
+            }
+            
+            /**
+            * Writes data to the file, replacing the previous.
+            */
+            public long write_file(uint8[] data = "".data){
+                long written = 0;
+                try {
+                    // an output file in the current working directory
+                    var file = File.new_for_path (this.file_name);
+                
+                   if (file.query_exists ()) {
+                   file.delete ();
+                    }
+
+                    // creating a file and a DataOutputStream to the file
+                    var dos = new DataOutputStream (file.create (FileCreateFlags.REPLACE_DESTINATION));
+                    // For long string writes, a loop should be used, because sometimes not all data can be written in one run
+                    // 'written' is used to check how much of the string has already been written
+                    while (written < data.length) { 
+                    // sum of the bytes of 'text' that already have been written to the stream
+                    written += dos.write (data[written:data.length]);
+                    }
+                    
+                } catch (Error e) {
+                stderr.printf ("%s\n", e.message);
+                }  
+            return written;          
+            }
+            
+            /**
+            * Read binary data file.
+            */
+            public uint8[] read_file(){
+                var file = File.new_for_path (this.file_name);
+                uint8[] Retorno = {}; 
+                if (file.query_exists ()) {
+                        try {
+                        
+                         var file_info = file.query_info ("*", FileQueryInfoFlags.NONE);
+                        //    stdout.printf ("File size: %lld bytes\n", file_info.get_size ());
+                        Retorno = new uint8[file_info.get_size()];
+                        // Open file for reading and wrap returned FileInputStream into a
+                        // DataInputStream, so we can read line by line
+                        var dis = new DataInputStream (file.read ());  
+                        size_t bytes_read;
+                       dis.read_all(Retorno, out bytes_read);
+                       //message("File '%s' loading... %s = %s - %s\n", file.get_path (), (string)Retorno, bytes_read.to_string(), dis.has_pending ().to_string());
+                    } catch (Error e) {
+                        error ("%s", e.message);
+                    } 
+                }else{
+                stderr.printf ("File '%s' doesn't exist.\n", file.get_path ());
+                }  
+                
+                return Retorno;         
+            }
+            
+            public BinaryData read_as_binarydata(){
+            return new BinaryData(this.read_file());            
+            }
+            
+            /**
+            * Read data from the file and returns them as a string with only valid characters unichar.
+            */
+            public string load_only_valid_unichars(){
+                var B = new BinaryData(this.read_file());
+                return B.to_string_only_valid_unichars();                
+            }
+    
+
+    
+    } 
+    
+    
+    
+    
+    /**
+    * Loads the address list server files, regular expression format.
+    * If the configuration file is changed the server must be restarted for the changes to take effect.
+    */
+    public class AddressListFiles:FileFunctions{
+        public ArrayList<string> regular_expressions = new ArrayList<string>();    
+        public string default_message = """#This file contains a list of the addresses of the files on the server and must be stored one per line and as regurar expression. 
+#To disable log insert a # at the beginning of the line. 
+#If you make any changes in this file will need to restart the server or wait about 5 minutes for the changes are automatically applied.""";
+    
+            /**
+            * Constructor with the filename passed as a parameter to load
+            */
+            public AddressListFiles(){
+            }   
+
+            /**
+            * Read the file data and loads the valid values ​​in the ArrayList regular_expressions
+            */
+            public void load(){
+                this.create_if_does_not_exist(this.default_message.data);
+                var lines = this.load_only_valid_unichars().split("\n");
+                    foreach(var l in lines){
+                            //stdout.printf ("-%s\n", l);
+                            if(!l.has_prefix("#") && l.length > 0){
+                                this.regular_expressions.add(l);                             
+                            }
+
+                        }            
+                      
+            }
+    
+
+    
+    }     
+    
+    /**
+    * This class represents binary data in uitn8[] with features that be converted to string
+    */
+    public class BinaryData:GLib.Object{
+        public uint8[] data{get; set;}
+        public BinaryData(uint8[] binary = "".data){
+            this.data = binary;        
+        }      
+        /**
+        * Converts string data.
+        */  
+        public string to_string(){
+            return (string)this.data;
+        }
+        /**
+        * Convert data and returns them as a string with only valid characters unichar.
+        */
+        public string to_string_only_valid_unichars() {
+			var R = new StringBuilder();
+			string Cadena = this.to_string();
+			int CLength = this.data.length;
+			unichar caracter;
+			if(CLength > 0) {
+				for (int i = 0; Cadena.get_next_char(ref i, out caracter);) {
+					if(i>CLength) {
+						break;
+					}
+					if(caracter.validate()) {
+						R.append_unichar(caracter);
+					}
+				}
+			}
+			return R.str;
+		}
+    
+    }
+    
+    /**
+    * Class that represents a list of cacheable addresses
+    */
+    public class CacheableAddress:AddressListFiles{
+    
+        /**
+        * Array containing the cached files and your address.
+        */
+        public HashMap<string, BinaryData> cache = new HashMap<string, BinaryData>();
+    
+        public CacheableAddress(){
+            this.file_name = "cache.uhttp";
+            this.default_message = """#This file contains regular expressions that point to all the files that are saved in the cache server. 
+#Place a regular expression for each line. 
+#If you want to disable a line place the # sign at the beginning of the line. 
+#Every change you make to this file will take effect once the server restarts.""";
+            this.load();
+        }
+    
+        /**
+        * Verify that the file is cacheable.
+        */
+        public bool is_cacheable(string file_name){
+            bool Retorno = false;
+				foreach(string exp in this.regular_expressions) {
+					try {
+						Regex RegExp = new Regex(exp);
+						MatchInfo match;
+						// Verify that the file passed as an argument matches any of the regular expression patterns.
+						if(RegExp.match(file_name, RegexMatchFlags.ANCHORED, out match)) {
+						    this.add_cacheable_data(file_name);
+						    warning("Coincide\n-%s\n-%s\n\n", file_name, exp);
+							Retorno = true;
+							break;
+							}
+						}
+					catch (RegexError err) {
+						warning (err.message);
+						}
+				}  
+		    return Retorno;      
+        }
+        
+        /**
+        * Returns a BinaryData. 
+        * If the file is cacheable returns from the cache, otherwise returns from the server.
+        */
+        public BinaryData return_file(string file_name){
+            BinaryData R = new BinaryData();
+            if(this.cache.has_key(file_name)){
+                R = this.cache[file_name];
+                message("Return from cache: %s\n", file_name);
+            }else{
+                FileFunctions F = new FileFunctions();
+                F.file_name = file_name;
+                R = F.read_as_binarydata();    
+                message("Return from server: %s\n", file_name);         
+            }
+            return R;            
+            }
+        
+        /**
+        * Add a file to the cache.
+        */
+        private void add_cacheable_data(string file_name){
+            if(!this.cache.has_key(file_name)){  
+                FileFunctions F = new FileFunctions();
+                F.file_name = file_name;
+                this.cache[file_name] = F.read_as_binarydata(); 
+                message("Load %s on the cache\n", file_name);                     
+            }       
+        }
+    
+    }
 	
 	[Description(nick = "HTTP Server", blurb = "Micro embebed HTTP Web Server")]
 	public class uHttpServer:GLib.Object {
 		[Description(nick = "Signal Request URL No Found", blurb = "Señal se dispara cuando una página no es encontrada en el servidor")]
 		public signal void NoFoundURL(Request request);
+        public CacheableAddress Cache = new CacheableAddress();
 		public signal void heartbeat(int seconds);
 		public int heartbeatseconds = 30;
 		private ThreadedSocketService tss;
 		[Description(nick = "Config uHTTP", blurb = " Data Config uHTTP")]
 		public uHttpServerConfig Config = new uHttpServerConfig();
-  //  	[Description(nick = "", blurb = " Data Config uHTTP")]
-		public TemporaryVariables TempGlobalVars  = new TemporaryVariables();
+//		public TemporaryVariables TempGlobalVars  = new TemporaryVariables();
 		[Description(nick = "Constructor uHttpServer", blurb = "")]  
 		  public uHttpServer(int max_threads = 100) {
 			//make the threaded socket service with hella possible threads
@@ -1105,8 +1361,7 @@ namespace edwinspire.uHttp {
 					dis.read_all (datos, out sz);
 					request.Data = datos;
 				}
-				//	stdout.printf();
-				//print("Data ::>> \n"+(string)request.Data);
+
 				if(Config.RequestPrintOnConsole) {
 					request.print();
 				}
@@ -1115,8 +1370,13 @@ namespace edwinspire.uHttp {
 				warning(e.message+"\n");
 			}
 			Response response = new Response();
-			if(request.Path == "/") {
-				//print("Llama al Doc Raiz\n");
+			string FullPath = this.PathLocalFile(request.Path);
+			if(Cache.is_cacheable(FullPath)){
+				response.Status = StatusCode.OK;
+				response.Data = Cache.return_file(FullPath).data;
+				response.Header["Content-Type"] = GetMimeTypeToFile(FullPath);
+				serve_response( response, dos );						
+			}else if(request.Path == "/") {
 				response.Status = StatusCode.OK;
 				response.Data = LoadServerFile(Config.Index);
 				response.Header["Content-Type"] = "text/html";
@@ -1148,7 +1408,7 @@ namespace edwinspire.uHttp {
 				}
 				response.Data = textjoin.str.data;
 				serve_response( response, dos );
-			} else if(FileUtils.test(PathLocalFile(request.Path), GLib.FileTest.IS_REGULAR)) {
+			} else if(FileUtils.test(FullPath, GLib.FileTest.IS_REGULAR)) {
 				// Es un archivo local. Lo carga y lo envia al cliente
 				response.Status = StatusCode.OK;
 				response.Data = LoadServerFile(request.Path);

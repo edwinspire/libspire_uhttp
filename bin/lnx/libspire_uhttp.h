@@ -97,16 +97,49 @@ typedef struct _edwinspireuHttpuHttpServerConfig edwinspireuHttpuHttpServerConfi
 typedef struct _edwinspireuHttpuHttpServerConfigClass edwinspireuHttpuHttpServerConfigClass;
 typedef struct _edwinspireuHttpuHttpServerConfigPrivate edwinspireuHttpuHttpServerConfigPrivate;
 
-#define EDWINSPIRE_UHTTP_TYPE_TEMPORARY_VARIABLES (edwinspire_uhttp_temporary_variables_get_type ())
-#define EDWINSPIRE_UHTTP_TEMPORARY_VARIABLES(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_TEMPORARY_VARIABLES, edwinspireuHttpTemporaryVariables))
-#define EDWINSPIRE_UHTTP_TEMPORARY_VARIABLES_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_TEMPORARY_VARIABLES, edwinspireuHttpTemporaryVariablesClass))
-#define EDWINSPIRE_UHTTP_IS_TEMPORARY_VARIABLES(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_TEMPORARY_VARIABLES))
-#define EDWINSPIRE_UHTTP_IS_TEMPORARY_VARIABLES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_TEMPORARY_VARIABLES))
-#define EDWINSPIRE_UHTTP_TEMPORARY_VARIABLES_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_TEMPORARY_VARIABLES, edwinspireuHttpTemporaryVariablesClass))
+#define EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS (edwinspire_uhttp_file_functions_get_type ())
+#define EDWINSPIRE_UHTTP_FILE_FUNCTIONS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS, edwinspireuHttpFileFunctions))
+#define EDWINSPIRE_UHTTP_FILE_FUNCTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS, edwinspireuHttpFileFunctionsClass))
+#define EDWINSPIRE_UHTTP_IS_FILE_FUNCTIONS(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS))
+#define EDWINSPIRE_UHTTP_IS_FILE_FUNCTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS))
+#define EDWINSPIRE_UHTTP_FILE_FUNCTIONS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS, edwinspireuHttpFileFunctionsClass))
 
-typedef struct _edwinspireuHttpTemporaryVariables edwinspireuHttpTemporaryVariables;
-typedef struct _edwinspireuHttpTemporaryVariablesClass edwinspireuHttpTemporaryVariablesClass;
-typedef struct _edwinspireuHttpTemporaryVariablesPrivate edwinspireuHttpTemporaryVariablesPrivate;
+typedef struct _edwinspireuHttpFileFunctions edwinspireuHttpFileFunctions;
+typedef struct _edwinspireuHttpFileFunctionsClass edwinspireuHttpFileFunctionsClass;
+typedef struct _edwinspireuHttpFileFunctionsPrivate edwinspireuHttpFileFunctionsPrivate;
+
+#define EDWINSPIRE_UHTTP_TYPE_BINARY_DATA (edwinspire_uhttp_binary_data_get_type ())
+#define EDWINSPIRE_UHTTP_BINARY_DATA(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_BINARY_DATA, edwinspireuHttpBinaryData))
+#define EDWINSPIRE_UHTTP_BINARY_DATA_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_BINARY_DATA, edwinspireuHttpBinaryDataClass))
+#define EDWINSPIRE_UHTTP_IS_BINARY_DATA(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_BINARY_DATA))
+#define EDWINSPIRE_UHTTP_IS_BINARY_DATA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_BINARY_DATA))
+#define EDWINSPIRE_UHTTP_BINARY_DATA_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_BINARY_DATA, edwinspireuHttpBinaryDataClass))
+
+typedef struct _edwinspireuHttpBinaryData edwinspireuHttpBinaryData;
+typedef struct _edwinspireuHttpBinaryDataClass edwinspireuHttpBinaryDataClass;
+
+#define EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES (edwinspire_uhttp_address_list_files_get_type ())
+#define EDWINSPIRE_UHTTP_ADDRESS_LIST_FILES(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES, edwinspireuHttpAddressListFiles))
+#define EDWINSPIRE_UHTTP_ADDRESS_LIST_FILES_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES, edwinspireuHttpAddressListFilesClass))
+#define EDWINSPIRE_UHTTP_IS_ADDRESS_LIST_FILES(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES))
+#define EDWINSPIRE_UHTTP_IS_ADDRESS_LIST_FILES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES))
+#define EDWINSPIRE_UHTTP_ADDRESS_LIST_FILES_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES, edwinspireuHttpAddressListFilesClass))
+
+typedef struct _edwinspireuHttpAddressListFiles edwinspireuHttpAddressListFiles;
+typedef struct _edwinspireuHttpAddressListFilesClass edwinspireuHttpAddressListFilesClass;
+typedef struct _edwinspireuHttpAddressListFilesPrivate edwinspireuHttpAddressListFilesPrivate;
+typedef struct _edwinspireuHttpBinaryDataPrivate edwinspireuHttpBinaryDataPrivate;
+
+#define EDWINSPIRE_UHTTP_TYPE_CACHEABLE_ADDRESS (edwinspire_uhttp_cacheable_address_get_type ())
+#define EDWINSPIRE_UHTTP_CACHEABLE_ADDRESS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_CACHEABLE_ADDRESS, edwinspireuHttpCacheableAddress))
+#define EDWINSPIRE_UHTTP_CACHEABLE_ADDRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_CACHEABLE_ADDRESS, edwinspireuHttpCacheableAddressClass))
+#define EDWINSPIRE_UHTTP_IS_CACHEABLE_ADDRESS(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_CACHEABLE_ADDRESS))
+#define EDWINSPIRE_UHTTP_IS_CACHEABLE_ADDRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_CACHEABLE_ADDRESS))
+#define EDWINSPIRE_UHTTP_CACHEABLE_ADDRESS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_CACHEABLE_ADDRESS, edwinspireuHttpCacheableAddressClass))
+
+typedef struct _edwinspireuHttpCacheableAddress edwinspireuHttpCacheableAddress;
+typedef struct _edwinspireuHttpCacheableAddressClass edwinspireuHttpCacheableAddressClass;
+typedef struct _edwinspireuHttpCacheableAddressPrivate edwinspireuHttpCacheableAddressPrivate;
 
 #define EDWINSPIRE_UHTTP_TYPE_UHTTP_SERVER (edwinspire_uhttp_uhttp_server_get_type ())
 #define EDWINSPIRE_UHTTP_UHTTP_SERVER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_UHTTP_SERVER, edwinspireuHttpuHttpServer))
@@ -258,21 +291,52 @@ struct _edwinspireuHttpuHttpServerConfigClass {
 	GObjectClass parent_class;
 };
 
-struct _edwinspireuHttpTemporaryVariables {
+struct _edwinspireuHttpFileFunctions {
 	GObject parent_instance;
-	edwinspireuHttpTemporaryVariablesPrivate * priv;
+	edwinspireuHttpFileFunctionsPrivate * priv;
+	gchar* file_name;
 };
 
-struct _edwinspireuHttpTemporaryVariablesClass {
+struct _edwinspireuHttpFileFunctionsClass {
 	GObjectClass parent_class;
+};
+
+struct _edwinspireuHttpAddressListFiles {
+	edwinspireuHttpFileFunctions parent_instance;
+	edwinspireuHttpAddressListFilesPrivate * priv;
+	GeeArrayList* regular_expressions;
+	gchar* default_message;
+};
+
+struct _edwinspireuHttpAddressListFilesClass {
+	edwinspireuHttpFileFunctionsClass parent_class;
+};
+
+struct _edwinspireuHttpBinaryData {
+	GObject parent_instance;
+	edwinspireuHttpBinaryDataPrivate * priv;
+};
+
+struct _edwinspireuHttpBinaryDataClass {
+	GObjectClass parent_class;
+};
+
+struct _edwinspireuHttpCacheableAddress {
+	edwinspireuHttpAddressListFiles parent_instance;
+	edwinspireuHttpCacheableAddressPrivate * priv;
+	GeeHashMap* cache;
+};
+
+struct _edwinspireuHttpCacheableAddressClass {
+	edwinspireuHttpAddressListFilesClass parent_class;
 };
 
 struct _edwinspireuHttpuHttpServer {
 	GObject parent_instance;
 	edwinspireuHttpuHttpServerPrivate * priv;
+	edwinspireuHttpCacheableAddress* Cache;
 	gint heartbeatseconds;
 	edwinspireuHttpuHttpServerConfig* Config;
-	edwinspireuHttpTemporaryVariables* TempGlobalVars;
 };
 
 struct _edwinspireuHttpuHttpServerClass {
@@ -346,12 +410,31 @@ gchar* edwinspire_uhttp_uhttp_server_config_HashMapToString (GeeHashMap* hm);
 void edwinspire_uhttp_uhttp_server_config_read (edwinspireuHttpuHttpServerConfig* self);
 gchar* edwinspire_uhttp_uhttp_server_config_ToXml (edwinspireuHttpuHttpServerConfig* self, gboolean fieldtextasbase64);
 gboolean edwinspire_uhttp_uhttp_server_config_write (edwinspireuHttpuHttpServerConfig* self);
-GType edwinspire_uhttp_temporary_variables_get_type (void) G_GNUC_CONST;
-edwinspireuHttpTemporaryVariables* edwinspire_uhttp_temporary_variables_new (void);
-edwinspireuHttpTemporaryVariables* edwinspire_uhttp_temporary_variables_construct (GType object_type);
-void edwinspire_uhttp_temporary_variables_set_value (edwinspireuHttpTemporaryVariables* self, const gchar* n, const gchar* v, gint t);
-gchar* edwinspire_uhttp_temporary_variables_get_value (edwinspireuHttpTemporaryVariables* self, const gchar* n);
-gchar* edwinspire_uhttp_temporary_variables_set_value_random_name (edwinspireuHttpTemporaryVariables* self, const gchar* v, gint t);
+GType edwinspire_uhttp_file_functions_get_type (void) G_GNUC_CONST;
+edwinspireuHttpFileFunctions* edwinspire_uhttp_file_functions_new (void);
+edwinspireuHttpFileFunctions* edwinspire_uhttp_file_functions_construct (GType object_type);
+gboolean edwinspire_uhttp_file_functions_create_if_does_not_exist (edwinspireuHttpFileFunctions* self, guint8* data, int data_length1);
+glong edwinspire_uhttp_file_functions_create_new_file (edwinspireuHttpFileFunctions* self, guint8* data, int data_length1);
+glong edwinspire_uhttp_file_functions_write_file (edwinspireuHttpFileFunctions* self, guint8* data, int data_length1);
+guint8* edwinspire_uhttp_file_functions_read_file (edwinspireuHttpFileFunctions* self, int* result_length1);
+GType edwinspire_uhttp_binary_data_get_type (void) G_GNUC_CONST;
+edwinspireuHttpBinaryData* edwinspire_uhttp_file_functions_read_as_binarydata (edwinspireuHttpFileFunctions* self);
+gchar* edwinspire_uhttp_file_functions_load_only_valid_unichars (edwinspireuHttpFileFunctions* self);
+GType edwinspire_uhttp_address_list_files_get_type (void) G_GNUC_CONST;
+edwinspireuHttpAddressListFiles* edwinspire_uhttp_address_list_files_new (void);
+edwinspireuHttpAddressListFiles* edwinspire_uhttp_address_list_files_construct (GType object_type);
+void edwinspire_uhttp_address_list_files_load (edwinspireuHttpAddressListFiles* self);
+edwinspireuHttpBinaryData* edwinspire_uhttp_binary_data_new (guint8* binary, int binary_length1);
+edwinspireuHttpBinaryData* edwinspire_uhttp_binary_data_construct (GType object_type, guint8* binary, int binary_length1);
+gchar* edwinspire_uhttp_binary_data_to_string (edwinspireuHttpBinaryData* self);
+gchar* edwinspire_uhttp_binary_data_to_string_only_valid_unichars (edwinspireuHttpBinaryData* self);
+guint8* edwinspire_uhttp_binary_data_get_data (edwinspireuHttpBinaryData* self, int* result_length1);
+void edwinspire_uhttp_binary_data_set_data (edwinspireuHttpBinaryData* self, guint8* value, int value_length1);
+GType edwinspire_uhttp_cacheable_address_get_type (void) G_GNUC_CONST;
+edwinspireuHttpCacheableAddress* edwinspire_uhttp_cacheable_address_new (void);
+edwinspireuHttpCacheableAddress* edwinspire_uhttp_cacheable_address_construct (GType object_type);
+gboolean edwinspire_uhttp_cacheable_address_is_cacheable (edwinspireuHttpCacheableAddress* self, const gchar* file_name);
+edwinspireuHttpBinaryData* edwinspire_uhttp_cacheable_address_return_file (edwinspireuHttpCacheableAddress* self, const gchar* file_name);
 GType edwinspire_uhttp_uhttp_server_get_type (void) G_GNUC_CONST;
 edwinspireuHttpuHttpServer* edwinspire_uhttp_uhttp_server_new (gint max_threads);
 edwinspireuHttpuHttpServer* edwinspire_uhttp_uhttp_server_construct (GType object_type, gint max_threads);

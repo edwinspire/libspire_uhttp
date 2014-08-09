@@ -3,6 +3,38 @@
 namespace edwinspire {
 	namespace uHttp {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class AddressListFiles : edwinspire.uHttp.FileFunctions {
+			public string default_message;
+			public Gee.ArrayList<string> regular_expressions;
+			public AddressListFiles ();
+			public void load ();
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class BinaryData : GLib.Object {
+			public BinaryData (uint8[] binary = "".data);
+			public string to_string ();
+			public string to_string_only_valid_unichars ();
+			public uint8[] data { get; set; }
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class CacheableAddress : edwinspire.uHttp.AddressListFiles {
+			public Gee.HashMap<string,edwinspire.uHttp.BinaryData> cache;
+			public CacheableAddress ();
+			public bool is_cacheable (string file_name);
+			public edwinspire.uHttp.BinaryData return_file (string file_name);
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class FileFunctions : GLib.Object {
+			public string file_name;
+			public FileFunctions ();
+			public bool create_if_does_not_exist (uint8[] data = "".data);
+			public long create_new_file (uint8[] data = "".data);
+			public string load_only_valid_unichars ();
+			public edwinspire.uHttp.BinaryData read_as_binarydata ();
+			public uint8[] read_file ();
+			public long write_file (uint8[] data = "".data);
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Form")]
 		public class Form : GLib.Object {
 			public Form ();
@@ -67,18 +99,11 @@ namespace edwinspire {
 			public string ToString ();
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class TemporaryVariables : GLib.Object {
-			public TemporaryVariables ();
-			public string get_value (string n);
-			public void set_value (string n, string v, int t = 10);
-			public string set_value_random_name (string v, int t = 10);
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Micro embebed HTTP Web Server", nick = "HTTP Server")]
 		public class uHttpServer : GLib.Object {
+			public edwinspire.uHttp.CacheableAddress Cache;
 			[Description (blurb = " Data Config uHTTP", nick = "Config uHTTP")]
 			public edwinspire.uHttp.uHttpServerConfig Config;
-			public edwinspire.uHttp.TemporaryVariables TempGlobalVars;
 			public int heartbeatseconds;
 			[Description (blurb = "", nick = "Constructor uHttpServer")]
 			public uHttpServer (int max_threads = 100);
