@@ -24,7 +24,7 @@
 using Gee;
 using GLib;
 namespace edwinspire.uHttp {
-	const string VERSION = "uHttp Server Version 0.2 Alpha";
+	const string VERSION = "uHttp Server Version 0.3 Alpha";
 	/*
 	public enum DateFormat {
 		HTTP,
@@ -106,7 +106,7 @@ namespace edwinspire.uHttp {
 	}
 	//******************************************
 	//******************************************
-	[Description(nick = "HTTP Form", blurb = "")]
+	/*[Description(nick = "HTTP Form", blurb = "")]
 	public class Form:GLib.Object {
 		public Form() {
 		}
@@ -144,6 +144,7 @@ namespace edwinspire.uHttp {
 			return Retorno;
 		}
 	}
+	*/
 	[Description(nick = "HTTP Request", blurb = "")]
 	public class Request:GLib.Object {
 		public RequestMethod Method {
@@ -156,12 +157,21 @@ namespace edwinspire.uHttp {
 			private set;
 			default = "";
 		}
+		
+		public  string url_query {
+			get;
+			private set;
+			default = "";
+		}
+				
+		public FormRequest Form = new FormRequest();
+		/*
 		[Description(nick = "Query", blurb = "Query pased by url, Method GET")]
 		public  HashMap<string, string> Query {
 			get;
 			private set;
 			default = new HashMap<string, string>();
-		}
+		}*/
 		public HashMap<string, string> Header {
 			get;
 			private set;
@@ -170,25 +180,25 @@ namespace edwinspire.uHttp {
 		//public RequestHeader Header = new RequestHeader();
 		[Description(nick = "Content data", blurb = "Content sent by User Agent")]
 		private uint8[] DatasInternal =  new uint8[0];
-		[Description(nick = "Content Form", blurb = "Content sent by User Agent from POST")]
+		/*[Description(nick = "Content Form", blurb = "Content sent by User Agent from POST")]
 		public HashMap<string, string> Form {
 			get;
 			private set;
 			default = new HashMap<string, string>();
-		}
+		}*/
 		public bool isWebSocketHandshake {
 			get;
 			private set;
 			default = false;
-		}
+		}/*
 		public MultiPartFormData MultiPartForm {
 			public get;
 			private set;
 			default = new MultiPartFormData();
-		}
+		}*/
 		public Request() {
 		}
-		// Decodifica los datos provenientes de una requerimiento
+		// Decodifica los datos provenientes de un requerimiento
 		public void from_lines(string lines) {
 			//GLib.print("%s\n", lines);
 			try {
@@ -207,6 +217,7 @@ namespace edwinspire.uHttp {
 						} else if(line.has_prefix("PUT")) {
 							this.Method   = RequestMethod.PUT;
 						}
+						
 						//get the parts from the line
 						string[] partsline = line.split(" ");
 						if(partsline.length==3) {
@@ -214,14 +225,17 @@ namespace edwinspire.uHttp {
 							if(partsquery.length>0) {
 								this.Path = partsquery[0];
 								if(partsquery.length>1) {
-									foreach(var part in partsquery[1].split("&")) {
+			//TODO Dejar solo FR ya que el resto se mantiene temporalmete solo por compatibilidad con la version anterior de la libreria.
+								//	
+								this.url_query = partsquery[1];
+									/*foreach(var part in partsquery[1].split("&")) {
 										var kv = part.split("=");
 										if(kv.length>1) {
 											string Key = Uri.unescape_string(kv[0].replace("+", " "));
 											string Value = Uri.unescape_string(kv[1].replace("+", " "));
 											this.Query[Key] = Value;
 										}
-									}
+									}*/
 								}
 							}
 						}
@@ -258,12 +272,12 @@ namespace edwinspire.uHttp {
 			stdout.printf("<<isWebSocketHandshake>>: %s\n", this.isWebSocketHandshake.to_string());
 			stdout.printf("<<Method>>: %s\n", this.Method.to_string());
 			stdout.printf("<<Path>>: %s\n", Path);
-			stdout.printf("<<Header>>:\n%s\n", uHttpServerConfig.HashMapToString(this.Header));
+			stdout.printf("<<Header>>:\n%s\n", KeyValueFile.HashMapToString(this.Header));
 			//stdout.printf("<<Boundary>>:\n%s\n", this.boundary);
-			stdout.printf("<<Query>>:\n%s\n", uHttpServerConfig.HashMapToString(this.Query));
-			stdout.printf("<<Form:>>\n%s\n", uHttpServerConfig.HashMapToString(this.Form));
+			//stdout.printf("<<Query>>:\n%s\n", uHttpServerConfig.HashMapToString(this.Query));
+			//stdout.printf("<<Form:>>\n%s\n", uHttpServerConfig.HashMapToString(this.Form));
 			stdout.printf("<<MultiPartForm>>:\n");
-			stdout.printf("[Is Multipart]: %s\n", this.MultiPartForm.is_multipart_form_data.to_string());
+			/*stdout.printf("[Is Multipart]: %s\n", this.MultiPartForm.is_multipart_form_data.to_string());
 			if(this.MultiPartForm.is_multipart_form_data) {
 				foreach(var r in this.MultiPartForm.Parts) {
 					stdout.printf("[Headers]:\n");
@@ -280,6 +294,11 @@ namespace edwinspire.uHttp {
 					}
 				}
 			}
+			*/
+			
+			stdout.printf("Data FR \n%s\n", Form.to_string());
+			
+			
 		}
 		public uint8[] Data {
 			get {
@@ -287,7 +306,7 @@ namespace edwinspire.uHttp {
 			}
 			set {
 				DatasInternal = value;
-				Form.clear();
+				/*//Form.clear();
 				//stdout.printf("Data leng: %s\n", value.length.to_string());
 				if(this.Method == RequestMethod.POST) {
 					if(Header.has_key("Content-Type")) {
@@ -301,10 +320,14 @@ namespace edwinspire.uHttp {
 					if(DatasInternal!=null && CLength>0) {
 						Form = uHttp.Form.DataDecode(uHttpServer.get_data_as_string_valid_unichars(Data));
 					}
-				}
+				}*/
+				
+			this.Form.decode(this.Method, this.Header, this.url_query, this.DatasInternal);					
 			}
 		}
 	}
+	
+	
 	public class MultiPartFormDataHeader:GLib.Object {
 		public string name {
 			set;
@@ -546,7 +569,7 @@ namespace edwinspire.uHttp {
 				Cadena.append("\n");
 				//this is the end of the return headers
 			}
-			Cadena.append_printf("%s\r", uHttpServerConfig.HashMapToString(this.Header));
+			Cadena.append_printf("%s\r", KeyValueFile.HashMapToString(this.Header));
 			return Cadena.str;
 		}
 		private string CalcHandshake() {
@@ -745,7 +768,7 @@ namespace edwinspire.uHttp {
 			return Retorno;
 		}
 	}
-	[Description(nick = "HTTP Server Config", blurb = "Micro embebed HTTP Web Server config file")]
+	/*[Description(nick = "HTTP Server Config", blurb = "Micro embebed HTTP Web Server config file")]
 	public class uHttpServerConfig:GLib.Object {
 		[Description(nick = "Signal on write file", blurb = "")]
 		public signal void FileWrited();
@@ -868,6 +891,7 @@ namespace edwinspire.uHttp {
 			return Retorno;
 		}
 	}
+	*/
 /*	
     public class TemporaryVariables:GLib.Object{
 
@@ -907,6 +931,7 @@ namespace edwinspire.uHttp {
         * You may need to put the full path.
         */
         public string file_name = "file.uhttp";
+        public string full_path{get; private set; default = "";}
            
             public FileFunctions(){
             }
@@ -915,6 +940,7 @@ namespace edwinspire.uHttp {
             */
             public bool create_if_does_not_exist(uint8[] data = "".data){
                     var file = File.new_for_path (this.file_name);
+                    this.full_path = file.get_path();
 
                     if (!file.query_exists ()) {
                         this.create_new_file(data);
@@ -936,7 +962,7 @@ namespace edwinspire.uHttp {
                 try {
                     // an output file in the current working directory
                     var file = File.new_for_path (this.file_name);
-                
+                	 this.full_path = file.get_path();
                    if (file.query_exists ()) {
                    file.delete ();
                     }
@@ -961,6 +987,7 @@ namespace edwinspire.uHttp {
             */
             public uint8[] read_file(){
                 var file = File.new_for_path (this.file_name);
+               // warning(file.get_path());
                 uint8[] Retorno = {}; 
                 if (file.query_exists ()) {
                         try {
@@ -1000,7 +1027,99 @@ namespace edwinspire.uHttp {
     
     } 
     
+    public class KeyValueFile:FileFunctions{
+    	public string Exp = """(?<key>[0-9\w]+):[\s]+(?<value>[0-9\w\s\W]+)""";
+    	public string default_message = "";
+    	public HashMap<string, string> KeyValue = new HashMap<string, string>();
+    	public KeyValueFile(){
+    		this.default_message = "# Configuration File";
+    		//this.Exp = regex;
+    		this.file_name = "kf.conf";
+    	}
     
+    		public static string HashMapToString(HashMap<string, string> hm) {
+			var Retorno = new StringBuilder();
+			foreach(var r in hm.entries) {
+				Retorno.append_printf("%s: %s\n", r.key, r.value);
+			}
+			return Retorno.str;
+		}
+
+	public string to_string(string title = "KeyValueFile\n"){
+		var Retorno = new StringBuilder(title);
+		Retorno.append(HashMapToString(KeyValue));
+		return Retorno.str;
+	}
+	    
+    	public void load(){
+                this.create_if_does_not_exist(this.default_message.data);
+                var lines = this.load_only_valid_unichars().split("\n");
+                try {
+                	//warning(Exp);
+                                	Regex RegExp = new Regex(Exp);       
+					MatchInfo match;
+					      
+                    foreach(var l in lines){
+                            if(!l.has_prefix("#") && l.length > 0){
+                            
+                               // warning(l);
+					// Verify that the file passed as an argument matches any of the regular expression patterns.
+						if(RegExp.match(l, RegexMatchFlags.ANCHORED, out match)) {
+							//warning("Funca\n");	  
+						  string? k = match.fetch_named("key");
+						  string? v = match.fetch_named("value");
+						  
+						  if(k != null && k.length>0){
+						  	if(v == null){
+						  		v = "";
+						  	}
+						  	this.KeyValue[k] = v; 
+						  }						  
+						  
+						}
+				                                             
+                            }
+
+                        }
+                        
+                        }catch (RegexError err) {
+							warning (err.message);
+						}
+
+                    
+                   
+            }
+            
+            public string get_as_string(string key){
+            	if(KeyValue.has_key(key)){
+            		return KeyValue[key];
+            	}else{
+            		return "";
+            	}
+            }
+		public bool get_as_bool(string key){
+            	if(KeyValue.has_key(key)){
+            		return bool.parse(KeyValue[key]);
+            	}else{
+            		return false;
+            	}
+            }
+            
+		public uint16 get_as_uint16(string key){
+            		return (uint16)this.get_as_int(key);
+		}            
+            
+		public int get_as_int(string key){
+            	if(KeyValue.has_key(key)){
+            		return int.parse(KeyValue[key]);
+            	}else{
+            		return 0;
+            	}
+		}            
+            
+                
+    
+    }    
     
     
     /**
@@ -1043,15 +1162,47 @@ namespace edwinspire.uHttp {
     * This class represents binary data in uitn8[] with features that be converted to string
     */
     public class BinaryData:GLib.Object{
-        public uint8[] data{get; set;}
-        public BinaryData(uint8[] binary = "".data){
+    
+        private ArrayList<uint8> internal_data = new ArrayList<uint8>();
+        
+        public BinaryData(uint8[] binary = {}){
             this.data = binary;        
-        }      
+        }  
+        
+        public string md5(){
+        return Checksum.compute_for_data (ChecksumType.MD5, this.data);
+        }
+        
+        public int length{
+        	get {
+        		return internal_data.size;
+        	}
+        }
+        
+	public uint8[] data{
+		owned get{
+		
+			return this.internal_data.to_array();
+		}
+		set{
+			this.internal_data.clear();
+			foreach(var d in value){
+				this.internal_data.add(d);			
+			}
+		}
+	}    
+	
+	  
+            
         /**
         * Converts string data.
         */  
         public string to_string(){
             return (string)this.data;
+        }
+        
+        public void add_uint8(uint8 byte){
+          	this.internal_data.add(byte);   
         }
         /**
         * Convert data and returns them as a string with only valid characters unichar.
@@ -1150,20 +1301,46 @@ namespace edwinspire.uHttp {
         }
     
     }
+    
+
+	public class uHttpServerConfigFile:KeyValueFile{
+	
+		public uHttpServerConfigFile(){
+			
+			this.file_name = "uhttp.conf";
+			this.load();
+			this.to_environment_vars();
+		}
+		
+		public void to_environment_vars(){
+			Environment.set_variable("uhttp_upload_temp_dir", this.get_as_string("UploadTempDir"), true);
+			Environment.set_variable("uhttp_upload_max_filesize", this.get_as_string("UploadMaxFilesize"), true);
+			Environment.set_variable("uhttp_document_root", this.get_as_string("DocumentRoot"), true);
+			
+			//warning(this.full_path);
+			
+					
+		}
+	
+	}    
 	
 	[Description(nick = "HTTP Server", blurb = "Micro embebed HTTP Web Server")]
 	public class uHttpServer:GLib.Object {
 		[Description(nick = "Signal Request URL No Found", blurb = "Señal se dispara cuando una página no es encontrada en el servidor")]
 		public signal void NoFoundURL(Request request);
         public CacheableAddress Cache = new CacheableAddress();
+        
 		public signal void heartbeat(int seconds);
 		public int heartbeatseconds = 30;
 		private ThreadedSocketService tss;
 		[Description(nick = "Config uHTTP", blurb = " Data Config uHTTP")]
-		public uHttpServerConfig Config = new uHttpServerConfig();
+		public uHttpServerConfigFile Config = new uHttpServerConfigFile();
 //		public TemporaryVariables TempGlobalVars  = new TemporaryVariables();
 		[Description(nick = "Constructor uHttpServer", blurb = "")]  
 		  public uHttpServer(int max_threads = 100) {
+		  	//Config.to_environment_vars();
+		  	
+		  	
 			//make the threaded socket service with hella possible threads
 			tss = new ThreadedSocketService(max_threads);
 			/* connect the 'run' signal that is emitted when 
@@ -1193,6 +1370,8 @@ namespace edwinspire.uHttp {
 				Thread.usleep(1000000*this.heartbeatseconds);
 			}
 		}
+		
+		
 		public static string EnumToXml(Type typeenum, bool fieldtextasbase64 = true) {
 			var Retorno = new StringBuilder("<enum>");
 			var TempNick = new StringBuilder();
@@ -1218,7 +1397,7 @@ namespace edwinspire.uHttp {
 			//create an IPV4 InetAddress bound to no specific IP address
 			InetAddress ia = new InetAddress.any(SocketFamily.IPV4);
 			//create a socket address based on the netadress and set the port
-			InetSocketAddress isa = new InetSocketAddress(ia, Config.Port);
+			InetSocketAddress isa = new InetSocketAddress(ia, Config.get_as_uint16("Port"));
 			//try to add the address to the ThreadedSocketService
 			try {
 				tss.add_address(isa, SocketType.STREAM, SocketProtocol.TCP, null, null);
@@ -1234,19 +1413,20 @@ namespace edwinspire.uHttp {
 			print("Start uHTTP Micro WebServer");
 			print("Licence: LGPL\n");
 			print("Contact: edwinspire@gmail.com\n");
-			print("Contact: software@edwinspire.com\n");
-			print("Contact: http://www.edwinspire.com\n\n");
-			print("Configure\n");
-			stdout.printf("Port: %s\n", Config.Port.to_string());
-			stdout.printf("Root: %s\n", Config.Root);
-			stdout.printf("Index: %s\n", Config.Index);
+			//print("Contact: software@edwinspire.com\n");
+			//print("Contact: http://www.edwinspire.com\n\n");
+			stdout.printf("%s\n", Config.to_string("Configuration Server:\n"));
+			/*
+			stdout.printf("Port: %s\n", Config.get_as_string("Port"));
+			stdout.printf("Root: %s\n", Config.get_as_string("DocumentRoot"));
+			stdout.printf("Index: %s\n", Config.get_as_string("Index"));*/
 			ml.run();
 		}
 		public void run_without_mainloop() {
 			//create an IPV4 InetAddress bound to no specific IP address
 			InetAddress ia = new InetAddress.any(SocketFamily.IPV4);
 			//create a socket address based on the netadress and set the port
-			InetSocketAddress isa = new InetSocketAddress(ia, Config.Port);
+			InetSocketAddress isa = new InetSocketAddress(ia, Config.get_as_uint16("Port"));
 			//try to add the address to the ThreadedSocketService
 			try {
 				tss.add_address(isa, SocketType.STREAM, SocketProtocol.TCP, null, null);
@@ -1259,14 +1439,28 @@ namespace edwinspire.uHttp {
 			//    MainLoop ml = new MainLoop();
 			//start listening 
 			tss.start();
-			stdout.printf("Serving on port %s\n", Config.Port.to_string());
+			stdout.printf("Serving on port %s\n", Config.get_as_string("Port"));
 			//tss.
 			//run the main loop
 			//  ml.run();
 		}
-		public bool upload_file(string subpath_file, uint8[] data, bool replace = false) {
-			return save_file(Path.build_path (Path.DIR_SEPARATOR_S, this.Config.Root, subpath_file), data, replace);
+		public bool upload_file_on_documentroot(string subpath_file, uint8[] data, bool replace = false) {
+			return upload_file(Environment.get_variable("uhttp_document_root"), subpath_file, data, replace);
 		}
+		
+		public bool upload_file(string path, string file, uint8[] data, bool replace = false) {
+			return save_file(Path.build_path (Path.DIR_SEPARATOR_S, path, file), data, replace);
+		}
+		
+		public bool save_file_into_temp_dir(string file, uint8[] data, bool replace = false) {
+			return save_file(full_path_temp_file(file), data, replace);
+		}
+		
+		public static string full_path_temp_file(string filename){
+			return Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_variable("uhttp_upload_temp_dir"), filename);		
+		}
+
+		
 		public static bool save_file(string path, uint8[] data, bool replace = false) {
 			bool R = false;
 			try {
@@ -1330,11 +1524,25 @@ namespace edwinspire.uHttp {
 			this.serve_response( response, dos );
 			return false;
 		}
+		
+		public void upload_file_signal(BinaryData binary, string filename){
+		
+			if(binary.length <= int.parse(Environment.get_variable("uhttp_upload_max_filesize"))*1000000){
+				this.save_file_into_temp_dir(binary.md5()+".tmp", binary.data, false);
+			}else{
+				warning("El archivo "+filename+" excede el limite maximo permitido para subida\n");		
+			}
+		
+			
+		}
+		
 		//**************************************************************
 		//when a request is made, handle the socket connection
 		private bool connection_handler(SocketConnection connection) {
 			size_t size = 0;
 			Request request = new Request();
+			request.Form.post_request.file_uploaded.connect(upload_file_signal);
+
 			//get data input and output streams for the connection
 			DataInputStream dis = new DataInputStream(connection.input_stream);
 			DataOutputStream dos = new DataOutputStream(connection.output_stream);
@@ -1360,9 +1568,11 @@ namespace edwinspire.uHttp {
 					uint8[] datos = new uint8[request.ContentLength];
 					dis.read_all (datos, out sz);
 					request.Data = datos;
+				}else{
+					request.Data = {};
 				}
 
-				if(Config.RequestPrintOnConsole) {
+				if(Config.get_as_bool("RequestPrintOnConsole")) {
 					request.print();
 				}
 			}
@@ -1372,22 +1582,25 @@ namespace edwinspire.uHttp {
 			Response response = new Response();
 			string FullPath = this.PathLocalFile(request.Path);
 			if(Cache.is_cacheable(FullPath)){
+				// Devuelve el archivo directo de la cache 
 				response.Status = StatusCode.OK;
 				response.Data = Cache.return_file(FullPath).data;
 				response.Header["Content-Type"] = GetMimeTypeToFile(FullPath);
 				serve_response( response, dos );						
 			}else if(request.Path == "/") {
+				// Carga la pagina inicial del servidor
 				response.Status = StatusCode.OK;
-				response.Data = LoadServerFile(Config.Index);
+				response.Data = LoadServerFile(Config.get_as_string("Index"));
 				response.Header["Content-Type"] = "text/html";
 				serve_response( response, dos );
 			} else if(request.Path  == "/config.uhttp") {
 				// Devuelva una lista en xml de la configuración del sistema
 				response.Status = StatusCode.OK;
-				response.Data = LoadFile(Config.ToXml());
+				// TODO No implementado
+				//response.Data = LoadFile(Config.ToXml());
 				response.Header["Content-Type"] = "text/xml";
 				serve_response( response, dos );
-			} else if(request.Path  == "/joinjsfiles.uhttp") {
+			} /*else if(request.Path  == "/joinjsfiles.uhttp") {
 				//TODO:
 				// Esta seccion es una utilidad del servidor que permite unir varios archivos javascript en uno solo y enviarlo a cliente, esto elimina la cantidad de peticiones hechas al servidor y carga mas rapido la pagina. 
 				// Los scripts separados por comas, sin el .js y el path relativo o absoluto
@@ -1408,12 +1621,23 @@ namespace edwinspire.uHttp {
 				}
 				response.Data = textjoin.str.data;
 				serve_response( response, dos );
-			} else if(FileUtils.test(FullPath, GLib.FileTest.IS_REGULAR)) {
+			} */else if(FileUtils.test(FullPath, GLib.FileTest.IS_REGULAR)) {
 				// Es un archivo local. Lo carga y lo envia al cliente
 				response.Status = StatusCode.OK;
-				response.Data = LoadServerFile(request.Path);
-				response.Header["Content-Type"] = GetMimeTypeToFile(request.Path);
+				string new_name = "";
+					if(PHP_Support.is_script(request.Path, ref new_name)){
+						PHP_Support PHP = new PHP_Support();
+						//PHP.Path_Uploads = Config.get_as_string("Uploads");
+						//PHP.DocumentRoot = Config.get_as_string("DocumentRoot");
+						response.Header["Content-Type"] = GetMimeTypeToFile(new_name);
+						response.Data = PHP.run_script(FullPath, ref request).data;
+						//print("PHP devuelve %s\n", (string)response.Data);
+					}else{
+						response.Header["Content-Type"] = GetMimeTypeToFile(request.Path);
+						response.Data = LoadServerFile(request.Path);				
+					}
 				serve_response( response, dos );
+				
 			} else if(request.Path == "/uhttp-websocket-echo.uhttp") {
 				if(request.isWebSocketHandshake) {
 					/*
@@ -1494,14 +1718,14 @@ Access-Control-Allow-Headers: content-type
 		}
 		// Obtiene el path local del archivo solicitado
 		public string PathLocalFile(string Filex) {
-			return Path.build_path (Path.DIR_SEPARATOR_S, Config.Root, Filex);
+			return Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_variable("uhttp_document_root"), Filex);
 		}
 		public static string ReadFile(string path) {
 			return (string)LoadFile(path);
-		}
+		}/*
 		private static string ReadJavaScriptFile(string path) {
 			return ReadFile(path);
-		}
+		}*/
 		public uint8[] LoadServerFile(string path) {
 			return LoadFile(PathLocalFile(path));
 		}
@@ -1631,11 +1855,17 @@ Access-Control-Allow-Headers: content-type
 				case "bz2":
 				Retorno = "application/x-bzip";
 				break;
+				case "php":
+				Retorno = "text/x-php";
+				break;
 				case "ogg":
 				Retorno = "application/ogg";
 				break;
 				case "mp3":
 				Retorno = "audio/mpeg3";
+				break;
+				case "ttf":
+				Retorno = "font/opentype";
 				break;
 				default:
 				Retorno = "text/plain";

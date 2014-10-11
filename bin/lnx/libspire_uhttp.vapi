@@ -11,10 +11,13 @@ namespace edwinspire {
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class BinaryData : GLib.Object {
-			public BinaryData (uint8[] binary = "".data);
+			public BinaryData (uint8[] binary = new uint8[0] { });
+			public void add_uint8 (uint8 byte);
+			public string md5 ();
 			public string to_string ();
 			public string to_string_only_valid_unichars ();
-			public uint8[] data { get; set; }
+			public uint8[] data { owned get; set; }
+			public int length { get; }
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class CacheableAddress : edwinspire.uHttp.AddressListFiles {
@@ -33,13 +36,34 @@ namespace edwinspire {
 			public edwinspire.uHttp.BinaryData read_as_binarydata ();
 			public uint8[] read_file ();
 			public long write_file (uint8[] data = "".data);
+			public string full_path { get; private set; }
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		[Description (blurb = "", nick = "HTTP Form")]
-		public class Form : GLib.Object {
-			public Form ();
-			[Description (blurb = "Get data From Form", nick = "Form Data Decode")]
-			public static Gee.HashMap<string,string> DataDecode (string? data);
+		public class FormRequest : GLib.Object {
+			public FormRequest ();
+			public void decode (edwinspire.uHttp.RequestMethod method, Gee.HashMap<string,string> header, string? query, uint8[] data);
+			public string to_string ();
+			public edwinspire.uHttp.GET get_request { get; private set; }
+			public edwinspire.uHttp.POST post_request { get; private set; }
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class GET : edwinspire.uHttp.iFormValues, GLib.Object {
+			public GET ();
+			public void decode (string query_section);
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class KeyValueFile : edwinspire.uHttp.FileFunctions {
+			public string Exp;
+			public Gee.HashMap<string,string> KeyValue;
+			public string default_message;
+			public KeyValueFile ();
+			public static string HashMapToString (Gee.HashMap<string,string> hm);
+			public bool get_as_bool (string key);
+			public int get_as_int (string key);
+			public string get_as_string (string key);
+			public uint16 get_as_uint16 (string key);
+			public void load ();
+			public string to_string (string title = "KeyValueFile\n");
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class MultiPartFormData : GLib.Object {
@@ -71,22 +95,51 @@ namespace edwinspire {
 			public uint8[] data { get; set; }
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class PHP_Support : edwinspire.uHttp.FileFunctions {
+			public string Server_Addr;
+			public string Server_Name;
+			public string Server_Protocol;
+			public string Server_Software;
+			public PHP_Support ();
+			public static bool is_script (string file, ref string new_name);
+			public string run_script (string script, ref edwinspire.uHttp.Request request);
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class POST : edwinspire.uHttp.iFormValues, GLib.Object {
+			public POST ();
+			public void decode (Gee.HashMap<string,string> header, uint8[] data);
+			[Description (blurb = "Boundary", nick = "Multi Part Form Boundary")]
+			public string boundary { get; private set; }
+			public bool is_multipart_form_data { get; private set; }
+			public signal void file_uploaded (edwinspire.uHttp.BinaryData bin, string filename);
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public class POSTMultipartBlock : GLib.Object {
+			public POSTMultipartBlock ();
+			public string Filename ();
+			public string Name ();
+			public string Value ();
+			public Gee.HashMap<string,string> all_values ();
+			public static GLib.DataInputStream create_DataInputStream_from_data (uint8[] data);
+			public void decode (uint8[] block);
+			public Gee.HashMap<string,string> Header { get; private set; }
+			public Gee.HashMap<string,string> Params { get; private set; }
+			public signal void file_uploaded (edwinspire.uHttp.BinaryData bin, string filename);
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Request")]
 		public class Request : GLib.Object {
+			public edwinspire.uHttp.FormRequest Form;
 			public Request ();
 			public void from_lines (string lines);
 			public void print ();
 			public int ContentLength { get; }
 			public uint8[] Data { get; set; }
-			[Description (blurb = "Content sent by User Agent from POST", nick = "Content Form")]
-			public Gee.HashMap<string,string> Form { get; private set; }
 			public Gee.HashMap<string,string> Header { get; private set; }
 			public edwinspire.uHttp.RequestMethod Method { get; private set; }
-			public edwinspire.uHttp.MultiPartFormData MultiPartForm { get; private set; }
 			public string Path { get; private set; }
-			[Description (blurb = "Query pased by url, Method GET", nick = "Query")]
-			public Gee.HashMap<string,string> Query { get; private set; }
 			public bool isWebSocketHandshake { get; private set; }
+			public string url_query { get; private set; }
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Response from server", nick = "HTTP Response")]
@@ -103,7 +156,7 @@ namespace edwinspire {
 		public class uHttpServer : GLib.Object {
 			public edwinspire.uHttp.CacheableAddress Cache;
 			[Description (blurb = " Data Config uHTTP", nick = "Config uHTTP")]
-			public edwinspire.uHttp.uHttpServerConfig Config;
+			public edwinspire.uHttp.uHttpServerConfigFile Config;
 			public int heartbeatseconds;
 			[Description (blurb = "", nick = "Constructor uHttpServer")]
 			public uHttpServer (int max_threads = 100);
@@ -116,39 +169,42 @@ namespace edwinspire {
 			public static string ReadFile (string path);
 			public string ReadServerFile (string path);
 			public virtual bool connection_handler_virtual (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
+			public static string full_path_temp_file (string filename);
 			public static string get_data_as_string_valid_unichars (uint8[] d);
 			public static string get_extension_file (string file_name);
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
 			public virtual void run ();
 			public void run_without_mainloop ();
 			public static bool save_file (string path, uint8[] data, bool replace = false);
+			public bool save_file_into_temp_dir (string file, uint8[] data, bool replace = false);
 			public long sendEvent (string data, GLib.DataOutputStream dos);
 			public void sendEventHeader (GLib.DataOutputStream dos);
 			[Description (blurb = "", nick = "Server Response")]
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
-			public bool upload_file (string subpath_file, uint8[] data, bool replace = false);
+			public bool upload_file (string path, string file, uint8[] data, bool replace = false);
+			public bool upload_file_on_documentroot (string subpath_file, uint8[] data, bool replace = false);
+			public void upload_file_signal (edwinspire.uHttp.BinaryData binary, string filename);
 			public long writeData (uint8[] data_, GLib.DataOutputStream dos);
 			[Description (blurb = "Señal se dispara cuando una página no es encontrada en el servidor", nick = "Signal Request URL No Found")]
 			public signal void NoFoundURL (edwinspire.uHttp.Request request);
 			public signal void heartbeat (int seconds);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		[Description (blurb = "Micro embebed HTTP Web Server config file", nick = "HTTP Server Config")]
-		public class uHttpServerConfig : GLib.Object {
-			[Description (blurb = "Index page, default: index.html", nick = "Index")]
-			public string Index;
-			[Description (blurb = "Default: 8080", nick = "Port")]
-			public uint16 Port;
-			public bool RequestPrintOnConsole;
-			[Description (blurb = "Default: rootweb on current directory.", nick = "Path Root")]
-			public string Root;
-			public uHttpServerConfig ();
-			public static string HashMapToString (Gee.HashMap<string,string> hm);
-			public string ToXml (bool fieldtextasbase64 = true);
-			public void read ();
-			public bool write ();
-			[Description (blurb = "", nick = "Signal on write file")]
-			public signal void FileWrited ();
+		public class uHttpServerConfigFile : edwinspire.uHttp.KeyValueFile {
+			public uHttpServerConfigFile ();
+			public void to_environment_vars ();
+		}
+		[CCode (cheader_filename = "libspire_uhttp.h")]
+		public interface iFormValues : GLib.Object {
+			public Gee.HashMap<string,string> as_hasmap ();
+			public static string get_data_as_string_valid_unichars (uint8[] d);
+			public string get_value (string name, int i = 0);
+			public bool has_key (string name, int i = 0);
+			public string next_name_free (string name);
+			public string set_value (string name, string value);
+			public void set_value_direct (string name, string value);
+			public string to_string ();
+			public abstract Gee.HashMap<string,string> internal_hashmap { get; private set; }
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Version")]
