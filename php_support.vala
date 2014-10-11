@@ -46,6 +46,10 @@ include_once $argv[1];
 			this.create_if_does_not_exist(default_message.data);
 		}
 
+		/**
+		* Is Script PHP
+		* For uhttp have partial support of PHP without problems the script name must have the following format: * -xml.php . In this case xml tells the library to the format returned by the script will be xml , this way you can use any Mimetype.
+		*/
 		public static bool is_script(string file, ref string new_name){
 			bool R = false;
 		//warning ("\nScript %s\n", file);
@@ -120,16 +124,13 @@ include_once $argv[1];
 				stderr.printf("%s\n", standard_error);
 				Salida.truncate();
 				Salida.append(standard_output);
+		#endif				
 			}
 
 			catch(SpawnError e){
 				GLib.stderr.printf("run_script error %s\n", e.message);
 			}
-	//		catch(ShellError e){
-	//			GLib.stderr.printf("shell error %s\n", e.message);			
-	//		}
 
-		#endif
 		return Salida.str;
 		}
 	}

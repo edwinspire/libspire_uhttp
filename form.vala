@@ -24,7 +24,11 @@
 using Gee;
 using GLib;
 namespace edwinspire.uHttp {
-
+	
+	/**
+	* POSTMultipartBlock
+	* 
+	*/
 	public class POSTMultipartBlock:GLib.Object{
 
 		public HashMap<string, string> Header{private set; get; default = new HashMap<string, string>();}
@@ -37,6 +41,10 @@ namespace edwinspire.uHttp {
 			
 		}
 		
+		/**
+		* All values
+		* Returns all values ​​as a Hashmap
+		*/
 		public HashMap<string, string> all_values(){
 			var r = new HashMap<string, string>();
 			r.set_all(this.Header);
@@ -47,6 +55,10 @@ namespace edwinspire.uHttp {
 			return r;
 		}
 		
+		/**
+		* Name
+		* Block name
+		*/
 		public string Name(){
 				if(Params.has_key("name")){
 				return Params["name"];
@@ -54,7 +66,10 @@ namespace edwinspire.uHttp {
 				return "";
 				}
 		}
-	
+		/**
+		* Filename
+		* If the block contains a file returns the file name, otherwise it returns an empty string .
+		*/
 		public string Filename(){
 				if(Params.has_key("filename")){
 				this.Params["tmp_full_path"] = uHttpServer.full_path_temp_file(binary.md5()+".tmp");
@@ -65,6 +80,10 @@ namespace edwinspire.uHttp {
 				
 		}
 		
+		/**
+		* Value
+		* Returns the value of the block if the block corresponds to a file and returns the file name .
+		*/
 		public string Value(){
 				if(Params.has_key("filename")){
 				return  Params["filename"];
@@ -74,6 +93,10 @@ namespace edwinspire.uHttp {
 				
 		}
 		
+		/**
+		* Create DataInputStream
+		* Creates a DataInputStream from the data passed as a parameter .
+		*/
 		public static DataInputStream create_DataInputStream_from_data(uint8[] data){
 		
 			MemoryInputStream Mis = new MemoryInputStream.from_data(data, null);
@@ -82,6 +105,10 @@ namespace edwinspire.uHttp {
 			return dis;
 		}
 		
+		/**
+		* Decode
+		* 
+		*/
 		public void decode(uint8[] block){
 		
 					try{
@@ -175,6 +202,10 @@ namespace edwinspire.uHttp {
 			this.internal_hashmap[name] = value;
 		}
 		
+		/**
+		* Next name free
+		* Gets the next free name that can be used .
+		*/
 		public string next_name_free(string name){
 		
 			var n = new StringBuilder();
@@ -194,6 +225,10 @@ namespace edwinspire.uHttp {
 			return n.str;
 		}
 		
+		/**
+		* Get value
+		* Get value from name and index
+		*/
 		public string get_value(string name, int i = 0){
 			string R = "";
 			if(this.has_key(name, i)){
@@ -203,16 +238,25 @@ namespace edwinspire.uHttp {
 		return R;
 		}
 		
-
+		
+		/**
+		* Has key
+		* Check if the name and index as parameters are passed.
+		*/
 		public bool has_key(string name, int i = 0){
 			var n = new StringBuilder();
 			n.append_printf("%s.%i", name, i);
 			return internal_hashmap.has_key(n.str);
 		}
 		
+		/**
+		* Has HashMap
+		* Returns all values ​​as a Hashmap
+		*/
 		public HashMap<string, string> as_hasmap(){
 			return this.internal_hashmap;		
 		}
+		
 		
 		public string to_string(){
 			var R = new StringBuilder();
@@ -243,11 +287,19 @@ namespace edwinspire.uHttp {
 		
 	}
 
+	/**
+	* GET
+	* 
+	*/
 	public class GET:iFormValues, GLib.Object{
 		public HashMap<string, string> internal_hashmap{private set; get; default = new HashMap<string, string>();}	
 		public GET(){
 				
 		}
+		/**
+		* Decode
+		* Decodes the data sent by the GET method
+		*/
 		public void decode(string query_section){
 		//stderr.printf("decode:\n\n%s\n", query_section);		
 				foreach(var part in query_section.split("&")) {
@@ -263,11 +315,19 @@ namespace edwinspire.uHttp {
 	
 	}
 
-
+	/**
+	* POST
+	*
+	*/
 	public class POST:iFormValues, GLib.Object{
 		public HashMap<string, string> internal_hashmap{private set; get; default = new HashMap<string, string>();}
 		public bool is_multipart_form_data {private set; get; default = false;}
 		public signal void file_uploaded(BinaryData bin, string filename);
+		
+		/**
+		* Boundary
+		* The Content-Type field for multipart entities requires one parameter, "boundary", which is used to specify the encapsulation boundary. The encapsulation boundary is defined as a line consisting entirely of two hyphen characters ("-", decimal code 45) followed by the boundary parameter value from the Content-Type header field.
+		*/
 		[Description(nick = "Multi Part Form Boundary", blurb = "Boundary")]
 		public string boundary {
 			get;
@@ -278,6 +338,10 @@ namespace edwinspire.uHttp {
 				
 		}
 		
+		/**
+		* Decode
+		* Decodes the data sent by the POST method
+		*/
 		public void decode(HashMap<string, string> header,  uint8[] data){
  			if(header.has_key("Content-Type")) {
  				// Verificamos si el formulario viene como multipart/form-data
@@ -328,38 +392,7 @@ namespace edwinspire.uHttp {
 			//stderr.printf("Decode as multipar\n%s\n", this.is_multipart_form_data.to_string());
 		return this.is_multipart_form_data;
 		}
-		/*
-		private string save_bin_data(BinaryData binarydata){
 		
-			FileFunctions Ff = new FileFunctions();
-			// TODO Usar path builder para que haya compatibilidad con windows
-			Ff.file_name = Environment.get_variable("uhttp_path_temp_file")+"/"+binarydata.md5()+".bin";
-			warning(Ff.file_name+"\n");
-			Ff.create_if_does_not_exist(binarydata.data);
-			return Ff.file_name;
-		}
-		
-		
-		private void read_bin_data(string path){
-		
-			var f = File.new_for_path(path);
-			if(f.query_exists()){
-			try{
-				var dis = new DataInputStream(f.read());
-				
-			//	stdout.printf("-=>(%s)\n", dis.get_available().to_string());
-				string line;
-				while((line = dis.read_line(null)) != null){
-					stdout.printf("->%s\n(%s)\n", line, dis.get_available().to_string());
-				}
-				
-			}catch(Error e){
-				warning("%s\n", e.message);			
-			}
-			}
-		
-		}
-		*/
 		private ArrayList<POSTMultipartBlock> blocks_multipart(uint8[] data){
 			
 			size_t pos_block_end = 0;
@@ -440,7 +473,10 @@ namespace edwinspire.uHttp {
 	
 	}
 	
-	
+	/**
+	* Form Request
+	* Class that extracts the data sent from a form with the Post or Get method .
+	*/	
 	public class FormRequest:GLib.Object{
 		public GET get_request{private set; get; default = new GET();}
 		public POST post_request{private set; get; default = new POST();}	
@@ -456,7 +492,8 @@ namespace edwinspire.uHttp {
 		s.append_printf("GET:\n%s\nPOST:\n%s\n", get_request.to_string(), post_request.to_string());
 		return s.str;
 		}
-	
+		
+		
 		public void decode(RequestMethod method, HashMap<string, string> header, string? query, uint8[] data){
 
 			switch(method){
