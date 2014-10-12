@@ -105,7 +105,10 @@ namespace edwinspire.uHttp {
 		PUT
 	}
 	
-	
+	/**
+	* Request
+	* Class representing a request
+	*/
 	[Description(nick = "HTTP Request", blurb = "")]
 	public class Request:GLib.Object {
 		public RequestMethod Method {
@@ -113,20 +116,37 @@ namespace edwinspire.uHttp {
 			private set;
 			default = RequestMethod.UNKNOW;
 		}
+		
+		/**
+		* Path
+		* Path file of the request
+		*/
 		public  string Path {
 			get;
 			private set;
 			default = "";
 		}
 		
+		/**
+		* Url Query
+		* Query sent in the URL
+		*/
 		public  string url_query {
 			get;
 			private set;
 			default = "";
 		}
-				
+		
+		/**
+		* Form
+		* Form data sent in the request on GET or POST method
+		*/		
 		public FormRequest Form = new FormRequest();
 		
+		/**
+		* Header
+		* Request Headers
+		*/
 		public HashMap<string, string> Header {
 			get;
 			private set;
@@ -143,7 +163,10 @@ namespace edwinspire.uHttp {
 		}
 		public Request() {
 		}
-		// Decodifica los datos provenientes de un requerimiento
+		/**
+		* from_lines
+		* Decodes the data from request
+		*/
 		public void from_lines(string lines) {
 			//GLib.print("%s\n", lines);
 			try {
@@ -201,7 +224,10 @@ namespace edwinspire.uHttp {
 				this.isWebSocketHandshake = true;
 			}
 		}
-		//public string 
+		/**
+		* Content Length
+		* Content length sent in the header.
+		*/
 		public int ContentLength {
 			get {
 				//GLib.print("this.Header[Content-Length] = %s\n", this.Header["Content-Length"].to_string());
@@ -245,6 +271,11 @@ namespace edwinspire.uHttp {
 			
 			
 		}
+		
+		/**
+		* Data
+		* 
+		*/
 		public uint8[] Data {
 			get {
 				return DatasInternal;
@@ -1104,7 +1135,17 @@ namespace edwinspire.uHttp {
 	public class uHttpServerConfigFile:KeyValueFile{
 	
 		public uHttpServerConfigFile(){
-			
+			this.default_message = """#Puerto / Socket, default = 8081
+Port: 8082
+#Página de inicio, default = index.html
+Index: index.html
+#Carpeta raíz de los documentos del servidor web. La ruta puede ser absoluta, o si la ruta inicia con * se tomará como relativa a la ubicación donde está corriendo el servidor. Si se deja vacio se tomará como raiz una carpeta llamada uhttproot dentro de la ubicación actual del servidor.
+DocumentRoot: /home/edwinspire/Dropbox/Desarrollo/ProyectosSoftware_ng/proyects/HelpDesk/bin/rootweb
+#Imprime en consola las peticiones realizadas al servidor
+RequestPrintOnConsole: true
+#==============================
+UploadTempDir: /home/edwinspire/Dropbox/Desarrollo/ProyectosSoftware_ng/proyects/HelpDesk/bin/uploads
+UploadMaxFilesize: 10""";
 			this.file_name = "uhttp.conf";
 			this.load();
 			this.to_environment_vars();

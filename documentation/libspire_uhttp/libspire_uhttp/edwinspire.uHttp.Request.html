@@ -55,6 +55,9 @@
 
         <h2 class="main_title">Description:</h2>
         <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span css="class">Request</span></b> : <span class="main_type"><code>Object</code></span>
+        </div>
+        <div class="description">
+          <p>Request Class representing a request</p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> edwinspire.uHttp</div>
         <div class="package_note"><b>Package:</b> libspire_uhttp</div>
@@ -67,15 +70,15 @@
             </div></li>
           <li class="property"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>string</code></span> <b><a href="edwinspire.uHttp.Request.Path.html" class="property">Path</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
             </span>
-            <div class="leaf_brief_description">
+            <div class="leaf_brief_description"><span class="brief_description">Path Path file of the request</span>
             </div></li>
           <li class="property"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>string</code></span> <b><a href="edwinspire.uHttp.Request.url_query.html" class="property">url_query</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
             </span>
-            <div class="leaf_brief_description">
+            <div class="leaf_brief_description"><span class="brief_description">Url Query Query sent in the URL</span>
             </div></li>
           <li class="property"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><code>HashMap</code></span>&lt;<span class="main_basic_type"><code>string</code></span>,<span class="main_basic_type"><code>string</code></span>&gt; <b><a href="edwinspire.uHttp.Request.Header.html" class="property">Header</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
             </span>
-            <div class="leaf_brief_description">
+            <div class="leaf_brief_description"><span class="brief_description">Header Request Headers</span>
             </div></li>
           <li class="property"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>bool</code></span> <b><a href="edwinspire.uHttp.Request.isWebSocketHandshake.html" class="property">isWebSocketHandshake</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
             </span>
@@ -83,11 +86,11 @@
             </div></li>
           <li class="property"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>int</code></span> <b><a href="edwinspire.uHttp.Request.ContentLength.html" class="property">ContentLength</a></b> { <span class="main_keyword">get</span>; }
             </span>
-            <div class="leaf_brief_description">
+            <div class="leaf_brief_description"><span class="brief_description">Content Length Content length sent in the header.</span>
             </div></li>
           <li class="property"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><code>uint8</code></span>[] <b><a href="edwinspire.uHttp.Request.Data.html" class="property">Data</a></b> { <span class="main_keyword">set</span>; <span class="main_keyword">get</span>; }
             </span>
-            <div class="leaf_brief_description">
+            <div class="leaf_brief_description"><span class="brief_description">Data</span>
             </div></li>
         </ul>
         <h3 class="main_title">Creation methods:</h3>
@@ -101,7 +104,7 @@
         <ul class="navi_inline">
           <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="edwinspire.uHttp.Request.from_lines.html" class="method">from_lines</a></b> (<span class="main_basic_type"><code>string</code></span> lines)
             </span>
-            <div class="leaf_brief_description">
+            <div class="leaf_brief_description"><span class="brief_description">from_lines Decodes the data from request</span>
             </div></li>
           <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="edwinspire.uHttp.Request.print.html" class="method">print</a></b> ()
             </span>
@@ -112,7 +115,7 @@
         <ul class="navi_inline">
           <li class="field"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="edwinspire.uHttp.FormRequest.html" class="class">FormRequest</a></span> <b><a href="edwinspire.uHttp.Request.Form.html" class="field">Form</a></b>
             </span>
-            <div class="leaf_brief_description">
+            <div class="leaf_brief_description"><span class="brief_description">Form Form data sent in the request on GET or POST method</span>
             </div></li>
         </ul>
       </div>
