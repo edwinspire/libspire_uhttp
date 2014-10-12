@@ -104,47 +104,8 @@ namespace edwinspire.uHttp {
 		HEAD,
 		PUT
 	}
-	//******************************************
-	//******************************************
-	/*[Description(nick = "HTTP Form", blurb = "")]
-	public class Form:GLib.Object {
-		public Form() {
-		}
-		[Description(nick = "Form Data Decode", blurb = "Get data From Form")]
-		public static HashMap<string, string> DataDecode(string? data) {
-			//Intl.setlocale (LocaleCategory.ALL, "es_ES.UTF-8");
-			var Retorno = new HashMap<string, string>();
-			if(data != null) {
-				// Con la cadena formada la dividimos en bloques de datos, seprarados por &
-				foreach(var Bloque in data.split("&")) {
-					var KVx = Bloque.split("=");
-					if(KVx.length==2) {
-						string Key = Uri.unescape_string(KVx[0].replace("+", " "));
-						string Value = Uri.unescape_string(KVx[1].replace("+", " "));
-						//print(">>>>>>>>>>>>>>>>>>>>> %s => %s\n", KVx[1], Value);
-						if(Retorno.has_key(Key)) {
-							var Nombre = new StringBuilder();
-							int i = 0;
-							while(i<Retorno.size) {
-								Nombre.truncate(0);
-								Nombre.append_printf("%s%i", Key, i);
-								if(!Retorno.has_key(Nombre.str)) {
-									break;
-								}
-								i++;
-							}
-							Retorno[Nombre.str] = Value;
-						} else {
-							Retorno[Key] = Value;
-						}
-					}
-				}
-			}
-			//print("UriDecode: %s\n",  Retorno.str);
-			return Retorno;
-		}
-	}
-	*/
+	
+	
 	[Description(nick = "HTTP Request", blurb = "")]
 	public class Request:GLib.Object {
 		public RequestMethod Method {
@@ -165,13 +126,7 @@ namespace edwinspire.uHttp {
 		}
 				
 		public FormRequest Form = new FormRequest();
-		/*
-		[Description(nick = "Query", blurb = "Query pased by url, Method GET")]
-		public  HashMap<string, string> Query {
-			get;
-			private set;
-			default = new HashMap<string, string>();
-		}*/
+		
 		public HashMap<string, string> Header {
 			get;
 			private set;
@@ -180,22 +135,12 @@ namespace edwinspire.uHttp {
 		//public RequestHeader Header = new RequestHeader();
 		[Description(nick = "Content data", blurb = "Content sent by User Agent")]
 		private uint8[] DatasInternal =  new uint8[0];
-		/*[Description(nick = "Content Form", blurb = "Content sent by User Agent from POST")]
-		public HashMap<string, string> Form {
-			get;
-			private set;
-			default = new HashMap<string, string>();
-		}*/
+		
 		public bool isWebSocketHandshake {
 			get;
 			private set;
 			default = false;
-		}/*
-		public MultiPartFormData MultiPartForm {
-			public get;
-			private set;
-			default = new MultiPartFormData();
-		}*/
+		}
 		public Request() {
 		}
 		// Decodifica los datos provenientes de un requerimiento
