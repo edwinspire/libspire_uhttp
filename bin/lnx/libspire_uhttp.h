@@ -556,6 +556,7 @@ gchar* edwinspire_uhttp_response_HtmErrorPage (const gchar* title, const gchar* 
 GType edwinspire_uhttp_file_functions_get_type (void) G_GNUC_CONST;
 edwinspireuHttpFileFunctions* edwinspire_uhttp_file_functions_new (void);
 edwinspireuHttpFileFunctions* edwinspire_uhttp_file_functions_construct (GType object_type);
+gchar* edwinspire_uhttp_file_functions_text_strip (const gchar* t);
 gboolean edwinspire_uhttp_file_functions_create_if_does_not_exist (edwinspireuHttpFileFunctions* self, guint8* data, int data_length1);
 glong edwinspire_uhttp_file_functions_create_new_file (edwinspireuHttpFileFunctions* self, guint8* data, int data_length1);
 glong edwinspire_uhttp_file_functions_write_file (edwinspireuHttpFileFunctions* self, guint8* data, int data_length1);

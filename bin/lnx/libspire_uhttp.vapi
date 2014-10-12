@@ -35,6 +35,7 @@ namespace edwinspire {
 			public string load_only_valid_unichars ();
 			public edwinspire.uHttp.BinaryData read_as_binarydata ();
 			public uint8[] read_file ();
+			public static string text_strip (string t);
 			public long write_file (uint8[] data = "".data);
 			public string full_path { get; private set; }
 		}

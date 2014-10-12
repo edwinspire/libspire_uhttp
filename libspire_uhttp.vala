@@ -223,7 +223,7 @@ namespace edwinspire.uHttp {
 						if(partsline.length==3) {
 							var partsquery = partsline[1].split("?");
 							if(partsquery.length>0) {
-								this.Path = partsquery[0];
+								this.Path = FileFunctions.text_strip(partsquery[0]);
 								if(partsquery.length>1) {
 			//TODO Dejar solo FR ya que el resto se mantiene temporalmete solo por compatibilidad con la version anterior de la libreria.
 								//	
@@ -783,6 +783,11 @@ namespace edwinspire.uHttp {
            
             public FileFunctions(){
             }
+            
+            public static string text_strip(string t){
+            	return t.strip();
+            }
+            
             /**
             * Create the file if it does not exist with the data passed as a parameter.
             */
@@ -921,7 +926,7 @@ namespace edwinspire.uHttp {
 						  	if(v == null){
 						  		v = "";
 						  	}
-						  	this.KeyValue[k] = v; 
+						  	this.KeyValue[k] = text_strip(v); 
 						  }						  
 						  
 						}
@@ -1293,15 +1298,15 @@ namespace edwinspire.uHttp {
 			//  ml.run();
 		}
 		public bool upload_file_on_documentroot(string subpath_file, uint8[] data, bool replace = false) {
-			return upload_file(Environment.get_variable("uhttp_document_root"), subpath_file, data, replace);
+			return upload_file(Environment.get_variable("uhttp_document_root"), FileFunctions.text_strip(subpath_file), data, replace);
 		}
 		
 		public bool upload_file(string path, string file, uint8[] data, bool replace = false) {
-			return save_file(Path.build_path (Path.DIR_SEPARATOR_S, path, file), data, replace);
+			return save_file(Path.build_path (Path.DIR_SEPARATOR_S, FileFunctions.text_strip(path), FileFunctions.text_strip(file)), data, replace);
 		}
 		
 		public bool save_file_into_temp_dir(string file, uint8[] data, bool replace = false) {
-			return save_file(full_path_temp_file(file), data, replace);
+			return save_file(full_path_temp_file(FileFunctions.text_strip(file)), data, replace);
 		}
 		
 		public static string full_path_temp_file(string filename){
@@ -1314,7 +1319,7 @@ namespace edwinspire.uHttp {
 			try {
 				// stderr.printf ("PATH\n%s\n", path);
 				// Reference a local file name
-				var file = File.new_for_path (path);
+				var file = File.new_for_path (FileFunctions.text_strip(path));
 				var exist = file.query_exists ();
 				if(exist && replace) {
 					file.delete ();
