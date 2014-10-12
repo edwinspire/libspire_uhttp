@@ -768,34 +768,6 @@ namespace edwinspire.uHttp {
 			return Retorno;
 		}
 	}
-/*	
-    public class TemporaryVariables:GLib.Object{
-
-        private HashMap<string, string> Values = new HashMap<string, string>();
-
-        public TemporaryVariables(){
-        }
-
-        public void set_value(string n, string v, int t = 10){
-        Values[n] = v; 
-        }
-
-        public string get_value(string n){
-        string r = "";
-        if(Values.has_key(n)){
-        r = Values[n];
-        }
-        return r;
-        }
-        
-        public string set_value_random_name(string v, int t = 10){
-        string n = "";
-        Values[n] = v;
-        return n; 
-        }       
-
-    }	
-    */
     
     
     /**
