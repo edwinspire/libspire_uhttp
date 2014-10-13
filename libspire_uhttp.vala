@@ -727,8 +727,8 @@ require([
 """;
 
 			string Retorno = Base.replace("@Title", title);
-			Retorno = Retorno.replace("@Error", error);
 			Retorno = Retorno.replace("@ErrorDescription", description);
+			Retorno = Retorno.replace("@Error", error);
 			return Retorno;
 		}
 	}
