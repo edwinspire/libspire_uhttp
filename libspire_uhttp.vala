@@ -1152,7 +1152,7 @@ UploadMaxFilesize: 10""";
 		}
 		
 		public void to_environment_vars(){
-			Environment.set_variable("uhttp_upload_temp_dir", this.get_as_string("UploadTempDir"), true);
+			Environment.set_variable("UHTTP_UPLOAD_TEMP_DIR", this.get_as_string("UploadTempDir"), true);
 			Environment.set_variable("UHTTP_UPLOAD_MAX_FILESIZE", this.get_as_string("UploadMaxFilesize"), true);
 			Environment.set_variable("UHTTP_DOCUMENT_ROOT", this.get_as_string("DocumentRoot"), true);
 			
@@ -1296,7 +1296,7 @@ UploadMaxFilesize: 10""";
 		}
 		
 		public static string full_path_temp_file(string filename){
-			return Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_variable("uhttp_upload_temp_dir"), filename);		
+			return Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_variable("UHTTP_UPLOAD_TEMP_DIR"), filename);		
 		}
 
 		

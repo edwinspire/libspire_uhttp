@@ -102,7 +102,7 @@ include_once $argv[1];
 
 			try{		
 		var arguments = new StringBuilder();
-		arguments.append_printf("$_SERVER[\'SERVER_ADDR\'] = \"%s\"; $_SERVER[\'SERVER_NAME\'] = \"%s\"; $_SERVER[\'SERVER_SOFTWARE\'] = \"%s\"; $_SERVER[\'SERVER_PROTOCOL\'] = \"%s\"; $_SERVER[\'SERVER_METHOD\'] = \"%s\"; $_SERVER[\'UHTTP_UPLOAD_TEMP_DIR\'] = \"%s\"; $_SERVER[\'DOCUMENT_ROOT\'] = \"%s\";", Server_Addr, Server_Name, Server_Software, Server_Protocol, (request.Method.to_string()).replace("EDWINSPIRE_UHTTP_REQUEST_METHOD_", ""), Environment.get_variable("uhttp_upload_temp_dir"), Environment.get_variable("UHTTP_DOCUMENT_ROOT"));
+		arguments.append_printf("$_SERVER[\'SERVER_ADDR\'] = \"%s\"; $_SERVER[\'SERVER_NAME\'] = \"%s\"; $_SERVER[\'SERVER_SOFTWARE\'] = \"%s\"; $_SERVER[\'SERVER_PROTOCOL\'] = \"%s\"; $_SERVER[\'SERVER_METHOD\'] = \"%s\"; $_SERVER[\'UHTTP_UPLOAD_TEMP_DIR\'] = \"%s\"; $_SERVER[\'DOCUMENT_ROOT\'] = \"%s\";", Server_Addr, Server_Name, Server_Software, Server_Protocol, (request.Method.to_string()).replace("EDWINSPIRE_UHTTP_REQUEST_METHOD_", ""), Environment.get_variable("UHTTP_UPLOAD_TEMP_DIR"), Environment.get_variable("UHTTP_DOCUMENT_ROOT"));
 				
 		#if (_WIN_SPIRE_)
 		// TODO: Por definir, no está probado
