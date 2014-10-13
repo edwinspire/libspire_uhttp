@@ -715,9 +715,20 @@ require([
    @ErrorDescription</div>
    <p style="height: 10px;"></p>
    <div>
-     libspire_uhttp is open source and available on GitHub :</div>
+     uHTTP is open source and available on GitHub</div></br>
+ 
+   <div>
+     Micro Web Server:</div>
+   <div>
+     https://github.com/edwinspire/uhttp</div></br>
+ 
+   
+   <div>
+     Library for an embedded server:</div>
    <div>
      https://github.com/edwinspire/libspire_uhttp</div>
+ 
+ 
  </div>
 </div>
   </body>
