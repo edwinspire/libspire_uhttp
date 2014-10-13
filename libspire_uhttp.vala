@@ -1390,7 +1390,7 @@ UploadMaxFilesize: 10""";
 		
 		public void upload_file_signal(BinaryData binary, string filename){
 		
-			if(binary.length <= int.parse(Config.get_as_int("UploadMaxFilesize"))*1000000){
+			if(binary.length <= (Config.get_as_int("UploadMaxFilesize"))*1000000){
 				this.save_file_into_temp_dir(binary.md5()+".tmp", binary.data, false);
 			}else{
 				warning("El archivo "+filename+" excede el limite maximo permitido para subida\n");		

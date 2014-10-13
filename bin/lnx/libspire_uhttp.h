@@ -609,7 +609,6 @@ void edwinspire_uhttp_uhttp_server_run_without_mainloop (edwinspireuHttpuHttpSer
 gboolean edwinspire_uhttp_uhttp_server_upload_file_on_documentroot (edwinspireuHttpuHttpServer* self, const gchar* subpath_file, guint8* data, int data_length1, gboolean replace);
 gboolean edwinspire_uhttp_uhttp_server_upload_file (edwinspireuHttpuHttpServer* self, const gchar* path, const gchar* file, guint8* data, int data_length1, gboolean replace);
 gboolean edwinspire_uhttp_uhttp_server_save_file_into_temp_dir (edwinspireuHttpuHttpServer* self, const gchar* file, guint8* data, int data_length1, gboolean replace);
-gchar* edwinspire_uhttp_uhttp_server_full_path_temp_file (edwinspireuHttpuHttpServer* self, const gchar* filename);
 gboolean edwinspire_uhttp_uhttp_server_save_file (const gchar* path, guint8* data, int data_length1, gboolean replace);
 gchar* edwinspire_uhttp_uhttp_server_get_data_as_string_valid_unichars (guint8* d, int d_length1);
 gchar* edwinspire_uhttp_uhttp_server_GenUrl (const gchar* root, const gchar* value);

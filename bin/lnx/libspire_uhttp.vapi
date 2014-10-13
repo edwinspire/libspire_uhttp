@@ -173,7 +173,6 @@ namespace edwinspire {
 			public static string ReadFile (string path);
 			public string ReadServerFile (string path);
 			public virtual bool connection_handler_virtual (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
-			public string full_path_temp_file (string filename);
 			public static string get_data_as_string_valid_unichars (uint8[] d);
 			public static string get_extension_file (string file_name);
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
