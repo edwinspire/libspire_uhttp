@@ -61,7 +61,9 @@ include_once $argv[1];
 					R = true;
 					new_name = "script_php."+match.fetch_named("ext");
 				}else{
-					new_name = "script_php.php";
+					if(file.has_suffix(".php")){
+						new_name = "script_php.php";
+					}
 				}				
 			}catch (RegexError err) {
 				warning (err.message);
