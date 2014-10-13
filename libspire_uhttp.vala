@@ -1140,17 +1140,25 @@ Port: 8082
 #Página de inicio, default = index.html
 Index: index.html
 #Carpeta raíz de los documentos del servidor web. La ruta puede ser absoluta, o si la ruta inicia con * se tomará como relativa a la ubicación donde está corriendo el servidor. Si se deja vacio se tomará como raiz una carpeta llamada uhttproot dentro de la ubicación actual del servidor.
-DocumentRoot: /home/edwinspire/Dropbox/Desarrollo/ProyectosSoftware_ng/proyects/HelpDesk/bin/rootweb
+#DocumentRoot: 
 #Imprime en consola las peticiones realizadas al servidor
 RequestPrintOnConsole: true
 #==============================
-UploadTempDir: /home/edwinspire/Dropbox/Desarrollo/ProyectosSoftware_ng/proyects/HelpDesk/bin/uploads
+#UploadTempDir: 
 UploadMaxFilesize: 10""";
 			this.file_name = "uhttp.conf";
 			this.load();
 			
 			if(!this.KeyValue.has_key("DocumentRoot") || this.get_as_string("DocumentRoot").length < 1){
-				this.KeyValue["DocumentRoot"] = "uhttproot";
+				this.KeyValue["DocumentRoot"] = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir(), "uhttproot");
+			}
+			
+			if(!this.KeyValue.has_key("UploadTempDir") || this.get_as_string("UploadTempDir").length < 1){
+				this.KeyValue["UploadTempDir"] = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_tmp_dir());
+			}
+			
+			if(!this.KeyValue.has_key("UploadMaxFilesize") || this.get_as_int("UploadMaxFilesize") < 0){
+				this.KeyValue["UploadMaxFilesize"] = "1";
 			}
 			
 			this.to_environment_vars();
