@@ -685,7 +685,7 @@ namespace edwinspire.uHttp {
 			}
 			return Retorno;
 		}
-		public static string HtmErrorPage(string error, string description = "", string title = "uHTTP Micro Web Server") {
+		public static string HttpError(string error, string description = "", string title = "uHTTP Micro Web Server") {
 			string Base  = """
 <!DOCTYPE html>
 <html>
@@ -1360,7 +1360,7 @@ UploadMaxFilesize: 10""";
 		public virtual bool connection_handler_virtual(Request request, DataOutputStream dos) {
 			uHttp.Response response = new uHttp.Response();
 			response.Status = StatusCode.NOT_FOUND;
-			response.Data = Response.HtmErrorPage("404 - PAGE NOT FOUND", "The page you requested could not be found . You may have mistyped the address or the page has been removed.").data;
+			response.Data = Response.HttpError("404 - PAGE NOT FOUND", "The page you requested could not be found . You may have mistyped the address or the page has been removed.").data;
 			response.Header["Content-Type"] = "text/html";
 			this.serve_response( response, dos );
 			return false;
@@ -1513,7 +1513,7 @@ Access-Control-Allow-Headers: content-type
 				NoFoundURL(request);
 				print("No found %s\n", request.Path);
 				//     response.Header.Status = StatusCode.NOT_FOUND;
-				//  response.Data = Response.HtmErrorPage("uHTTP WebServer", "404 - Página no encontrada").data;
+				//  response.Data = Response.HttpError("uHTTP WebServer", "404 - Página no encontrada").data;
 				//  response.Header.ContentType = "text/html";
 				//    serve_response( response, dos );
 				// stderr.printf("Path no found: %s\n", request.Path);
