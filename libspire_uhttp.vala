@@ -1167,9 +1167,6 @@ UploadMaxFilesize: 10""";
 			Environment.set_variable("UHTTP_UPLOAD_TEMP_DIR", this.get_as_string("UploadTempDir"), true);
 			Environment.set_variable("UHTTP_UPLOAD_MAX_FILESIZE", this.get_as_string("UploadMaxFilesize"), true);
 			Environment.set_variable("UHTTP_DOCUMENT_ROOT", this.get_as_string("DocumentRoot"), true);
-			
-			//warning(this.full_path);
-			
 					
 		}
 	
@@ -1195,8 +1192,8 @@ UploadMaxFilesize: 10""";
 			//make the threaded socket service with hella possible threads
 			tss = new ThreadedSocketService(max_threads);
 			/* connect the 'run' signal that is emitted when 
-     * there is a connection to our connection handler
-     */
+     			* there is a connection to our connection handler
+    			*/
 			this.thread_heartbeat();
 			tss.run.connect( connection_handler );
 		}
@@ -1503,7 +1500,7 @@ UploadMaxFilesize: 10""";
 						//PHP.Path_Uploads = Config.get_as_string("Uploads");
 						//PHP.DocumentRoot = Config.get_as_string("DocumentRoot");
 						response.Header["Content-Type"] = GetMimeTypeToFile(new_name);
-						response.Data = PHP.run_script(FullPath, ref request).data;
+						response.Data = PHP.run_script(FullPath, Config.get_as_string("DocumentRoot"), Config.get_as_string("UploadTempDir"), ref request).data;
 						//print("PHP devuelve %s\n", (string)response.Data);
 					}else{
 						response.Header["Content-Type"] = GetMimeTypeToFile(request.Path);

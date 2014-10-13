@@ -103,7 +103,7 @@ namespace edwinspire {
 			public string Server_Software;
 			public PHP_Support ();
 			public static bool is_script (string file, ref string new_name);
-			public string run_script (string script, ref edwinspire.uHttp.Request request);
+			public string run_script (string script, string document_root, string tmp_dir, ref edwinspire.uHttp.Request request);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class POST : edwinspire.uHttp.iFormValues, GLib.Object {

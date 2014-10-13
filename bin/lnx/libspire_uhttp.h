@@ -626,7 +626,7 @@ GType edwinspire_uhttp_php_support_get_type (void) G_GNUC_CONST;
 edwinspireuHttpPHP_Support* edwinspire_uhttp_php_support_new (void);
 edwinspireuHttpPHP_Support* edwinspire_uhttp_php_support_construct (GType object_type);
 gboolean edwinspire_uhttp_php_support_is_script (const gchar* file, gchar** new_name);
-gchar* edwinspire_uhttp_php_support_run_script (edwinspireuHttpPHP_Support* self, const gchar* script, edwinspireuHttpRequest** request);
+gchar* edwinspire_uhttp_php_support_run_script (edwinspireuHttpPHP_Support* self, const gchar* script, const gchar* document_root, const gchar* tmp_dir, edwinspireuHttpRequest** request);
 
 
 G_END_DECLS
