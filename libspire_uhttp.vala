@@ -1432,21 +1432,28 @@ UploadMaxFilesize: 10""";
 			catch (Error e) {
 				warning(e.message+"\n");
 			}
+			
 			Response response = new Response();
+			
 			string FullPath = this.PathLocalFile(request.Path);
+			
+			if(request.Path == "/"){
+				FullPath = this.PathLocalFile(Config.get_as_string("Index"));
+			}
+			
 			if(Cache.is_cacheable(FullPath)){
 				// Devuelve el archivo directo de la cache 
 				response.Status = StatusCode.OK;
 				response.Data = Cache.return_file(FullPath).data;
 				response.Header["Content-Type"] = GetMimeTypeToFile(FullPath);
 				serve_response( response, dos );						
-			}else if(request.Path == "/") {
+			/*}else if(request.Path == "/") {
 				// Carga la pagina inicial del servidor
 				response.Status = StatusCode.OK;
 				response.Data = LoadServerFile(Config.get_as_string("Index"));
 				response.Header["Content-Type"] = "text/html";
-				serve_response( response, dos );
-			} else if(request.Path  == "/config.uhttp") {
+				serve_response( response, dos );*/
+			}else if(request.Path  == "/config.uhttp") {
 				// Devuelva una lista en xml de la configuración del sistema
 				response.Status = StatusCode.OK;
 				// TODO No implementado
