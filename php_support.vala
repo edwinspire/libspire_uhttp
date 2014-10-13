@@ -60,6 +60,8 @@ include_once $argv[1];
 		//		warning ("Si es un script php valido/n");
 					R = true;
 					new_name = "script_php."+match.fetch_named("ext");
+				}else{
+					new_name = "script_php.php";
 				}				
 			}catch (RegexError err) {
 				warning (err.message);
