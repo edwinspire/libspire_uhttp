@@ -149,7 +149,7 @@ namespace edwinspire {
 			public Gee.HashMap<string,string> Header;
 			public edwinspire.uHttp.StatusCode Status;
 			public Response ();
-			public static string HtmErrorPage (string title = "uHTTP WebServer", string error);
+			public static string HtmErrorPage (string error, string description = "", string title = "uHTTP Micro Web Server");
 			public string ToString ();
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]

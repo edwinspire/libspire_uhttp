@@ -552,7 +552,7 @@ GType edwinspire_uhttp_response_get_type (void) G_GNUC_CONST;
 edwinspireuHttpResponse* edwinspire_uhttp_response_new (void);
 edwinspireuHttpResponse* edwinspire_uhttp_response_construct (GType object_type);
 gchar* edwinspire_uhttp_response_ToString (edwinspireuHttpResponse* self);
-gchar* edwinspire_uhttp_response_HtmErrorPage (const gchar* title, const gchar* _error_);
+gchar* edwinspire_uhttp_response_HtmErrorPage (const gchar* _error_, const gchar* description, const gchar* title);
 GType edwinspire_uhttp_file_functions_get_type (void) G_GNUC_CONST;
 edwinspireuHttpFileFunctions* edwinspire_uhttp_file_functions_new (void);
 edwinspireuHttpFileFunctions* edwinspire_uhttp_file_functions_construct (GType object_type);
