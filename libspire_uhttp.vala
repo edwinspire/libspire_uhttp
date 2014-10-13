@@ -1148,7 +1148,7 @@ UploadMaxFilesize: 10""";
 			this.file_name = "uhttp.conf";
 			this.load();
 			
-			if(!this.KeyValue.has_key("DocumentRoot") || this.get_as_string("DocumentRoot").length < 1){
+			if(!this.KeyValue.has_key("DocumentRoot") || this.get_as_string("DocumentRoot").length < 1 || this.get_as_string("DocumentRoot").contains("*")){
 				this.KeyValue["DocumentRoot"] = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir(), "uhttproot");
 			}
 			
@@ -1450,6 +1450,7 @@ UploadMaxFilesize: 10""";
 			
 			if(request.Path == "/"){
 				FullPath = this.PathLocalFile(Config.get_as_string("Index"));
+				//warning(FullPath);
 			}
 			
 			if(Cache.is_cacheable(FullPath)){
@@ -1504,8 +1505,8 @@ UploadMaxFilesize: 10""";
 						response.Data = PHP.run_script(FullPath, Config.get_as_string("DocumentRoot"), Config.get_as_string("UploadTempDir"), ref request).data;
 						//print("PHP devuelve %s\n", (string)response.Data);
 					}else{
-						response.Header["Content-Type"] = GetMimeTypeToFile(request.Path);
-						response.Data = LoadServerFile(request.Path);				
+						response.Header["Content-Type"] = GetMimeTypeToFile(FullPath);
+						response.Data = LoadFile(FullPath);				
 					}
 				serve_response( response, dos );
 				
