@@ -175,6 +175,7 @@ namespace edwinspire {
 			public static string get_extension_file (string file_name);
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
 			public virtual void run ();
+			[Description (blurb = "Run without MainLoop", nick = "Run Server")]
 			public void run_without_mainloop ();
 			public static bool save_file (string path, uint8[] data, bool replace = false);
 			public bool save_file_into_temp_dir (string file, uint8[] data, bool replace = false);
