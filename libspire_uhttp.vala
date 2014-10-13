@@ -1148,6 +1148,11 @@ UploadTempDir: /home/edwinspire/Dropbox/Desarrollo/ProyectosSoftware_ng/proyects
 UploadMaxFilesize: 10""";
 			this.file_name = "uhttp.conf";
 			this.load();
+			
+			if(!this.KeyValue.has_key("DocumentRoot") || this.get_as_string("DocumentRoot").length < 1){
+				this.KeyValue["DocumentRoot"] = "uhttproot";
+			}
+			
 			this.to_environment_vars();
 		}
 		
@@ -1231,6 +1236,7 @@ UploadMaxFilesize: 10""";
 			Retorno.append("</enum>");
 			return Retorno.str;
 		}
+		
 		[Description(nick = "Run Server", blurb = "Run on MainLoop")]  
 		  public virtual void run() {
 			//create an IPV4 InetAddress bound to no specific IP address
