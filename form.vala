@@ -34,6 +34,7 @@ namespace edwinspire.uHttp {
 		public HashMap<string, string> Header{private set; get; default = new HashMap<string, string>();}
 		public HashMap<string, string> Params{private set; get; default = new HashMap<string, string>();}
 		private BinaryData binary = new BinaryData();
+		public string path_file_tmp = "";
 		
 		public signal void file_uploaded(BinaryData bin, string filename);
 		
@@ -72,7 +73,7 @@ namespace edwinspire.uHttp {
 		*/
 		public string Filename(){
 				if(Params.has_key("filename")){
-				this.Params["tmp_full_path"] = uHttpServer.full_path_temp_file(binary.md5()+".tmp");
+				this.Params["tmp_full_path"] = Path.build_path (Path.DIR_SEPARATOR_S, this.path_file_tmp, binary.md5()+".tmp");
 				return  Params["filename"];
 				}else{
 				return "";
@@ -323,7 +324,7 @@ namespace edwinspire.uHttp {
 		public HashMap<string, string> internal_hashmap{private set; get; default = new HashMap<string, string>();}
 		public bool is_multipart_form_data {private set; get; default = false;}
 		public signal void file_uploaded(BinaryData bin, string filename);
-		
+		public string path_file_tmp = "";
 		/**
 		* Boundary
 		* The Content-Type field for multipart entities requires one parameter, "boundary", which is used to specify the encapsulation boundary. The encapsulation boundary is defined as a line consisting entirely of two hyphen characters ("-", decimal code 45) followed by the boundary parameter value from the Content-Type header field.
@@ -415,7 +416,7 @@ namespace edwinspire.uHttp {
 							pos_block_end = data.length - dis.get_available() -1;
 							
 							var bytes = new Bytes(data[ix: pos_block_end]);
-							blocks.add(this.decode_block(bytes.slice(0, bytes.length-line.data.length).get_data ()));
+							blocks.add(this.decode_block(bytes.slice(0, bytes.length-line.data.length).get_data (), this.path_file_tmp));
 							
 							ix = data.length - dis.get_available();
 						}
@@ -434,20 +435,16 @@ namespace edwinspire.uHttp {
 		}
 		
 		
-		private POSTMultipartBlock decode_block(uint8[] block){
+		private POSTMultipartBlock decode_block(uint8[] block, string pathfiletmp){
 			POSTMultipartBlock PMPB = new POSTMultipartBlock();
+			PMPB.path_file_tmp = pathfiletmp;
 			PMPB.file_uploaded.connect(upload_file_signal);
 			PMPB.decode(block); 
 			return PMPB;
 		}
 		
-		private void upload_file_signal(BinaryData binary, string filename){
-			if(binary.length <= int.parse(Environment.get_variable("UHTTP_UPLOAD_MAX_FILESIZE"))*1000000){
+		private void upload_file_signal(BinaryData binary, string filename){	
 				this.file_uploaded(binary, filename);
-			}else{
-				warning("El archivo "+filename+" excede el limite maximo permitido para subida\n");		
-			}
-		
 		}
 		
 		/**
@@ -479,10 +476,10 @@ namespace edwinspire.uHttp {
 	*/	
 	public class FormRequest:GLib.Object{
 		public GET get_request{private set; get; default = new GET();}
-		public POST post_request{private set; get; default = new POST();}	
+		public POST post_request{private set; get; default = new POST();}
+		public string path_file_tmp = "";	
 	
 		public FormRequest(){
-		
 		
 		}	
 		

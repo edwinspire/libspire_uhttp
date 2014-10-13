@@ -41,6 +41,7 @@ namespace edwinspire {
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class FormRequest : GLib.Object {
+			public string path_file_tmp;
 			public FormRequest ();
 			public void decode (edwinspire.uHttp.RequestMethod method, Gee.HashMap<string,string> header, string? query, uint8[] data);
 			public string to_string ();
@@ -107,6 +108,7 @@ namespace edwinspire {
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class POST : edwinspire.uHttp.iFormValues, GLib.Object {
+			public string path_file_tmp;
 			public POST ();
 			public void decode (Gee.HashMap<string,string> header, uint8[] data);
 			[Description (blurb = "Boundary", nick = "Multi Part Form Boundary")]
@@ -116,6 +118,7 @@ namespace edwinspire {
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class POSTMultipartBlock : GLib.Object {
+			public string path_file_tmp;
 			public POSTMultipartBlock ();
 			public string Filename ();
 			public string Name ();
@@ -170,7 +173,7 @@ namespace edwinspire {
 			public static string ReadFile (string path);
 			public string ReadServerFile (string path);
 			public virtual bool connection_handler_virtual (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
-			public static string full_path_temp_file (string filename);
+			public string full_path_temp_file (string filename);
 			public static string get_data_as_string_valid_unichars (uint8[] d);
 			public static string get_extension_file (string file_name);
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
