@@ -1153,8 +1153,8 @@ UploadMaxFilesize: 10""";
 		
 		public void to_environment_vars(){
 			Environment.set_variable("uhttp_upload_temp_dir", this.get_as_string("UploadTempDir"), true);
-			Environment.set_variable("uhttp_upload_max_filesize", this.get_as_string("UploadMaxFilesize"), true);
-			Environment.set_variable("uhttp_document_root", this.get_as_string("DocumentRoot"), true);
+			Environment.set_variable("UHTTP_UPLOAD_MAX_FILESIZE", this.get_as_string("UploadMaxFilesize"), true);
+			Environment.set_variable("UHTTP_DOCUMENT_ROOT", this.get_as_string("DocumentRoot"), true);
 			
 			//warning(this.full_path);
 			
@@ -1284,7 +1284,7 @@ UploadMaxFilesize: 10""";
 			//  ml.run();
 		}
 		public bool upload_file_on_documentroot(string subpath_file, uint8[] data, bool replace = false) {
-			return upload_file(Environment.get_variable("uhttp_document_root"), FileFunctions.text_strip(subpath_file), data, replace);
+			return upload_file(Environment.get_variable("UHTTP_DOCUMENT_ROOT"), FileFunctions.text_strip(subpath_file), data, replace);
 		}
 		
 		public bool upload_file(string path, string file, uint8[] data, bool replace = false) {
@@ -1366,7 +1366,7 @@ UploadMaxFilesize: 10""";
 		
 		public void upload_file_signal(BinaryData binary, string filename){
 		
-			if(binary.length <= int.parse(Environment.get_variable("uhttp_upload_max_filesize"))*1000000){
+			if(binary.length <= int.parse(Environment.get_variable("UHTTP_UPLOAD_MAX_FILESIZE"))*1000000){
 				this.save_file_into_temp_dir(binary.md5()+".tmp", binary.data, false);
 			}else{
 				warning("El archivo "+filename+" excede el limite maximo permitido para subida\n");		
@@ -1557,7 +1557,7 @@ Access-Control-Allow-Headers: content-type
 		}
 		// Obtiene el path local del archivo solicitado
 		public string PathLocalFile(string Filex) {
-			return Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_variable("uhttp_document_root"), Filex);
+			return Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_variable("UHTTP_DOCUMENT_ROOT"), Filex);
 		}
 		public static string ReadFile(string path) {
 			return (string)LoadFile(path);

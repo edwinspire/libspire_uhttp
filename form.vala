@@ -442,7 +442,7 @@ namespace edwinspire.uHttp {
 		}
 		
 		private void upload_file_signal(BinaryData binary, string filename){
-			if(binary.length <= int.parse(Environment.get_variable("uhttp_upload_max_filesize"))*1000000){
+			if(binary.length <= int.parse(Environment.get_variable("UHTTP_UPLOAD_MAX_FILESIZE"))*1000000){
 				this.file_uploaded(binary, filename);
 			}else{
 				warning("El archivo "+filename+" excede el limite maximo permitido para subida\n");		
