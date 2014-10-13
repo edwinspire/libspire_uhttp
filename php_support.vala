@@ -63,6 +63,7 @@ include_once $argv[1];
 				}else{
 					if(file.has_suffix(".php")){
 						new_name = "script_php.php";
+						R = true;
 					}
 				}				
 			}catch (RegexError err) {

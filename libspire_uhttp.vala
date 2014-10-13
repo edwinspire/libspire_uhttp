@@ -1246,10 +1246,12 @@ UploadMaxFilesize: 10""";
 		
 		[Description(nick = "Run Server", blurb = "Run on MainLoop")]  
 		  public virtual void run() {
+		  	var p = Config.get_as_uint16("Port");
+		  	if(p>0){
 			//create an IPV4 InetAddress bound to no specific IP address
 			InetAddress ia = new InetAddress.any(SocketFamily.IPV4);
 			//create a socket address based on the netadress and set the port
-			InetSocketAddress isa = new InetSocketAddress(ia, Config.get_as_uint16("Port"));
+			InetSocketAddress isa = new InetSocketAddress(ia, p);
 			//try to add the address to the ThreadedSocketService
 			try {
 				tss.add_address(isa, SocketType.STREAM, SocketProtocol.TCP, null, null);
@@ -1273,6 +1275,10 @@ UploadMaxFilesize: 10""";
 			stdout.printf("Root: %s\n", Config.get_as_string("DocumentRoot"));
 			stdout.printf("Index: %s\n", Config.get_as_string("Index"));*/
 			ml.run();
+			}else{
+				stderr.printf("Invalid Port = %s\n", p.to_string());
+				return;
+			}
 		}
 		public void run_without_mainloop() {
 			//create an IPV4 InetAddress bound to no specific IP address
