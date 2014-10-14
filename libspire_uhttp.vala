@@ -1145,10 +1145,11 @@ RequestPrintOnConsole: true
 #==============================
 #UploadTempDir: 
 UploadMaxFilesize: 10""";
+			//TODO: Si la carpeta no existe debe intentar crearla, si falla usar valores de fabrica.
 			this.file_name = "uhttp.conf";
 			this.load();
 			
-			if(!this.KeyValue.has_key("DocumentRoot") || this.get_as_string("DocumentRoot").length < 1 || this.get_as_string("DocumentRoot").contains("*")){
+			if(!this.KeyValue.has_key("DocumentRoot") || this.get_as_string("DocumentRoot").length <= 1 || this.get_as_string("DocumentRoot").contains("*")){
 				this.KeyValue["DocumentRoot"] = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir(), "uhttproot");
 			}
 			
