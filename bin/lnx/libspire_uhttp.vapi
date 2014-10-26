@@ -49,7 +49,6 @@ namespace edwinspire {
 			public MultiPartFormDataPart ();
 			public string compute_md5_for_data ();
 			public string get_content_disposition_param (string name);
-			public string get_data_as_string_valid_unichars ();
 			public string get_head_param (string head, string name);
 			public edwinspire.uHttp.MultiPartFormDataHeader get_header_content_disposition ();
 			public edwinspire.uHttp.MultiPartFormDataHeader get_header_for_name (string name);
@@ -133,20 +132,18 @@ namespace edwinspire {
 			public static string ReadFile (string path);
 			public string ReadServerFile (string path);
 			public virtual bool connection_handler_virtual (edwinspire.uHttp.Request request, GLib.DataOutputStream dos);
-			public static string get_data_as_string_valid_unichars (uint8[] d);
 			public static string get_extension_file (string file_name);
 			[Description (blurb = "Run on MainLoop", nick = "Run Server")]
 			public virtual void run ();
 			[Description (blurb = "Run without MainLoop", nick = "Run Server")]
 			public void run_without_mainloop ();
-			public static bool save_file (string path, uint8[] data, bool replace = false);
-			public bool save_file_into_temp_dir (string file, uint8[] data, bool replace = false);
+			public long save_file_into_temp_dir (string file, uint8[] data, bool replace = false);
 			public long sendEvent (string data, GLib.DataOutputStream dos);
 			public void sendEventHeader (GLib.DataOutputStream dos);
 			[Description (blurb = "", nick = "Server Response")]
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
-			public bool upload_file (string path, string file, uint8[] data, bool replace = false);
-			public bool upload_file_on_documentroot (string subpath_file, uint8[] data, bool replace = false);
+			public long upload_file (string path, string file, uint8[] data, bool replace = false);
+			public long upload_file_on_documentroot (string subpath_file, uint8[] data, bool replace = false);
 			public void upload_file_signal (edwinspire.utils.BinaryData binary, string filename);
 			public long writeData (uint8[] data_, GLib.DataOutputStream dos);
 			[Description (blurb = "Señal se dispara cuando una página no es encontrada en el servidor", nick = "Signal Request URL No Found")]
@@ -156,7 +153,6 @@ namespace edwinspire {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class uHttpServerConfigFile : edwinspire.utils.KeyValueFile {
 			public uHttpServerConfigFile ();
-			public void to_environment_vars ();
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public interface iFormValues : GLib.Object {
