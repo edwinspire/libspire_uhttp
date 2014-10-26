@@ -764,16 +764,17 @@ UploadMaxFilesize: 10
 		}
 		
 		private void start_server_message_on_console(){
-			print("\n*******************************\n");
-			print("* Start uHTTP Micro WebServer *\n");
-			print("Version: %s\n", VERSION);
-			print("Licence: LGPL\n");
-			print("Contact: edwinspire@gmail.com\n");
-			print("         https://github.com/edwinspire?tab=repositories\n");
+			var Text = new StringBuilder();
+			Text.append("\n*******************************\n");
+			Text.append("* Start uHTTP Micro WebServer *\n");
+			Text.append_printf("Version: %s\n", VERSION);
+			Text.append_printf("Licence: LGPL\n");
+			Text.append_printf("Contact: edwinspire@gmail.com\n");
+			Text.append_printf("         https://github.com/edwinspire?tab=repositories\n");
 			//print("Contact: software@edwinspire.com\n");
 			//print("Contact: http://www.edwinspire.com\n\n");
-			stdout.printf("%s\n", Config.to_string("[Configuration]\n"));
-			//print("\n*******************************\n");
+			Text.append_printf("%s\n", Config.to_string("[Configuration]\n"));
+			print(Text.str);
 		}
 		
 		[Description(nick = "Run Server", blurb = "Run without MainLoop")]
