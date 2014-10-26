@@ -95,17 +95,6 @@ typedef struct _edwinspireuHttpResponse edwinspireuHttpResponse;
 typedef struct _edwinspireuHttpResponseClass edwinspireuHttpResponseClass;
 typedef struct _edwinspireuHttpResponsePrivate edwinspireuHttpResponsePrivate;
 
-#define EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES (edwinspire_uhttp_address_list_files_get_type ())
-#define EDWINSPIRE_UHTTP_ADDRESS_LIST_FILES(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES, edwinspireuHttpAddressListFiles))
-#define EDWINSPIRE_UHTTP_ADDRESS_LIST_FILES_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES, edwinspireuHttpAddressListFilesClass))
-#define EDWINSPIRE_UHTTP_IS_ADDRESS_LIST_FILES(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES))
-#define EDWINSPIRE_UHTTP_IS_ADDRESS_LIST_FILES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES))
-#define EDWINSPIRE_UHTTP_ADDRESS_LIST_FILES_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES, edwinspireuHttpAddressListFilesClass))
-
-typedef struct _edwinspireuHttpAddressListFiles edwinspireuHttpAddressListFiles;
-typedef struct _edwinspireuHttpAddressListFilesClass edwinspireuHttpAddressListFilesClass;
-typedef struct _edwinspireuHttpAddressListFilesPrivate edwinspireuHttpAddressListFilesPrivate;
-
 #define EDWINSPIRE_UHTTP_TYPE_CACHEABLE_ADDRESS (edwinspire_uhttp_cacheable_address_get_type ())
 #define EDWINSPIRE_UHTTP_CACHEABLE_ADDRESS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_CACHEABLE_ADDRESS, edwinspireuHttpCacheableAddress))
 #define EDWINSPIRE_UHTTP_CACHEABLE_ADDRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_CACHEABLE_ADDRESS, edwinspireuHttpCacheableAddressClass))
@@ -286,15 +275,6 @@ struct _edwinspireuHttpResponseClass {
 	GObjectClass parent_class;
 };
 
-struct _edwinspireuHttpAddressListFiles {
-	edwinspireutilsFilesLinesArray parent_instance;
-	edwinspireuHttpAddressListFilesPrivate * priv;
-};
-
-struct _edwinspireuHttpAddressListFilesClass {
-	edwinspireutilsFilesLinesArrayClass parent_class;
-};
-
 struct _edwinspireuHttpCacheableAddress {
 	edwinspireutilsFilesLinesArray parent_instance;
 	edwinspireuHttpCacheableAddressPrivate * priv;
@@ -308,6 +288,7 @@ struct _edwinspireuHttpCacheableAddressClass {
 struct _edwinspireuHttpuHttpServerConfigFile {
 	edwinspireutilsKeyValueFile parent_instance;
 	edwinspireuHttpuHttpServerConfigFilePrivate * priv;
+	edwinspireuHttpCacheableAddress* Cache;
 };
 
 struct _edwinspireuHttpuHttpServerConfigFileClass {
@@ -317,7 +298,6 @@ struct _edwinspireuHttpuHttpServerConfigFileClass {
 struct _edwinspireuHttpuHttpServer {
 	GObject parent_instance;
 	edwinspireuHttpuHttpServerPrivate * priv;
-	edwinspireuHttpCacheableAddress* Cache;
 	gint heartbeatseconds;
 	edwinspireuHttpuHttpServerConfigFile* Config;
 };
@@ -401,12 +381,10 @@ edwinspireuHttpResponse* edwinspire_uhttp_response_new (void);
 edwinspireuHttpResponse* edwinspire_uhttp_response_construct (GType object_type);
 gchar* edwinspire_uhttp_response_ToString (edwinspireuHttpResponse* self);
 gchar* edwinspire_uhttp_response_HttpError (const gchar* _error_, const gchar* description, const gchar* title);
-GType edwinspire_uhttp_address_list_files_get_type (void) G_GNUC_CONST;
-edwinspireuHttpAddressListFiles* edwinspire_uhttp_address_list_files_new (void);
-edwinspireuHttpAddressListFiles* edwinspire_uhttp_address_list_files_construct (GType object_type);
 GType edwinspire_uhttp_cacheable_address_get_type (void) G_GNUC_CONST;
 edwinspireuHttpCacheableAddress* edwinspire_uhttp_cacheable_address_new (void);
 edwinspireuHttpCacheableAddress* edwinspire_uhttp_cacheable_address_construct (GType object_type);
+void edwinspire_uhttp_cacheable_address_load_config (edwinspireuHttpCacheableAddress* self);
 gboolean edwinspire_uhttp_cacheable_address_is_cacheable (edwinspireuHttpCacheableAddress* self, const gchar* file_name);
 edwinspireutilsBinaryData* edwinspire_uhttp_cacheable_address_return_file (edwinspireuHttpCacheableAddress* self, const gchar* file_name);
 GType edwinspire_uhttp_uhttp_server_config_file_get_type (void) G_GNUC_CONST;

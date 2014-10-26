@@ -3,14 +3,11 @@
 namespace edwinspire {
 	namespace uHttp {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class AddressListFiles : edwinspire.utils.FilesLinesArray {
-			public AddressListFiles ();
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class CacheableAddress : edwinspire.utils.FilesLinesArray {
 			public Gee.HashMap<string,edwinspire.utils.BinaryData> cache;
 			public CacheableAddress ();
 			public bool is_cacheable (string file_name);
+			public void load_config ();
 			public edwinspire.utils.BinaryData return_file (string file_name);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
@@ -89,7 +86,6 @@ namespace edwinspire {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "Micro embebed HTTP Web Server", nick = "HTTP Server")]
 		public class uHttpServer : GLib.Object {
-			public edwinspire.uHttp.CacheableAddress Cache;
 			[Description (blurb = " Data Config uHTTP", nick = "Config uHTTP")]
 			public edwinspire.uHttp.uHttpServerConfigFile Config;
 			public int heartbeatseconds;
@@ -124,6 +120,7 @@ namespace edwinspire {
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class uHttpServerConfigFile : edwinspire.utils.KeyValueFile {
+			public edwinspire.uHttp.CacheableAddress Cache;
 			public uHttpServerConfigFile ();
 			public void load_config ();
 		}
