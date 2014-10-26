@@ -23,6 +23,8 @@
 //New file source
 using Gee;
 using GLib;
+using edwinspire.utils;
+
 namespace edwinspire.uHttp {
 
 	/**
@@ -43,7 +45,7 @@ namespace edwinspire.uHttp {
 eval($argv[2]);
 include_once $argv[1];
 ?>""";
-			this.create_if_does_not_exist(default_message.data);
+			this.write_file(default_message.data, false);
 		}
 
 		/**

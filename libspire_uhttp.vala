@@ -23,6 +23,8 @@
 //New file source
 using Gee;
 using GLib;
+using edwinspire.utils;
+
 namespace edwinspire.uHttp {
 	const string VERSION = "uHttp Server Version 0.3 Alpha";
 	/*
@@ -304,227 +306,9 @@ namespace edwinspire.uHttp {
 	}
 	
 	
-	public class MultiPartFormDataHeader:GLib.Object {
-		public string name {
-			set;
-			get;
-			default = "";
-		}
-		public string value {
-			set;
-			get;
-			default = "";
-		}
-		public HashMap<string, string> param {
-			get;
-			set;
-			default = new HashMap<string, string>();
-		}
-		public MultiPartFormDataHeader() {
-		}
-		public string get_param_for_name(string name) {
-			string Retorno = "";
-			if(this.param.has_key(name)) {
-				Retorno = this.param[name];
-			}
-			return Retorno;
-		}
-	}
-	public class MultiPartFormDataPart:GLib.Object {
-		public ArrayList<MultiPartFormDataHeader> Headers {
-			get;
-			set;
-			default = new ArrayList<MultiPartFormDataHeader>();
-		}
-		private uint8[] _data = {
-		}
-		;
-		private string _md5 = "";
-		public MultiPartFormDataPart() {
-		}
-		public uint8[] data {
-			get {
-				return this._data;
-			}
-			set {
-				this._data = value;
-				this._md5 = Checksum.compute_for_data (ChecksumType.MD5, this._data);
-			}
-		}
-		public string get_head_param(string head, string name) {
-			string Retorno = "";
-			this.get_header_for_name(head).get_param_for_name(name);
-			return Retorno;
-		}
-		public MultiPartFormDataHeader get_header_content_disposition() {
-			return this.get_header_for_name("Content-Disposition");
-		}
-		public string get_content_disposition_param(string name) {
-			return this.get_header_content_disposition().get_param_for_name(name);
-		}
-		public MultiPartFormDataHeader get_header_for_name(string name) {
-			var H = new MultiPartFormDataHeader();
-			foreach(var h in this.Headers) {
-				if(h.name == name) {
-					H = h;
-					break;
-				}
-			}
-			return H;
-		}
-		public string get_data_as_string_valid_unichars() {
-			return uHttpServer.get_data_as_string_valid_unichars(this.data);
-		}
-		public string compute_md5_for_data() {
-			//return Checksum.compute_for_data (ChecksumType.MD5, this.data);
-			return this._md5;
-		}
-	}
-	public class MultiPartFormData:GLib.Object {
-		private HashMap<int, MultiPartFormDataPart> PartsInternal = new HashMap<int, MultiPartFormDataPart>();
-		public ArrayList<MultiPartFormDataPart> Parts {
-			get;
-			private set;
-			default = new ArrayList<MultiPartFormDataPart>();
-		}
-		[Description(nick = "Multi Part Form Boundary", blurb = "Boundary")]
-		public string boundary {
-			get;
-			private set;
-			default = "uHTTPServerxyzqwertyuiopasdf2f3g5h5j";
-		}
-		public bool is_multipart_form_data {
-			get;
-			private set;
-			default = false;
-		}
-		public MultiPartFormData() {
-		}
-		public void decode(string ContentTypeHeader, uint8[] d) {
-			// Chequeamos si el Content-Type es multipart/form-data y extraemos el boundary
-			try {
-				Regex regexbase2 = new Regex("""multipart/form-data; boundary=(?<value>[-|\w|\W]+)""");
-				MatchInfo match2;
-				if(regexbase2.match(ContentTypeHeader, RegexMatchFlags.ANCHORED, out match2)) {
-					if(match2.fetch_named("value") != null) {
-						this.boundary = match2.fetch_named("value");
-						this.is_multipart_form_data = true;
-					}
-				}
-			}
-			catch(Error e) {
-				stderr.printf(e.message+"\n");
-			}
-			// Si es multipart entonces obtenemos las partes individuales
-			if(this.is_multipart_form_data) {
-				//stdout.printf("\n%s\n", (string)d);
-				//string nameHeader = "";
-				//string valueHeader = "";
-				StringBuilder temp = new StringBuilder();
-				//bool start = false;
-				var e= new ArrayList<uint8>();
-				int i = 0;
-				int j = 0;
-				int block = 0;
-				bool header = false;
-				bool data = false;
-				try {
-					Regex RxHeader = new Regex("""(?<header>[\w+\-]+): (?<value>[\w\-\/]+)""");
-					Regex RxHeaderWparam = new Regex("""(?<header>[\w+\-]+): (?<value>[\w\-\/]+);(?<parameters>[\d\D]+)""");
-					Regex RxHeaderParameter = new Regex("""\s?(?<name>[\w+\-]+)="(?<value>[ \s\w\W\d\D]+)"""+"\"");
-					foreach(var x in d) {
-						unichar uc = x;
-						if(uc.validate() && !uc.iscntrl()) {
-							temp.append_unichar(uc);
-							//temp2.append_unichar(x);
-						}
-						if(block > 0 && data && j > 0) {
-							e.add(x);
-						}
-						if( i > 0 && x == '\n' && d[i-1] == '\r') {
-							//lastSalto = i-1;
-							if(temp.str.has_suffix(this.boundary)) {
-								//temp.truncate(0);
-								if(block>0 && data && j > 0) {
-									this.PartsInternal[block].data = e.slice(0, e.size-this.boundary.data.length-6).to_array();
-									e.clear();
-								}
-								temp.truncate(0);
-								block++;
-								//stdout.printf("\n***INICIA [%i]***\n", block);
-								header = false;
-								data = false;
-								j = 0;
-								this.PartsInternal[block] = new MultiPartFormDataPart();
-							}
-							if(block>0 && !header && !data && temp.str == "") {
-								//stdout.printf("\n***HEADERS***\n");
-								header = true;
-								j = 0;
-								data = false;
-								//stdout.printf("\n[%s](%i)\n", temp.str, block);
-								temp.truncate(0);
-							} else if(block > 0 && header && !data && temp.str == "") {
-								//stdout.printf("\n***DATOS***\n");
-								data = true;
-								header = false;
-								temp.truncate(0);
-								j = i;
-								//stdout.printf("\n[%s](%i)\n", i, block);
-							} else if(block > 0 && !header && data && temp.str == "") {
-								//stdout.printf("\n***FIN***\n");
-								data = false;
-								header = false;
-								temp.truncate(0);
-							} else if(block > 0 && header) {
-								var h = new MultiPartFormDataHeader();
-								//stdout.printf("\n[%s](%i)\n", temp.str, block);
-								MatchInfo matchH;
-								if(RxHeaderWparam.match(temp.str, RegexMatchFlags.ANCHORED, out matchH)) {
-									// Con parametros
-									h.name = matchH.fetch_named("header");
-									h.value = matchH.fetch_named("value");
-									this.PartsInternal[block].Headers.add(h);
-									//stdout.printf("\n*[%s][%s][%s]*\n", h.name, h.value, matchH.fetch_named("parameters"));
-									var ps = matchH.fetch_named("parameters").split(";");
-									MatchInfo matchP;
-									foreach(var p in ps) {
-										//stdout.printf("\nParametros linea: %s\n", p);
-										if(RxHeaderParameter.match(p, RegexMatchFlags.ANCHORED, out matchP)) {
-											// Parametros
-											h.param[matchP.fetch_named("name")] = matchP.fetch_named("value");
-											//stdout.printf("\n*[%s]*=[%s]\n", matchP.fetch_named("name"), matchP.fetch_named("value"));
-										}
-									}
-								} else if(RxHeader.match(temp.str, RegexMatchFlags.ANCHORED, out matchH)) {
-									// Sin parametros
-									h.name = matchH.fetch_named("header");
-									h.value = matchH.fetch_named("value");
-									//h.
-									this.PartsInternal[block].Headers.add(h);
-									//stdout.printf("\n[%s][%s]\n", h.name, h.value);
-								}
-								temp.truncate(0);
-							}
-						}
-						i++;
-						//temp.truncate();
-					}
-					if(block>0) {
-						this.PartsInternal[block].data = e.slice(0, e.size-this.boundary.data.length-8).to_array();
-					}
-					foreach(var m in this.PartsInternal.entries) {
-						this.Parts.add(m.value);
-					}
-					PartsInternal.clear();
-				}
-				catch(Error e) {
-					stderr.printf(e.message+"\n");
-				}
-				//stdout.printf("\nDatos:\n%s\n", (string)e.to_array());
-			}
-		}
-	}
+	/**
+	* Class representing a response from the server.
+	*/
 	[Description(nick = "HTTP Response", blurb = "Response from server")]
 	public class Response:GLib.Object {
 		public  uint8[] Data = new uint8[0];
@@ -685,6 +469,10 @@ namespace edwinspire.uHttp {
 			}
 			return Retorno;
 		}
+		
+		/**
+		* Returns a string of HTML code with error message will be displayed in the browser.
+		*/
 		public static string HttpError(string error, string description = "", string title = "uHTTP Micro Web Server") {
 			string Base  = """
 <!DOCTYPE html>
@@ -693,15 +481,6 @@ namespace edwinspire.uHttp {
 <meta charset="utf-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <title>@Title</title>
-<script type="text/javascript" src="lib/dojo/dojo/dojo.js" data-dojo-config="'parseOnLoad':true,'async':true,'packages':[{'name':'gridx','location':'../gridx'},{'name':'clipart','location':'../../clipart'},{'name':'maqettaSamples','location':'../../../samples'},{'name':'maqetta','location':'../../maqetta'},{'name':'shapes','location':'../../shapes'},{'name':'zazl','location':'../../zazl'},{'name':'widgets','location':'../../custom'}]"></script>
-<script type="text/javascript">
-require([
-  "dijit/dijit",
-  "dojo/parser",
-  "maqetta/space",
-  "maqetta/AppStates"
-]);
-</script>
 </head>
 <body data-maq-ws="collapse" data-maq-comptype="desktop" data-maq-flow-layout="true" data-maq-appstates="{}" id="myapp">
  <div style="width: 100%; height: 100%;">
@@ -745,327 +524,31 @@ require([
 	}
     
     
-    /**
-    * Basic functions for reading and writing files.
-    */    
-    public class FileFunctions:GLib.Object{
-        /**
-        * file_name is the name of the file to be read or written. 
-        * You may need to put the full path.
-        */
-        public string file_name = "file.uhttp";
-        public string full_path{get; private set; default = "";}
-           
-            public FileFunctions(){
-            }
-            
-            public static string text_strip(string t){
-            	return t.strip();
-            }
-            
-            /**
-            * Create the file if it does not exist with the data passed as a parameter.
-            */
-            public bool create_if_does_not_exist(uint8[] data = "".data){
-                    var file = File.new_for_path (this.file_name);
-                    this.full_path = file.get_path();
-
-                    if (!file.query_exists ()) {
-                        this.create_new_file(data);
-                    }
-                    return true;            
-            }
-            /**
-            * Create a new file with the data passed as a parameter.
-            */
-            public long create_new_file(uint8[] data = "".data){
-                return this.write_file(data);                
-            }
-            
-            /**
-            * Writes data to the file, replacing the previous.
-            */
-            public long write_file(uint8[] data = "".data){
-                long written = 0;
-                try {
-                    // an output file in the current working directory
-                    var file = File.new_for_path (this.file_name);
-                	 this.full_path = file.get_path();
-                   if (file.query_exists ()) {
-                   file.delete ();
-                    }
-
-                    // creating a file and a DataOutputStream to the file
-                    var dos = new DataOutputStream (file.create (FileCreateFlags.REPLACE_DESTINATION));
-                    // For long string writes, a loop should be used, because sometimes not all data can be written in one run
-                    // 'written' is used to check how much of the string has already been written
-                    while (written < data.length) { 
-                    // sum of the bytes of 'text' that already have been written to the stream
-                    written += dos.write (data[written:data.length]);
-                    }
-                    
-                } catch (Error e) {
-                stderr.printf ("%s\n", e.message);
-                }  
-            return written;          
-            }
-            
-            /**
-            * Read binary data file.
-            */
-            public uint8[] read_file(){
-                var file = File.new_for_path (this.file_name);
-               // warning(file.get_path());
-                uint8[] Retorno = {}; 
-                if (file.query_exists ()) {
-                        try {
-                        
-                         var file_info = file.query_info ("*", FileQueryInfoFlags.NONE);
-                        //    stdout.printf ("File size: %lld bytes\n", file_info.get_size ());
-                        Retorno = new uint8[file_info.get_size()];
-                        // Open file for reading and wrap returned FileInputStream into a
-                        // DataInputStream, so we can read line by line
-                        var dis = new DataInputStream (file.read ());  
-                        size_t bytes_read;
-                       dis.read_all(Retorno, out bytes_read);
-                       //message("File '%s' loading... %s = %s - %s\n", file.get_path (), (string)Retorno, bytes_read.to_string(), dis.has_pending ().to_string());
-                    } catch (Error e) {
-                        error ("%s", e.message);
-                    } 
-                }else{
-                stderr.printf ("File '%s' doesn't exist.\n", file.get_path ());
-                }  
-                
-                return Retorno;         
-            }
-            
-            public BinaryData read_as_binarydata(){
-            return new BinaryData(this.read_file());            
-            }
-            
-            /**
-            * Read data from the file and returns them as a string with only valid characters unichar.
-            */
-            public string load_only_valid_unichars(){
-                var B = new BinaryData(this.read_file());
-                return B.to_string_only_valid_unichars();                
-            }
+    
+  
+    
     
 
-    
-    } 
-    
-    public class KeyValueFile:FileFunctions{
-    	public string Exp = """(?<key>[0-9\w]+):[\s]+(?<value>[0-9\w\s\W]+)""";
-    	public string default_message = "";
-    	public HashMap<string, string> KeyValue = new HashMap<string, string>();
-    	public KeyValueFile(){
-    		this.default_message = "# Configuration File";
-    		//this.Exp = regex;
-    		this.file_name = "kf.conf";
-    	}
-    
-    		public static string HashMapToString(HashMap<string, string> hm) {
-			var Retorno = new StringBuilder();
-			foreach(var r in hm.entries) {
-				Retorno.append_printf("%s: %s\n", r.key, r.value);
-			}
-			return Retorno.str;
-		}
 
-	public string to_string(string title = "KeyValueFile\n"){
-		var Retorno = new StringBuilder(title);
-		Retorno.append(HashMapToString(KeyValue));
-		return Retorno.str;
-	}
-	    
-    	public void load(){
-                this.create_if_does_not_exist(this.default_message.data);
-                var lines = this.load_only_valid_unichars().split("\n");
-                try {
-                	//warning(Exp);
-                                	Regex RegExp = new Regex(Exp);       
-					MatchInfo match;
-					      
-                    foreach(var l in lines){
-                            if(!l.has_prefix("#") && l.length > 0){
-                            
-                               // warning(l);
-					// Verify that the file passed as an argument matches any of the regular expression patterns.
-						if(RegExp.match(l, RegexMatchFlags.ANCHORED, out match)) {
-							//warning("Funca\n");	  
-						  string? k = match.fetch_named("key");
-						  string? v = match.fetch_named("value");
-						  
-						  if(k != null && k.length>0){
-						  	if(v == null){
-						  		v = "";
-						  	}
-						  	this.KeyValue[k] = text_strip(v); 
-						  }						  
-						  
-						}
-				                                             
-                            }
-
-                        }
-                        
-                        }catch (RegexError err) {
-							warning (err.message);
-						}
-
-                    
-                   
-            }
-            
-            public string get_as_string(string key){
-            	if(KeyValue.has_key(key)){
-            		return KeyValue[key];
-            	}else{
-            		return "";
-            	}
-            }
-		public bool get_as_bool(string key){
-            	if(KeyValue.has_key(key)){
-            		return bool.parse(KeyValue[key]);
-            	}else{
-            		return false;
-            	}
-            }
-            
-		public uint16 get_as_uint16(string key){
-            		return (uint16)this.get_as_int(key);
-		}            
-            
-		public int get_as_int(string key){
-            	if(KeyValue.has_key(key)){
-            		return int.parse(KeyValue[key]);
-            	}else{
-            		return 0;
-            	}
-		}            
-            
-                
-    
-    }    
-    
-    
-    /**
-    * Loads the address list server files, regular expression format.
-    * If the configuration file is changed the server must be restarted for the changes to take effect.
-    */
-    public class AddressListFiles:FileFunctions{
-        public ArrayList<string> regular_expressions = new ArrayList<string>();    
-        public string default_message = """#This file contains a list of the addresses of the files on the server and must be stored one per line and as regurar expression. 
-#To disable log insert a # at the beginning of the line. 
-#If you make any changes in this file will need to restart the server or wait about 5 minutes for the changes are automatically applied.""";
-    
-            /**
-            * Constructor with the filename passed as a parameter to load
-            */
-            public AddressListFiles(){
-            }   
-
-            /**
-            * Read the file data and loads the valid values ​​in the ArrayList regular_expressions
-            */
-            public void load(){
-                this.create_if_does_not_exist(this.default_message.data);
-                var lines = this.load_only_valid_unichars().split("\n");
-                    foreach(var l in lines){
-                            //stdout.printf ("-%s\n", l);
-                            if(!l.has_prefix("#") && l.length > 0){
-                                this.regular_expressions.add(l);                             
-                            }
-
-                        }            
-                      
-            }
-    
-
-    
-    }     
-    
-    /**
-    * This class represents binary data in uitn8[] with features that be converted to string
-    */
-    public class BinaryData:GLib.Object{
-    
-        private ArrayList<uint8> internal_data = new ArrayList<uint8>();
-        
-        public BinaryData(uint8[] binary = {}){
-            this.data = binary;        
-        }  
-        
-        public string md5(){
-        return Checksum.compute_for_data (ChecksumType.MD5, this.data);
-        }
-        
-        public int length{
-        	get {
-        		return internal_data.size;
-        	}
-        }
-        
-	public uint8[] data{
-		owned get{
-		
-			return this.internal_data.to_array();
-		}
-		set{
-			this.internal_data.clear();
-			foreach(var d in value){
-				this.internal_data.add(d);			
-			}
-		}
-	}    
-	
-	  
-            
-        /**
-        * Converts string data.
-        */  
-        public string to_string(){
-            return (string)this.data;
-        }
-        
-        public void add_uint8(uint8 byte){
-          	this.internal_data.add(byte);   
-        }
-        /**
-        * Convert data and returns them as a string with only valid characters unichar.
-        */
-        public string to_string_only_valid_unichars() {
-			var R = new StringBuilder();
-			string Cadena = this.to_string();
-			int CLength = this.data.length;
-			unichar caracter;
-			if(CLength > 0) {
-				for (int i = 0; Cadena.get_next_char(ref i, out caracter);) {
-					if(i>CLength) {
-						break;
-					}
-					if(caracter.validate()) {
-						R.append_unichar(caracter);
-					}
-				}
-			}
-			return R.str;
-		}
-    
-    }
     
     /**
     * Class that represents a list of cacheable addresses
     */
-    public class CacheableAddress:AddressListFiles{
+    public class CacheableAddress:FilesLinesArray{
     
         /**
         * Array containing the cached files and your address.
         */
         public HashMap<string, BinaryData> cache = new HashMap<string, BinaryData>();
     
-        public CacheableAddress(){
+    	/**
+    	* Constructor
+    	*/
+    	public CacheableAddress(){
+    	
+    	}
+    
+        public void load_config(){
             this.file_name = "cache.uhttp";
             this.default_message = """#This file contains regular expressions that point to all the files that are saved in the cache server. 
 #Place a regular expression for each line. 
@@ -1073,13 +556,15 @@ require([
 #Every change you make to this file will take effect once the server restarts.""";
             this.load();
         }
+        
+        
     
         /**
         * Verify that the file is cacheable.
         */
         public bool is_cacheable(string file_name){
             bool Retorno = false;
-				foreach(string exp in this.regular_expressions) {
+				foreach(string exp in this.Lines) {
 					try {
 						Regex RegExp = new Regex(exp);
 						MatchInfo match;
@@ -1130,8 +615,12 @@ require([
     
     }
     
-
+        /**
+        * Class that represents the server configuration file.
+        */
 	public class uHttpServerConfigFile:KeyValueFile{
+	
+		 public CacheableAddress Cache = new CacheableAddress();
 	
 		public uHttpServerConfigFile(){
 			this.default_message = """#Puerto / Socket, default = 8081
@@ -1144,9 +633,20 @@ Index: index.html
 RequestPrintOnConsole: true
 #==============================
 #UploadTempDir: 
-UploadMaxFilesize: 10""";
-			//TODO: Si la carpeta no existe debe intentar crearla, si falla usar valores de fabrica.
+UploadMaxFilesize: 10
+#CacheConfigFile Full Path of configuration file cache.
+#CacheConfigFile: """;
+
+			
 			this.file_name = "uhttp.conf";
+		}
+		
+		/**
+		* Load configuration from the file.
+		*/
+		public void load_config(){
+		
+			//this.file_name = full_path_file;
 			this.load();
 			
 			if(!this.KeyValue.has_key("DocumentRoot") || this.get_as_string("DocumentRoot").length <= 1 || this.get_as_string("DocumentRoot").contains("*")){
@@ -1157,27 +657,30 @@ UploadMaxFilesize: 10""";
 				this.KeyValue["UploadTempDir"] = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_tmp_dir());
 			}
 			
+			if(!this.KeyValue.has_key("CacheConfigFile") || this.get_as_string("CacheConfigFile").length < 1){
+				this.KeyValue["CacheConfigFile"] = Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_current_dir(), "cache.uhttp");
+			}			
+			
 			if(!this.KeyValue.has_key("UploadMaxFilesize") || this.get_as_int("UploadMaxFilesize") < 0){
 				this.KeyValue["UploadMaxFilesize"] = "1";
 			}
 			
-			this.to_environment_vars();
+			Cache.file_name = this.KeyValue["CacheConfigFile"];
+			Cache.load_config();
 		}
 		
-		public void to_environment_vars(){
-			//Environment.set_variable("UHTTP_UPLOAD_TEMP_DIR", this.get_as_string("UploadTempDir"), true);
-			//Environment.set_variable("UHTTP_UPLOAD_MAX_FILESIZE", this.get_as_string("UploadMaxFilesize"), true);
-			//Environment.set_variable("UHTTP_DOCUMENT_ROOT", this.get_as_string("DocumentRoot"), true);
-					
-		}
 	
 	}    
 	
+	
+        /**
+        * Class that represents the server uHTTP.
+        */	
 	[Description(nick = "HTTP Server", blurb = "Micro embebed HTTP Web Server")]
 	public class uHttpServer:GLib.Object {
 		[Description(nick = "Signal Request URL No Found", blurb = "Señal se dispara cuando una página no es encontrada en el servidor")]
 		public signal void NoFoundURL(Request request);
-        public CacheableAddress Cache = new CacheableAddress();
+       
         
 		public signal void heartbeat(int seconds);
 		public int heartbeatseconds = 30;
@@ -1198,6 +701,7 @@ UploadMaxFilesize: 10""";
 			this.thread_heartbeat();
 			tss.run.connect( connection_handler );
 		}
+		
 		private void thread_heartbeat() {
 			if (!Thread.supported()) {
 				stderr.printf("Cannot run without threads.\n");
@@ -1210,6 +714,7 @@ UploadMaxFilesize: 10""";
 				}
 			}
 		}
+		
 		private void trigger_heartbeat() {
 			while(true) {
 				if(this.heartbeatseconds < 1) {
@@ -1244,6 +749,7 @@ UploadMaxFilesize: 10""";
 		
 		[Description(nick = "Run Server", blurb = "Run on MainLoop")]  
 		  public virtual void run() {
+		  	Config.load_config();
 		  	var p = Config.get_as_uint16("Port");
 		  	if(p>0){
 			//create an IPV4 InetAddress bound to no specific IP address
@@ -1268,10 +774,6 @@ UploadMaxFilesize: 10""";
 			//print("Contact: software@edwinspire.com\n");
 			//print("Contact: http://www.edwinspire.com\n\n");
 			stdout.printf("%s\n", Config.to_string("Configuration Server:\n"));
-			/*
-			stdout.printf("Port: %s\n", Config.get_as_string("Port"));
-			stdout.printf("Root: %s\n", Config.get_as_string("DocumentRoot"));
-			stdout.printf("Index: %s\n", Config.get_as_string("Index"));*/
 			ml.run();
 			}else{
 				stderr.printf("Invalid Port = %s\n", p.to_string());
@@ -1281,6 +783,7 @@ UploadMaxFilesize: 10""";
 		
 		[Description(nick = "Run Server", blurb = "Run without MainLoop")]
 		public void run_without_mainloop() {
+			Config.load_config();
 			var p = Config.get_as_uint16("Port");
 			//create an IPV4 InetAddress bound to no specific IP address
 			if(p>0){
@@ -1299,7 +802,13 @@ UploadMaxFilesize: 10""";
 			//    MainLoop ml = new MainLoop();
 			//start listening 
 			tss.start();
-			stdout.printf("Serving on port %s\n", Config.get_as_string("Port"));
+			
+			print("Start uHTTP Micro WebServer");
+			print("Licence: LGPL\n");
+			print("Contact: edwinspire@gmail.com\n");
+			//print("Contact: software@edwinspire.com\n");
+			//print("Contact: http://www.edwinspire.com\n\n");
+			stdout.printf("%s\n", Config.to_string("Configuration Server:\n"));
 		
 			}else{
 				stderr.printf("Invalid Port = %s\n", p.to_string());
@@ -1308,55 +817,32 @@ UploadMaxFilesize: 10""";
 			//run the main loop
 			//  ml.run();
 		}
-		public bool upload_file_on_documentroot(string subpath_file, uint8[] data, bool replace = false) {
+		
+        /**
+        * Upload a file to the folder passed as a parameter that is within the document root.
+        */		
+		public long upload_file_on_documentroot(string subpath_file, uint8[] data, bool replace = false) {
 			return upload_file(Config.get_as_string("DocumentRoot"), FileFunctions.text_strip(subpath_file), data, replace);
 		}
-		
-		public bool upload_file(string path, string file, uint8[] data, bool replace = false) {
-			return save_file(Path.build_path (Path.DIR_SEPARATOR_S, FileFunctions.text_strip(path), FileFunctions.text_strip(file)), data, replace);
+
+        /**
+        * Upload a file to the folder passed as a parameter.
+        */		
+		public long upload_file(string path, string file, uint8[] data, bool replace = false) {
+			return FileFunctions.save_file(Path.build_path (Path.DIR_SEPARATOR_S, FileFunctions.text_strip(path), FileFunctions.text_strip(file)), data, replace);
 		}
-		
-		public bool save_file_into_temp_dir(string file, uint8[] data, bool replace = false) {
-			return save_file(full_path_temp_file(FileFunctions.text_strip(file)), data, replace);
+        /**
+        * Upload a file to the temp folder defined in the server configuration file.
+        */		
+		public long save_file_into_temp_dir(string file, uint8[] data, bool replace = false) {
+			return FileFunctions.save_file(full_path_temp_file(FileFunctions.text_strip(file)), data, replace);
 		}
 		
 		private string full_path_temp_file(string filename){
 			return Path.build_path (Path.DIR_SEPARATOR_S, Config.get_as_string("DocumentRoot"), filename);		
 		}
 
-		
-		public static bool save_file(string path, uint8[] data, bool replace = false) {
-			bool R = false;
-			try {
-				// stderr.printf ("PATH\n%s\n", path);
-				// Reference a local file name
-				var file = File.new_for_path (FileFunctions.text_strip(path));
-				var exist = file.query_exists ();
-				if(exist && replace) {
-					file.delete ();
-				}
-				// Test for the existence of file
-				if (!exist) {
-					var dos = new DataOutputStream (file.create (FileCreateFlags.REPLACE_DESTINATION));
-					// For long string writes, a loop should be used, because sometimes not all data can be written in one run
-					// 'written' is used to check how much of the string has already been written
-					long written = 0;
-					while (written < data.length) {
-						// sum of the bytes of 'text' that already have been written to the stream
-						written += dos.write (data[written:data.length]);
-					}
-					if(data.length == written) {
-						R = true;
-					}
-				} else {
-					R = true;
-				}
-			}
-			catch(GLib.Error e) {
-				stdout.printf ("Error: %s\n", e.message);
-			}
-			return R;
-		}
+  /*
 		public static string get_data_as_string_valid_unichars(uint8[] d) {
 			var R = new StringBuilder();
 			string Cadena = (string)d;
@@ -1373,7 +859,7 @@ UploadMaxFilesize: 10""";
 				}
 			}
 			return R.str;
-		}
+		}*/
 		[Description(nick = "GenUrl", blurb = "Crea una Url unica automaticamente")]  
 		public static string GenUrl(string root = "/", string value = "Sf54+-dsfk%6md&bfpJ") {
 			TimeVal tv = TimeVal();
@@ -1445,19 +931,22 @@ UploadMaxFilesize: 10""";
 				warning(e.message+"\n");
 			}
 			
+			if(request.Method != RequestMethod.UNKNOW){
+			
 			Response response = new Response();
 			
 			string FullPath = this.PathLocalFile(request.Path);
+			
 			
 			if(request.Path == "/"){
 				FullPath = this.PathLocalFile(Config.get_as_string("Index"));
 				//warning(FullPath);
 			}
 			
-			if(Cache.is_cacheable(FullPath)){
+			if(Config.Cache.is_cacheable(FullPath)){
 				// Devuelve el archivo directo de la cache 
 				response.Status = StatusCode.OK;
-				response.Data = Cache.return_file(FullPath).data;
+				response.Data = Config.Cache.return_file(FullPath).data;
 				response.Header["Content-Type"] = GetMimeTypeToFile(FullPath);
 				serve_response( response, dos );						
 			/*}else if(request.Path == "/") {
@@ -1536,7 +1025,7 @@ Access-Control-Allow-Headers: content-type
 				}
 			} else {
 				NoFoundURL(request);
-				print("No found %s\n", request.Path);
+				print("No found %s\n", FullPath);
 				//     response.Header.Status = StatusCode.NOT_FOUND;
 				//  response.Data = Response.HttpError("uHTTP WebServer", "404 - Página no encontrada").data;
 				//  response.Header.ContentType = "text/html";
@@ -1545,6 +1034,12 @@ Access-Control-Allow-Headers: content-type
 				// Si no se han encontrado el archivo dentro del servidor se buscará en las paginas virtuales. 
 				this.connection_handler_virtual(request, dos);
 			}
+			
+			}else{
+			
+			
+			}
+			
 			return false;
 		}
 		//********************************************************************

@@ -23,6 +23,8 @@
 //New file source
 using Gee;
 using GLib;
+using edwinspire.utils;
+
 namespace edwinspire.uHttp {
 	
 	/**
