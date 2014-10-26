@@ -149,7 +149,10 @@ namespace edwinspire {
 			GET,
 			POST,
 			HEAD,
-			PUT
+			PUT,
+			DELETE,
+			OPTIONS,
+			CONNECT
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Status Code")]

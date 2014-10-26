@@ -26,7 +26,7 @@ using GLib;
 using edwinspire.utils;
 
 namespace edwinspire.uHttp {
-	const string VERSION = "uHttp Server Version 0.3 Alpha";
+	const string VERSION = "uHttp Server Version 0.3.1 Alpha";
 	/*
 	public enum DateFormat {
 		HTTP,
@@ -38,6 +38,10 @@ namespace edwinspire.uHttp {
 		ISO8601_XMLRPC
 	}
 */
+
+	/**
+	* HTTP version numbers
+	*/
 	[Description(nick = "HTTP Version", blurb = "")]
 		public enum HTTPVersion {
 		@1_0,
@@ -101,10 +105,34 @@ namespace edwinspire.uHttp {
 	[Description(nick = "HTTP Request Method", blurb = "")]
 	public enum RequestMethod {
 		UNKNOW,
+		/**
+		* Requests data from a specified resource
+		*/
 		GET,
+		/**
+		* Submits data to be processed to a specified resource
+		*/
 		POST,
+		/**
+		* Same as GET but returns only HTTP headers and no document body
+		*/
 		HEAD,
-		PUT
+		/**
+		* Uploads a representation of the specified URI
+		*/
+		PUT,
+		/**
+		* Deletes the specified resource
+		*/
+		DELETE,
+		/**
+		* Returns the HTTP methods that the server supports
+		*/
+		OPTIONS,
+		/**
+		* Converts the request connection to a transparent TCP/IP tunnel
+		*/
+		CONNECT
 	}
 	
 	/**
@@ -186,6 +214,12 @@ namespace edwinspire.uHttp {
 							this.Method   = RequestMethod.HEAD;
 						} else if(line.has_prefix("PUT")) {
 							this.Method   = RequestMethod.PUT;
+						} else if(line.has_prefix("DELETE")) {
+							this.Method   = RequestMethod.DELETE;
+						} else if(line.has_prefix("OPTIONS")) {
+							this.Method   = RequestMethod.OPTIONS;
+						} else if(line.has_prefix("CONNECT")) {
+							this.Method   = RequestMethod.CONNECT;
 						}
 						
 						//get the parts from the line
@@ -195,17 +229,9 @@ namespace edwinspire.uHttp {
 							if(partsquery.length>0) {
 								this.Path = FileFunctions.text_strip(partsquery[0]);
 								if(partsquery.length>1) {
-			//TODO Dejar solo FR ya que el resto se mantiene temporalmete solo por compatibilidad con la version anterior de la libreria.
-								//	
+	
 								this.url_query = partsquery[1];
-									/*foreach(var part in partsquery[1].split("&")) {
-										var kv = part.split("=");
-										if(kv.length>1) {
-											string Key = Uri.unescape_string(kv[0].replace("+", " "));
-											string Value = Uri.unescape_string(kv[1].replace("+", " "));
-											this.Query[Key] = Value;
-										}
-									}*/
+
 								}
 							}
 						}
@@ -241,35 +267,13 @@ namespace edwinspire.uHttp {
 			}
 		}
 		public void print() {
-			stdout.printf("<*** REQUEST ***>\n");
-			stdout.printf("<<isWebSocketHandshake>>: %s\n", this.isWebSocketHandshake.to_string());
-			stdout.printf("<<Method>>: %s\n", this.Method.to_string());
-			stdout.printf("<<Path>>: %s\n", Path);
-			stdout.printf("<<Header>>:\n%s\n", KeyValueFile.HashMapToString(this.Header));
-			//stdout.printf("<<Boundary>>:\n%s\n", this.boundary);
-			//stdout.printf("<<Query>>:\n%s\n", uHttpServerConfig.HashMapToString(this.Query));
-			//stdout.printf("<<Form:>>\n%s\n", uHttpServerConfig.HashMapToString(this.Form));
-			stdout.printf("<<MultiPartForm>>:\n");
-			/*stdout.printf("[Is Multipart]: %s\n", this.MultiPartForm.is_multipart_form_data.to_string());
-			if(this.MultiPartForm.is_multipart_form_data) {
-				foreach(var r in this.MultiPartForm.Parts) {
-					stdout.printf("[Headers]:\n");
-					foreach(var v in r.Headers) {
-						stdout.printf("%s: %s\n", v.name, v.value);
-						if(v.param.size > 0) {
-							stdout.printf("[Parametros]\n%s\n", uHttpServerConfig.HashMapToString(v.param));
-						}
-					}
-					if(r.data.length > 1024) {
-						stdout.printf("[Data (%s bytes)]\nData > 1024 bytes, no show!\n", r.data.length.to_string());
-					} else {
-						stdout.printf("[Data (%s bytes)]\n%s\n", r.data.length.to_string(), r.get_data_as_string_valid_unichars());
-					}
-				}
-			}
-			*/
-			
-			stdout.printf("Data FR \n%s\n", Form.to_string());
+			stdout.printf("*****************\n");
+			stdout.printf("[*** REQUEST ***]\n");
+			//stdout.printf("isWebSocketHandshake => %s\n", this.isWebSocketHandshake.to_string());
+			stdout.printf("Method => %s\n", this.Method.to_string());
+			stdout.printf("Path => %s\n", Path);
+			stdout.printf("[Header]\n%s\n", KeyValueFile.HashMapToString(this.Header));			
+			stdout.printf("[DATAS]\n%s\n", Form.to_string());
 			
 			
 		}
@@ -283,23 +287,7 @@ namespace edwinspire.uHttp {
 				return DatasInternal;
 			}
 			set {
-				DatasInternal = value;
-				/*//Form.clear();
-				//stdout.printf("Data leng: %s\n", value.length.to_string());
-				if(this.Method == RequestMethod.POST) {
-					if(Header.has_key("Content-Type")) {
-						if(Header["Content-Type"].has_prefix("multipart/form-data")) {
-							MultiPartForm.decode(Header["Content-Type"], value);
-						}
-					}
-				}
-				if(!MultiPartForm.is_multipart_form_data) {
-					int CLength = this.ContentLength;
-					if(DatasInternal!=null && CLength>0) {
-						Form = uHttp.Form.DataDecode(uHttpServer.get_data_as_string_valid_unichars(Data));
-					}
-				}*/
-				
+				DatasInternal = value;				
 			this.Form.decode(this.Method, this.Header, this.url_query, this.DatasInternal);					
 			}
 		}
@@ -768,17 +756,25 @@ UploadMaxFilesize: 10
 			MainLoop ml = new MainLoop();
 			//start listening 
 			tss.start();
-			print("Start uHTTP Micro WebServer");
-			print("Licence: LGPL\n");
-			print("Contact: edwinspire@gmail.com\n");
-			//print("Contact: software@edwinspire.com\n");
-			//print("Contact: http://www.edwinspire.com\n\n");
-			stdout.printf("%s\n", Config.to_string("Configuration Server:\n"));
+			start_server_message_on_console();
 			ml.run();
 			}else{
 				stderr.printf("Invalid Port = %s\n", p.to_string());
 				return;
 			}
+		}
+		
+		private void start_server_message_on_console(){
+			print("\n*******************************\n");
+			print("* Start uHTTP Micro WebServer *\n");
+			print("Version: %s\n", VERSION);
+			print("Licence: LGPL\n");
+			print("Contact: edwinspire@gmail.com\n");
+			print("         https://github.com/edwinspire?tab=repositories\n");
+			//print("Contact: software@edwinspire.com\n");
+			//print("Contact: http://www.edwinspire.com\n\n");
+			stdout.printf("%s\n", Config.to_string("Configuration:\n"));
+			print("\n*******************************\n");
 		}
 		
 		[Description(nick = "Run Server", blurb = "Run without MainLoop")]
@@ -803,12 +799,7 @@ UploadMaxFilesize: 10
 			//start listening 
 			tss.start();
 			
-			print("Start uHTTP Micro WebServer");
-			print("Licence: LGPL\n");
-			print("Contact: edwinspire@gmail.com\n");
-			//print("Contact: software@edwinspire.com\n");
-			//print("Contact: http://www.edwinspire.com\n\n");
-			stdout.printf("%s\n", Config.to_string("Configuration Server:\n"));
+			start_server_message_on_console();
 		
 			}else{
 				stderr.printf("Invalid Port = %s\n", p.to_string());
