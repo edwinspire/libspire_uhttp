@@ -10,6 +10,7 @@
 #include <string.h>
 #include <gee.h>
 #include <gio/gio.h>
+#include "libspire_utilities.h"
 
 G_BEGIN_DECLS
 
@@ -127,38 +128,6 @@ typedef struct _edwinspireuHttpResponse edwinspireuHttpResponse;
 typedef struct _edwinspireuHttpResponseClass edwinspireuHttpResponseClass;
 typedef struct _edwinspireuHttpResponsePrivate edwinspireuHttpResponsePrivate;
 
-#define EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS (edwinspire_uhttp_file_functions_get_type ())
-#define EDWINSPIRE_UHTTP_FILE_FUNCTIONS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS, edwinspireuHttpFileFunctions))
-#define EDWINSPIRE_UHTTP_FILE_FUNCTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS, edwinspireuHttpFileFunctionsClass))
-#define EDWINSPIRE_UHTTP_IS_FILE_FUNCTIONS(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS))
-#define EDWINSPIRE_UHTTP_IS_FILE_FUNCTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS))
-#define EDWINSPIRE_UHTTP_FILE_FUNCTIONS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_FILE_FUNCTIONS, edwinspireuHttpFileFunctionsClass))
-
-typedef struct _edwinspireuHttpFileFunctions edwinspireuHttpFileFunctions;
-typedef struct _edwinspireuHttpFileFunctionsClass edwinspireuHttpFileFunctionsClass;
-typedef struct _edwinspireuHttpFileFunctionsPrivate edwinspireuHttpFileFunctionsPrivate;
-
-#define EDWINSPIRE_UHTTP_TYPE_BINARY_DATA (edwinspire_uhttp_binary_data_get_type ())
-#define EDWINSPIRE_UHTTP_BINARY_DATA(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_BINARY_DATA, edwinspireuHttpBinaryData))
-#define EDWINSPIRE_UHTTP_BINARY_DATA_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_BINARY_DATA, edwinspireuHttpBinaryDataClass))
-#define EDWINSPIRE_UHTTP_IS_BINARY_DATA(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_BINARY_DATA))
-#define EDWINSPIRE_UHTTP_IS_BINARY_DATA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_BINARY_DATA))
-#define EDWINSPIRE_UHTTP_BINARY_DATA_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_BINARY_DATA, edwinspireuHttpBinaryDataClass))
-
-typedef struct _edwinspireuHttpBinaryData edwinspireuHttpBinaryData;
-typedef struct _edwinspireuHttpBinaryDataClass edwinspireuHttpBinaryDataClass;
-
-#define EDWINSPIRE_UHTTP_TYPE_KEY_VALUE_FILE (edwinspire_uhttp_key_value_file_get_type ())
-#define EDWINSPIRE_UHTTP_KEY_VALUE_FILE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_KEY_VALUE_FILE, edwinspireuHttpKeyValueFile))
-#define EDWINSPIRE_UHTTP_KEY_VALUE_FILE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_KEY_VALUE_FILE, edwinspireuHttpKeyValueFileClass))
-#define EDWINSPIRE_UHTTP_IS_KEY_VALUE_FILE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), EDWINSPIRE_UHTTP_TYPE_KEY_VALUE_FILE))
-#define EDWINSPIRE_UHTTP_IS_KEY_VALUE_FILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), EDWINSPIRE_UHTTP_TYPE_KEY_VALUE_FILE))
-#define EDWINSPIRE_UHTTP_KEY_VALUE_FILE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), EDWINSPIRE_UHTTP_TYPE_KEY_VALUE_FILE, edwinspireuHttpKeyValueFileClass))
-
-typedef struct _edwinspireuHttpKeyValueFile edwinspireuHttpKeyValueFile;
-typedef struct _edwinspireuHttpKeyValueFileClass edwinspireuHttpKeyValueFileClass;
-typedef struct _edwinspireuHttpKeyValueFilePrivate edwinspireuHttpKeyValueFilePrivate;
-
 #define EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES (edwinspire_uhttp_address_list_files_get_type ())
 #define EDWINSPIRE_UHTTP_ADDRESS_LIST_FILES(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES, edwinspireuHttpAddressListFiles))
 #define EDWINSPIRE_UHTTP_ADDRESS_LIST_FILES_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), EDWINSPIRE_UHTTP_TYPE_ADDRESS_LIST_FILES, edwinspireuHttpAddressListFilesClass))
@@ -169,7 +138,6 @@ typedef struct _edwinspireuHttpKeyValueFilePrivate edwinspireuHttpKeyValueFilePr
 typedef struct _edwinspireuHttpAddressListFiles edwinspireuHttpAddressListFiles;
 typedef struct _edwinspireuHttpAddressListFilesClass edwinspireuHttpAddressListFilesClass;
 typedef struct _edwinspireuHttpAddressListFilesPrivate edwinspireuHttpAddressListFilesPrivate;
-typedef struct _edwinspireuHttpBinaryDataPrivate edwinspireuHttpBinaryDataPrivate;
 
 #define EDWINSPIRE_UHTTP_TYPE_CACHEABLE_ADDRESS (edwinspire_uhttp_cacheable_address_get_type ())
 #define EDWINSPIRE_UHTTP_CACHEABLE_ADDRESS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), EDWINSPIRE_UHTTP_TYPE_CACHEABLE_ADDRESS, edwinspireuHttpCacheableAddress))
@@ -378,65 +346,32 @@ struct _edwinspireuHttpResponseClass {
 	GObjectClass parent_class;
 };
 
-struct _edwinspireuHttpFileFunctions {
-	GObject parent_instance;
-	edwinspireuHttpFileFunctionsPrivate * priv;
-	gchar* file_name;
-};
-
-struct _edwinspireuHttpFileFunctionsClass {
-	GObjectClass parent_class;
-};
-
-struct _edwinspireuHttpKeyValueFile {
-	edwinspireuHttpFileFunctions parent_instance;
-	edwinspireuHttpKeyValueFilePrivate * priv;
-	gchar* Exp;
-	gchar* default_message;
-	GeeHashMap* KeyValue;
-};
-
-struct _edwinspireuHttpKeyValueFileClass {
-	edwinspireuHttpFileFunctionsClass parent_class;
-};
-
 struct _edwinspireuHttpAddressListFiles {
-	edwinspireuHttpFileFunctions parent_instance;
+	edwinspireutilsFilesLinesArray parent_instance;
 	edwinspireuHttpAddressListFilesPrivate * priv;
-	GeeArrayList* regular_expressions;
-	gchar* default_message;
 };
 
 struct _edwinspireuHttpAddressListFilesClass {
-	edwinspireuHttpFileFunctionsClass parent_class;
-};
-
-struct _edwinspireuHttpBinaryData {
-	GObject parent_instance;
-	edwinspireuHttpBinaryDataPrivate * priv;
-};
-
-struct _edwinspireuHttpBinaryDataClass {
-	GObjectClass parent_class;
+	edwinspireutilsFilesLinesArrayClass parent_class;
 };
 
 struct _edwinspireuHttpCacheableAddress {
-	edwinspireuHttpAddressListFiles parent_instance;
+	edwinspireutilsFilesLinesArray parent_instance;
 	edwinspireuHttpCacheableAddressPrivate * priv;
 	GeeHashMap* cache;
 };
 
 struct _edwinspireuHttpCacheableAddressClass {
-	edwinspireuHttpAddressListFilesClass parent_class;
+	edwinspireutilsFilesLinesArrayClass parent_class;
 };
 
 struct _edwinspireuHttpuHttpServerConfigFile {
-	edwinspireuHttpKeyValueFile parent_instance;
+	edwinspireutilsKeyValueFile parent_instance;
 	edwinspireuHttpuHttpServerConfigFilePrivate * priv;
 };
 
 struct _edwinspireuHttpuHttpServerConfigFileClass {
-	edwinspireuHttpKeyValueFileClass parent_class;
+	edwinspireutilsKeyValueFileClass parent_class;
 };
 
 struct _edwinspireuHttpuHttpServer {
@@ -454,7 +389,7 @@ struct _edwinspireuHttpuHttpServerClass {
 };
 
 struct _edwinspireuHttpPHP_Support {
-	edwinspireuHttpFileFunctions parent_instance;
+	edwinspireutilsFileFunctions parent_instance;
 	edwinspireuHttpPHP_SupportPrivate * priv;
 	gchar* Server_Addr;
 	gchar* Server_Name;
@@ -463,7 +398,7 @@ struct _edwinspireuHttpPHP_Support {
 };
 
 struct _edwinspireuHttpPHP_SupportClass {
-	edwinspireuHttpFileFunctionsClass parent_class;
+	edwinspireutilsFileFunctionsClass parent_class;
 };
 
 
@@ -556,46 +491,14 @@ edwinspireuHttpResponse* edwinspire_uhttp_response_new (void);
 edwinspireuHttpResponse* edwinspire_uhttp_response_construct (GType object_type);
 gchar* edwinspire_uhttp_response_ToString (edwinspireuHttpResponse* self);
 gchar* edwinspire_uhttp_response_HttpError (const gchar* _error_, const gchar* description, const gchar* title);
-GType edwinspire_uhttp_file_functions_get_type (void) G_GNUC_CONST;
-edwinspireuHttpFileFunctions* edwinspire_uhttp_file_functions_new (void);
-edwinspireuHttpFileFunctions* edwinspire_uhttp_file_functions_construct (GType object_type);
-gchar* edwinspire_uhttp_file_functions_text_strip (const gchar* t);
-gboolean edwinspire_uhttp_file_functions_create_if_does_not_exist (edwinspireuHttpFileFunctions* self, guint8* data, int data_length1);
-glong edwinspire_uhttp_file_functions_create_new_file (edwinspireuHttpFileFunctions* self, guint8* data, int data_length1);
-glong edwinspire_uhttp_file_functions_write_file (edwinspireuHttpFileFunctions* self, guint8* data, int data_length1);
-guint8* edwinspire_uhttp_file_functions_read_file (edwinspireuHttpFileFunctions* self, int* result_length1);
-GType edwinspire_uhttp_binary_data_get_type (void) G_GNUC_CONST;
-edwinspireuHttpBinaryData* edwinspire_uhttp_file_functions_read_as_binarydata (edwinspireuHttpFileFunctions* self);
-gchar* edwinspire_uhttp_file_functions_load_only_valid_unichars (edwinspireuHttpFileFunctions* self);
-const gchar* edwinspire_uhttp_file_functions_get_full_path (edwinspireuHttpFileFunctions* self);
-GType edwinspire_uhttp_key_value_file_get_type (void) G_GNUC_CONST;
-edwinspireuHttpKeyValueFile* edwinspire_uhttp_key_value_file_new (void);
-edwinspireuHttpKeyValueFile* edwinspire_uhttp_key_value_file_construct (GType object_type);
-gchar* edwinspire_uhttp_key_value_file_HashMapToString (GeeHashMap* hm);
-gchar* edwinspire_uhttp_key_value_file_to_string (edwinspireuHttpKeyValueFile* self, const gchar* title);
-void edwinspire_uhttp_key_value_file_load (edwinspireuHttpKeyValueFile* self);
-gchar* edwinspire_uhttp_key_value_file_get_as_string (edwinspireuHttpKeyValueFile* self, const gchar* key);
-gboolean edwinspire_uhttp_key_value_file_get_as_bool (edwinspireuHttpKeyValueFile* self, const gchar* key);
-guint16 edwinspire_uhttp_key_value_file_get_as_uint16 (edwinspireuHttpKeyValueFile* self, const gchar* key);
-gint edwinspire_uhttp_key_value_file_get_as_int (edwinspireuHttpKeyValueFile* self, const gchar* key);
 GType edwinspire_uhttp_address_list_files_get_type (void) G_GNUC_CONST;
 edwinspireuHttpAddressListFiles* edwinspire_uhttp_address_list_files_new (void);
 edwinspireuHttpAddressListFiles* edwinspire_uhttp_address_list_files_construct (GType object_type);
-void edwinspire_uhttp_address_list_files_load (edwinspireuHttpAddressListFiles* self);
-edwinspireuHttpBinaryData* edwinspire_uhttp_binary_data_new (guint8* binary, int binary_length1);
-edwinspireuHttpBinaryData* edwinspire_uhttp_binary_data_construct (GType object_type, guint8* binary, int binary_length1);
-gchar* edwinspire_uhttp_binary_data_md5 (edwinspireuHttpBinaryData* self);
-gchar* edwinspire_uhttp_binary_data_to_string (edwinspireuHttpBinaryData* self);
-void edwinspire_uhttp_binary_data_add_uint8 (edwinspireuHttpBinaryData* self, guint8 byte);
-gchar* edwinspire_uhttp_binary_data_to_string_only_valid_unichars (edwinspireuHttpBinaryData* self);
-gint edwinspire_uhttp_binary_data_get_length (edwinspireuHttpBinaryData* self);
-guint8* edwinspire_uhttp_binary_data_get_data (edwinspireuHttpBinaryData* self, int* result_length1);
-void edwinspire_uhttp_binary_data_set_data (edwinspireuHttpBinaryData* self, guint8* value, int value_length1);
 GType edwinspire_uhttp_cacheable_address_get_type (void) G_GNUC_CONST;
 edwinspireuHttpCacheableAddress* edwinspire_uhttp_cacheable_address_new (void);
 edwinspireuHttpCacheableAddress* edwinspire_uhttp_cacheable_address_construct (GType object_type);
 gboolean edwinspire_uhttp_cacheable_address_is_cacheable (edwinspireuHttpCacheableAddress* self, const gchar* file_name);
-edwinspireuHttpBinaryData* edwinspire_uhttp_cacheable_address_return_file (edwinspireuHttpCacheableAddress* self, const gchar* file_name);
+edwinspireutilsBinaryData* edwinspire_uhttp_cacheable_address_return_file (edwinspireuHttpCacheableAddress* self, const gchar* file_name);
 GType edwinspire_uhttp_uhttp_server_config_file_get_type (void) G_GNUC_CONST;
 edwinspireuHttpuHttpServerConfigFile* edwinspire_uhttp_uhttp_server_config_file_new (void);
 edwinspireuHttpuHttpServerConfigFile* edwinspire_uhttp_uhttp_server_config_file_construct (GType object_type);
@@ -613,7 +516,7 @@ gboolean edwinspire_uhttp_uhttp_server_save_file (const gchar* path, guint8* dat
 gchar* edwinspire_uhttp_uhttp_server_get_data_as_string_valid_unichars (guint8* d, int d_length1);
 gchar* edwinspire_uhttp_uhttp_server_GenUrl (const gchar* root, const gchar* value);
 gboolean edwinspire_uhttp_uhttp_server_connection_handler_virtual (edwinspireuHttpuHttpServer* self, edwinspireuHttpRequest* request, GDataOutputStream* dos);
-void edwinspire_uhttp_uhttp_server_upload_file_signal (edwinspireuHttpuHttpServer* self, edwinspireuHttpBinaryData* binary, const gchar* filename);
+void edwinspire_uhttp_uhttp_server_upload_file_signal (edwinspireuHttpuHttpServer* self, edwinspireutilsBinaryData* binary, const gchar* filename);
 void edwinspire_uhttp_uhttp_server_serve_response (edwinspireuHttpuHttpServer* self, edwinspireuHttpResponse* response, GDataOutputStream* dos);
 glong edwinspire_uhttp_uhttp_server_writeData (edwinspireuHttpuHttpServer* self, guint8* data_, int data__length1, GDataOutputStream* dos);
 void edwinspire_uhttp_uhttp_server_sendEventHeader (edwinspireuHttpuHttpServer* self, GDataOutputStream* dos);

@@ -3,41 +3,15 @@
 namespace edwinspire {
 	namespace uHttp {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class AddressListFiles : edwinspire.uHttp.FileFunctions {
-			public string default_message;
-			public Gee.ArrayList<string> regular_expressions;
+		public class AddressListFiles : edwinspire.utils.FilesLinesArray {
 			public AddressListFiles ();
-			public void load ();
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class BinaryData : GLib.Object {
-			public BinaryData (uint8[] binary = new uint8[0] { });
-			public void add_uint8 (uint8 byte);
-			public string md5 ();
-			public string to_string ();
-			public string to_string_only_valid_unichars ();
-			public uint8[] data { owned get; set; }
-			public int length { get; }
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class CacheableAddress : edwinspire.uHttp.AddressListFiles {
-			public Gee.HashMap<string,edwinspire.uHttp.BinaryData> cache;
+		public class CacheableAddress : edwinspire.utils.FilesLinesArray {
+			public Gee.HashMap<string,edwinspire.utils.BinaryData> cache;
 			public CacheableAddress ();
 			public bool is_cacheable (string file_name);
-			public edwinspire.uHttp.BinaryData return_file (string file_name);
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class FileFunctions : GLib.Object {
-			public string file_name;
-			public FileFunctions ();
-			public bool create_if_does_not_exist (uint8[] data = "".data);
-			public long create_new_file (uint8[] data = "".data);
-			public string load_only_valid_unichars ();
-			public edwinspire.uHttp.BinaryData read_as_binarydata ();
-			public uint8[] read_file ();
-			public static string text_strip (string t);
-			public long write_file (uint8[] data = "".data);
-			public string full_path { get; private set; }
+			public edwinspire.utils.BinaryData return_file (string file_name);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class FormRequest : GLib.Object {
@@ -52,20 +26,6 @@ namespace edwinspire {
 		public class GET : edwinspire.uHttp.iFormValues, GLib.Object {
 			public GET ();
 			public void decode (string query_section);
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class KeyValueFile : edwinspire.uHttp.FileFunctions {
-			public string Exp;
-			public Gee.HashMap<string,string> KeyValue;
-			public string default_message;
-			public KeyValueFile ();
-			public static string HashMapToString (Gee.HashMap<string,string> hm);
-			public bool get_as_bool (string key);
-			public int get_as_int (string key);
-			public string get_as_string (string key);
-			public uint16 get_as_uint16 (string key);
-			public void load ();
-			public string to_string (string title = "KeyValueFile\n");
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class MultiPartFormData : GLib.Object {
@@ -97,7 +57,7 @@ namespace edwinspire {
 			public uint8[] data { get; set; }
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class PHP_Support : edwinspire.uHttp.FileFunctions {
+		public class PHP_Support : edwinspire.utils.FileFunctions {
 			public string Server_Addr;
 			public string Server_Name;
 			public string Server_Protocol;
@@ -114,7 +74,7 @@ namespace edwinspire {
 			[Description (blurb = "Boundary", nick = "Multi Part Form Boundary")]
 			public string boundary { get; private set; }
 			public bool is_multipart_form_data { get; private set; }
-			public signal void file_uploaded (edwinspire.uHttp.BinaryData bin, string filename);
+			public signal void file_uploaded (edwinspire.utils.BinaryData bin, string filename);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class POSTMultipartBlock : GLib.Object {
@@ -128,7 +88,7 @@ namespace edwinspire {
 			public void decode (uint8[] block);
 			public Gee.HashMap<string,string> Header { get; private set; }
 			public Gee.HashMap<string,string> Params { get; private set; }
-			public signal void file_uploaded (edwinspire.uHttp.BinaryData bin, string filename);
+			public signal void file_uploaded (edwinspire.utils.BinaryData bin, string filename);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		[Description (blurb = "", nick = "HTTP Request")]
@@ -187,14 +147,14 @@ namespace edwinspire {
 			public void serve_response (edwinspire.uHttp.Response response, GLib.DataOutputStream dos);
 			public bool upload_file (string path, string file, uint8[] data, bool replace = false);
 			public bool upload_file_on_documentroot (string subpath_file, uint8[] data, bool replace = false);
-			public void upload_file_signal (edwinspire.uHttp.BinaryData binary, string filename);
+			public void upload_file_signal (edwinspire.utils.BinaryData binary, string filename);
 			public long writeData (uint8[] data_, GLib.DataOutputStream dos);
 			[Description (blurb = "Señal se dispara cuando una página no es encontrada en el servidor", nick = "Signal Request URL No Found")]
 			public signal void NoFoundURL (edwinspire.uHttp.Request request);
 			public signal void heartbeat (int seconds);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class uHttpServerConfigFile : edwinspire.uHttp.KeyValueFile {
+		public class uHttpServerConfigFile : edwinspire.utils.KeyValueFile {
 			public uHttpServerConfigFile ();
 			public void to_environment_vars ();
 		}
