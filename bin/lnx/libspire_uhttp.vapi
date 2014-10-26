@@ -28,34 +28,6 @@ namespace edwinspire {
 			public void decode (string query_section);
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class MultiPartFormData : GLib.Object {
-			public MultiPartFormData ();
-			public void decode (string ContentTypeHeader, uint8[] d);
-			public Gee.ArrayList<edwinspire.uHttp.MultiPartFormDataPart> Parts { get; private set; }
-			[Description (blurb = "Boundary", nick = "Multi Part Form Boundary")]
-			public string boundary { get; private set; }
-			public bool is_multipart_form_data { get; private set; }
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class MultiPartFormDataHeader : GLib.Object {
-			public MultiPartFormDataHeader ();
-			public string get_param_for_name (string name);
-			public string name { get; set; }
-			public Gee.HashMap<string,string> param { get; set; }
-			public string value { get; set; }
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
-		public class MultiPartFormDataPart : GLib.Object {
-			public MultiPartFormDataPart ();
-			public string compute_md5_for_data ();
-			public string get_content_disposition_param (string name);
-			public string get_head_param (string head, string name);
-			public edwinspire.uHttp.MultiPartFormDataHeader get_header_content_disposition ();
-			public edwinspire.uHttp.MultiPartFormDataHeader get_header_for_name (string name);
-			public Gee.ArrayList<edwinspire.uHttp.MultiPartFormDataHeader> Headers { get; set; }
-			public uint8[] data { get; set; }
-		}
-		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class PHP_Support : edwinspire.utils.FileFunctions {
 			public string Server_Addr;
 			public string Server_Name;
