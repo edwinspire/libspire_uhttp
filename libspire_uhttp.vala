@@ -533,11 +533,10 @@ namespace edwinspire.uHttp {
     	* Constructor
     	*/
     	public CacheableAddress(){
-    	
+    		this.file_name = "cache.uhttp";
     	}
     
         public void load_config(){
-            this.file_name = "cache.uhttp";
             this.default_message = """#This file contains regular expressions that point to all the files that are saved in the cache server. 
 #Place a regular expression for each line. 
 #If you want to disable a line place the # sign at the beginning of the line. 
@@ -773,8 +772,8 @@ UploadMaxFilesize: 10
 			print("         https://github.com/edwinspire?tab=repositories\n");
 			//print("Contact: software@edwinspire.com\n");
 			//print("Contact: http://www.edwinspire.com\n\n");
-			stdout.printf("%s\n", Config.to_string("Configuration:\n"));
-			print("\n*******************************\n");
+			stdout.printf("%s\n", Config.to_string("[Configuration]\n"));
+			//print("\n*******************************\n");
 		}
 		
 		[Description(nick = "Run Server", blurb = "Run without MainLoop")]
