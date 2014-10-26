@@ -412,6 +412,7 @@ edwinspireutilsBinaryData* edwinspire_uhttp_cacheable_address_return_file (edwin
 GType edwinspire_uhttp_uhttp_server_config_file_get_type (void) G_GNUC_CONST;
 edwinspireuHttpuHttpServerConfigFile* edwinspire_uhttp_uhttp_server_config_file_new (void);
 edwinspireuHttpuHttpServerConfigFile* edwinspire_uhttp_uhttp_server_config_file_construct (GType object_type);
+void edwinspire_uhttp_uhttp_server_config_file_load_config (edwinspireuHttpuHttpServerConfigFile* self);
 GType edwinspire_uhttp_uhttp_server_get_type (void) G_GNUC_CONST;
 edwinspireuHttpuHttpServer* edwinspire_uhttp_uhttp_server_new (gint max_threads);
 edwinspireuHttpuHttpServer* edwinspire_uhttp_uhttp_server_construct (GType object_type, gint max_threads);

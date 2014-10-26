@@ -125,6 +125,7 @@ namespace edwinspire {
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public class uHttpServerConfigFile : edwinspire.utils.KeyValueFile {
 			public uHttpServerConfigFile ();
+			public void load_config ();
 		}
 		[CCode (cheader_filename = "libspire_uhttp.h")]
 		public interface iFormValues : GLib.Object {
