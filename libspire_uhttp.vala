@@ -611,7 +611,7 @@ namespace edwinspire.uHttp {
 	
 		public uHttpServerConfigFile(){
 			this.default_message = """#Puerto / Socket, default = 8081
-Port: 8082
+Port: 8081
 #Página de inicio, default = index.html
 Index: index.html
 #Carpeta raíz de los documentos del servidor web. La ruta puede ser absoluta, o si la ruta inicia con * se tomará como relativa a la ubicación donde está corriendo el servidor. Si se deja vacio se tomará como raiz una carpeta llamada uhttproot dentro de la ubicación actual del servidor.
@@ -737,6 +737,7 @@ UploadMaxFilesize: 10
 		[Description(nick = "Run Server", blurb = "Run on MainLoop")]  
 		  public virtual void run() {
 		  	Config.load_config();
+		  	start_server_message_on_console();
 		  	var p = Config.get_as_uint16("Port");
 		  	if(p>0){
 			//create an IPV4 InetAddress bound to no specific IP address
@@ -755,7 +756,6 @@ UploadMaxFilesize: 10
 			MainLoop ml = new MainLoop();
 			//start listening 
 			tss.start();
-			start_server_message_on_console();
 			ml.run();
 			}else{
 				stderr.printf("Invalid Port = %s\n", p.to_string());
@@ -780,6 +780,7 @@ UploadMaxFilesize: 10
 		[Description(nick = "Run Server", blurb = "Run without MainLoop")]
 		public void run_without_mainloop() {
 			Config.load_config();
+			start_server_message_on_console();
 			var p = Config.get_as_uint16("Port");
 			//create an IPV4 InetAddress bound to no specific IP address
 			if(p>0){
@@ -794,19 +795,15 @@ UploadMaxFilesize: 10
 				stderr.printf(e.message+"\n");
 				return;
 			}
-			//we need a gobject main loop
-			//    MainLoop ml = new MainLoop();
+
 			//start listening 
 			tss.start();
-			
-			start_server_message_on_console();
 		
 			}else{
 				stderr.printf("Invalid Port = %s\n", p.to_string());
 				return;
 			}	//tss.
-			//run the main loop
-			//  ml.run();
+		
 		}
 		
         /**
