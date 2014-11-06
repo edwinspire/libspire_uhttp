@@ -197,7 +197,14 @@ namespace edwinspire.uHttp {
 	
 		public string set_value(string name, string value){
 			string n = this.next_name_free(name);
-			this.internal_hashmap[n] = value;
+			
+			if(n.has_suffix(".0")){
+				this.internal_hashmap[n] = value;
+				this.internal_hashmap[name] = value;
+			}else{
+				this.internal_hashmap[n] = value;
+			}
+			
 			return n;
 		}
 		
@@ -289,6 +296,7 @@ namespace edwinspire.uHttp {
 		
 		
 	}
+	
 
 	/**
 	* GET
